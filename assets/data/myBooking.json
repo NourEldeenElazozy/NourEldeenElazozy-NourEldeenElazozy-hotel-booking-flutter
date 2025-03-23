@@ -1,0 +1,116 @@
+{
+  "myBooking": [
+    {
+      "id": 1,
+      "hotelName": "President Hotel",
+      "location": "Paris, France",
+      "Status": "Paid",
+      "image": "https://i.ibb.co/Xy2nWg4/Image1.jpg"
+    },
+    {
+      "id": 2,
+      "hotelName": "Palms Casino",
+      "location": "Amsterdam, Netherlands",
+      "Status": "Completed",
+      "image": "https://i.ibb.co/k6s1gH2/image2.jpg"
+    },
+    {
+      "id": 3,
+      "hotelName": "Palazzo Versace",
+      "location": "Rome, Italia",
+      "Status": "Completed",
+      "image": "https://i.ibb.co/7brrCxQ/image3.jpg"
+    },
+    {
+      "id": 4,
+      "hotelName": "Bulgari Resort",
+      "location": "Istanbul, Turkiye",
+      "Status": "Canceled & Refunded",
+      "image": "https://i.ibb.co/vdxn79n/image4.jpg"
+    },
+    {
+      "id": 5,
+      "hotelName": "Martinez Cannes",
+      "location": "London, United Kingdom",
+      "Status": "Paid",
+      "image": "https://i.ibb.co/7tHLkVw/image5.jpg"
+    },
+    {
+      "id": 6,
+      "hotelName": "Oberoi Rajvilas",
+      "location": "Mumbai, India",
+      "Status": "Canceled & Refunded",
+      "image": "https://i.ibb.co/Lv7qR7V/image6.jpg"
+    },
+    {
+      "id": 7,
+      "hotelName": "Royal Palace Hotel",
+      "location": "Bryan, Russia",
+      "Status": "Completed",
+      "image": "https://i.ibb.co/NCbcH19/image7.jpg"
+    },
+    {
+      "id": 8,
+      "hotelName": "Quirk Hotel",
+      "location": "Dubai, United Arab Emirates",
+      "Status": "Paid",
+      "image": "https://i.ibb.co/28wRWfs/Rectangle.jpg"
+    },
+    {
+      "id": 9,
+      "hotelName": "President Hotel",
+      "location": "Paris, France",
+      "Status": "Canceled & Refunded",
+      "image": "https://i.ibb.co/Xy2nWg4/Image1.jpg"
+    },
+    {
+      "id": 10,
+      "hotelName": "Palms Casino",
+      "location": "Amsterdam, Netherlands",
+      "Status": "Paid",
+      "image": "https://i.ibb.co/k6s1gH2/image2.jpg"
+    },
+    {
+      "id": 11,
+      "hotelName": "Palazzo Versace",
+      "location": "Rome, Italia",
+      "Status": "Completed",
+      "image": "https://i.ibb.co/7brrCxQ/image3.jpg"
+    },
+    {
+      "id": 12,
+      "hotelName": "Bulgari Resort",
+      "location": "Istanbul, Turkiye",
+      "Status": "Paid",
+      "image": "https://i.ibb.co/vdxn79n/image4.jpg"
+    },
+    {
+      "id": 13,
+      "hotelName": "Martinez Cannes",
+      "location": "London, United Kingdom",
+      "Status": "Completed",
+      "image": "https://i.ibb.co/7tHLkVw/image5.jpg"
+    },
+    {
+      "id": 14,
+      "hotelName": "Oberoi Rajvilas",
+      "location": "Mumbai, India",
+      "Status": "Canceled & Refunded",
+      "image": "https://i.ibb.co/Lv7qR7V/image6.jpg"
+    },
+    {
+      "id": 15,
+      "hotelName": "Royal Palace Hotel",
+      "location": "Bryan, Russia",
+      "Status": "Completed",
+      "image": "https://i.ibb.co/NCbcH19/image7.jpg"
+    },
+    {
+      "id": 16,
+      "hotelName": "Quirk Hotel",
+      "location": "Dubai, United Arab Emirates",
+      "Status": "Paid",
+      "image": "https://i.ibb.co/28wRWfs/Rectangle.jpg"
+    }
+  ]
+}

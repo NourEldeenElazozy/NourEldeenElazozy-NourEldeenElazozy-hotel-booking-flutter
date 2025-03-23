@@ -1,0 +1,1336 @@
+{
+  "details": [
+    {
+      "id": 1,
+      "hotelName": "Oberoi Rajvilas",
+      "location": "Mumbai, India",
+      "price": "$30",
+      "rate": "3.5",
+      "review": "4,552",
+      "status": "Popular",
+      "lat": 19.0760,
+      "lng": 72.8777,
+      "image": "https://i.ibb.co/jbSKVZS/Mask-Group.png",
+      "Description": "Opposite the Arabian Sea, this luxury hotel is a 6-minute walk from the Gateway of India and 3 km from the bustling Marine Drive.\nThe refined rooms come with free Wi-Fi, flat-screens and turndown service. Club-level rooms add butler service, marble bathrooms and access to a private lounge serving drinks and appetizers. Suites add living rooms, and the presidential suite provides a spa and a fitness room.",
+      "images": [
+        {
+          "url": "https://i.ibb.co/xmbbv3m/calm-pool-with-deck-chairs-1203-1030.jpg"
+        },
+        {
+          "url": "https://i.ibb.co/f8wvPr7/406295566.jpg"
+        },
+        {
+          "url": "https://i.ibb.co/JszDSqD/376789770.jpg"
+        },
+        {
+          "url": "https://i.ibb.co/kxRY2Gf/376789449.jpg"
+        }
+      ],
+      "galleryPhotos": [
+        {
+          "url": "https://i.ibb.co/xmbbv3m/calm-pool-with-deck-chairs-1203-1030.jpg"
+        },
+        {
+          "url": "https://i.ibb.co/f8wvPr7/406295566.jpg"
+        },
+        {
+          "url": "https://i.ibb.co/JszDSqD/376789770.jpg"
+        },
+        {
+          "url": "https://i.ibb.co/kxRY2Gf/376789449.jpg"
+        },
+        {
+          "url": "https://i.ibb.co/K2rsG5Y/153296557.jpg"
+        },
+        {
+          "url": "https://i.ibb.co/WxBBT24/376787360.jpg"
+        },
+        {
+          "url": "https://i.ibb.co/brxtFyF/376788522.jpg"
+        }
+      ],
+      "details": [
+        {
+          "url": "https://i.ibb.co/822dgpF/hotel.png",
+          "type": "Hotel"
+        },
+        {
+          "url": "https://i.ibb.co/vxSkbVv/bedroom.png",
+          "type": "4 Bedrooms"
+        },
+        {
+          "url": "https://i.ibb.co/cc6gCpj/bathroom.png",
+          "type": "2 Bathrooms"
+        },
+        {
+          "url": "https://i.ibb.co/zsBQcgW/sqft.png",
+          "type": "3700 sqft"
+        }
+      ],
+      "facilites": [
+        {
+          "type": "Swimming Pool",
+          "url": "https://i.ibb.co/sVQhCJq/Swimming-Pool.png"
+        },
+        {
+          "type": "Wifi",
+          "url": "https://i.ibb.co/VHZc4tZ/Wifi.png"
+        },
+        {
+          "type": "Restaurant",
+          "url": "https://i.ibb.co/JtXmcsj/Restaurant.png"
+        },
+        {
+          "type": "Parking",
+          "url": "https://i.ibb.co/j6yRggV/Parking.png"
+        },
+        {
+          "type": "Meeting Room",
+          "url": "https://i.ibb.co/12m0m7w/Meeting-Room.png"
+        },
+        {
+          "type": "24-hours Open",
+          "url": "https://i.ibb.co/CmLM1gg/24-hours-Open.png"
+        }
+      ],
+      "allReviews": [
+        {
+          "id": 1,
+          "name": "Jenny Wilson",
+          "date": "Dec 10,2024",
+          "rate": "3",
+          "description": "Very nice and comfortable hotel, thank you for accompanying my vacation!",
+          "image": "https://i.ibb.co/Zc2vt1Z/image1.png"
+        },
+        {
+          "id": 2,
+          "name": "Guy Hawkins",
+          "date": "Jun 24,2023",
+          "rate": "4",
+          "description": "Very beautiful hotel, my family and I are very satisfied with the service!",
+          "image": "https://i.ibb.co/ZTCNLQG/image2.png"
+        },
+        {
+          "id": 3,
+          "name": "Kristin Watson",
+          "date": "Apr 17,2023",
+          "rate": "5",
+          "description": "The rooms are very comfortable and the natural views are amazing, can't wait to come back again!",
+          "image": "https://i.ibb.co/ch6KTYz/image3.png"
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "hotelName": "Royal Palace Hotel",
+      "location": "Bryan, Russia",
+      "price": "$60",
+      "rate": "4.5",
+      "review": "2,252",
+      "status": "Popular",
+      "lat": 19.0760,
+      "lng": 72.8777,
+      "image": "https://i.ibb.co/hcTpv18/Mask-Group-1.png",
+      "Description": "Set 2 km from Chhatrapati Shivaji Maharaj International Airport, this laid-back airport hotel with a glass facade is 6 km from both Juhu Beach and Sanjay Gandhi National Park.\nRelaxed rooms feature Wi-Fi, flat-screen TVs and minibars, plus tea and coffeemaking facilities. Suites add separate living areas. Room service is available 24/7.\n\nAmenities include a bar/restaurant and a cafe, as well as an outdoor pool, a steam room, a gym and a spa. There's also meeting space. A breakfast buffet, an airport shuttle and parking are available.",
+      "images": [
+        {
+          "url": "https://i.ibb.co/hcTpv18/Mask-Group-1.png"
+        },
+        {
+          "url": "https://i.ibb.co/f8wvPr7/406295566.jpg"
+        },
+        {
+          "url": "https://i.ibb.co/JszDSqD/376789770.jpg"
+        },
+        {
+          "url": "https://i.ibb.co/kxRY2Gf/376789449.jpg"
+        }
+      ],
+      "galleryPhotos": [
+        {
+          "url": "https://i.ibb.co/xmbbv3m/calm-pool-with-deck-chairs-1203-1030.jpg"
+        },
+        {
+          "url": "https://i.ibb.co/f8wvPr7/406295566.jpg"
+        },
+        {
+          "url": "https://i.ibb.co/JszDSqD/376789770.jpg"
+        },
+        {
+          "url": "https://i.ibb.co/kxRY2Gf/376789449.jpg"
+        },
+        {
+          "url": "https://i.ibb.co/K2rsG5Y/153296557.jpg"
+        },
+        {
+          "url": "https://i.ibb.co/WxBBT24/376787360.jpg"
+        },
+        {
+          "url": "https://i.ibb.co/brxtFyF/376788522.jpg"
+        }
+      ],
+      "details": [
+        {
+          "url": "https://i.ibb.co/822dgpF/hotel.png",
+          "type": "Hotel"
+        },
+        {
+          "url": "https://i.ibb.co/vxSkbVv/bedroom.png",
+          "type": "3 Bedrooms"
+        },
+        {
+          "url": "https://i.ibb.co/cc6gCpj/bathroom.png",
+          "type": "3 Bathrooms"
+        },
+        {
+          "url": "https://i.ibb.co/zsBQcgW/sqft.png",
+          "type": "sqft"
+        }
+      ],
+      "facilites": [
+        {
+          "type": "Swimming Pool",
+          "url": "https://i.ibb.co/sVQhCJq/Swimming-Pool.png"
+        },
+        {
+          "type": "Wifi",
+          "url": "https://i.ibb.co/VHZc4tZ/Wifi.png"
+        },
+        {
+          "type": "Restaurant",
+          "url": "https://i.ibb.co/JtXmcsj/Restaurant.png"
+        },
+        {
+          "type": "Parking",
+          "url": "https://i.ibb.co/j6yRggV/Parking.png"
+        },
+        {
+          "type": "Fitness Center",
+          "url": "https://i.ibb.co/qMPHj0L/Fitness-Center.png"
+        },
+        {
+          "type": "24-hours Open",
+          "url": "https://i.ibb.co/CmLM1gg/24-hours-Open.png"
+        }
+      ],
+      "allReviews": [
+        {
+          "id": 1,
+          "name": "Darrell Steward",
+          "date": "Dec 10,2024",
+          "rate": "4",
+          "description": "Extraordinary! I am very happy with the facilities and services provided! Highly recommended!",
+          "image": "https://i.ibb.co/n3HM9zM/Ellipse.png"
+        },
+        {
+          "id": 2,
+          "name": "Jenny Wilson",
+          "date": "Dec 10,2024",
+          "rate": "5",
+          "description": "Very nice and comfortable hotel, thank you for accompanying my vacation!",
+          "image": "https://i.ibb.co/Zc2vt1Z/image1.png"
+        },
+        {
+          "id": 3,
+          "name": "Guy Hawkins",
+          "date": "Jun 24,2023",
+          "rate": "2",
+          "description": "Very beautiful hotel, my family and I are very satisfied with the service!",
+          "image": "https://i.ibb.co/ZTCNLQG/image2.png"
+        }
+      ]
+    },
+    {
+      "id": 3,
+      "hotelName": "Quirk Hotel",
+      "location": "Dubai, United Arab Emirates",
+      "price": "$44",
+      "rate": "4.2",
+      "review": "4,561",
+      "lat": 19.0760,
+      "lng": 72.8777,
+      "status": "Popular",
+      "image": "https://i.ibb.co/9Hn9gts/photo-1577544728904-c1ae02851346.jpg",
+      "Description": "Set on a hillside overlooking the Arabian Sea, this upscale convention hotel is an 8-minute walk from Vainguinim Beach, 22 km from Aguada Fort and 28 km from Goa International Airport.\nPolished rooms have Wi-Fi, flat-screen TVs and minibars, as well as tea and coffeemaking facilities. Upgraded rooms offer sea views. Suites provide separate living rooms. Club quarters include access to a 24-hour private lounge.",
+      "images": [
+        {
+          "url": "https://i.ibb.co/y6nDRDt/image1.jpg"
+        },
+        {
+          "url": "https://i.ibb.co/f8wvPr7/406295566.jpg"
+        },
+        {
+          "url": "https://i.ibb.co/JszDSqD/376789770.jpg"
+        },
+        {
+          "url": "https://i.ibb.co/kxRY2Gf/376789449.jpg"
+        }
+      ],
+      "galleryPhotos": [
+        {
+          "url": "https://i.ibb.co/xmbbv3m/calm-pool-with-deck-chairs-1203-1030.jpg"
+        },
+        {
+          "url": "https://i.ibb.co/f8wvPr7/406295566.jpg"
+        },
+        {
+          "url": "https://i.ibb.co/JszDSqD/376789770.jpg"
+        },
+        {
+          "url": "https://i.ibb.co/kxRY2Gf/376789449.jpg"
+        },
+        {
+          "url": "https://i.ibb.co/K2rsG5Y/153296557.jpg"
+        },
+        {
+          "url": "https://i.ibb.co/WxBBT24/376787360.jpg"
+        },
+        {
+          "url": "https://i.ibb.co/brxtFyF/376788522.jpg"
+        }
+      ],
+      "details": [
+        {
+          "url": "https://i.ibb.co/822dgpF/hotel.png",
+          "type": "Hotel"
+        },
+        {
+          "url": "https://i.ibb.co/vxSkbVv/bedroom.png",
+          "type": "2 Bedrooms"
+        },
+        {
+          "url": "https://i.ibb.co/cc6gCpj/bathroom.png",
+          "type": "2 Bathrooms"
+        },
+        {
+          "url": "https://i.ibb.co/zsBQcgW/sqft.png",
+          "type": "2000 sqft"
+        }
+      ],
+      "facilites": [
+        {
+          "type": "Wifi",
+          "url": "https://i.ibb.co/VHZc4tZ/Wifi.png"
+        },
+        {
+          "type": "Restaurant",
+          "url": "https://i.ibb.co/JtXmcsj/Restaurant.png"
+        },
+        {
+          "type": "Parking",
+          "url": "https://i.ibb.co/j6yRggV/Parking.png"
+        },
+        {
+          "type": "Meeting Room",
+          "url": "https://i.ibb.co/12m0m7w/Meeting-Room.png"
+        },
+        {
+          "type": "24-hours Open",
+          "url": "https://i.ibb.co/CmLM1gg/24-hours-Open.png"
+        }
+      ],
+      "allReviews": [
+        {
+          "id": 1,
+          "name": "Jenny Wilson",
+          "date": "Dec 10,2024",
+          "rate": "3",
+          "description": "Very nice and comfortable hotel, thank you for accompanying my vacation!",
+          "image": "https://i.ibb.co/Zc2vt1Z/image1.png"
+        },
+        {
+          "id": 2,
+          "name": "Darrell Steward",
+          "date": "Dec 10,2024",
+          "rate": "3",
+          "description": "Extraordinary! I am very happy with the facilities and services provided! Highly recommended!",
+          "image": "https://i.ibb.co/n3HM9zM/Ellipse.png"
+        },
+        {
+          "id": 3,
+          "name": "Guy Hawkins",
+          "date": "Jun 24,2023",
+          "rate": "5",
+          "description": "Very beautiful hotel, my family and I are very satisfied with the service!",
+          "image": "https://i.ibb.co/ZTCNLQG/image2.png"
+        }
+      ]
+    },
+    {
+      "id": 4,
+      "hotelName": "Amore Albergo",
+      "location": "New York, America",
+      "price": "$170",
+      "rate": "4.0",
+      "review": "1,552",
+      "lat": 19.0760,
+      "lng": 72.8777,
+      "status": "New Arrive",
+      "image": "https://i.ibb.co/JKy3LVt/photo-1576504445558-0edc67b0f7a4.jpg",
+      "Description": "Opposite the Arabian Sea, this luxury hotel is a 6-minute walk from the Gateway of India and 3 km from the bustling Marine Drive.\nThe refined rooms come with free Wi-Fi, flat-screens and turndown service. Club-level rooms add butler service, marble bathrooms and access to a private lounge serving drinks and appetizers. Suites add living rooms, and the presidential suite provides a spa and a fitness room.",
+      "images": [
+        {
+          "url": "https://i.ibb.co/y6nDRDt/image1.jpg"
+        },
+        {
+          "url": "https://i.ibb.co/f8wvPr7/406295566.jpg"
+        },
+        {
+          "url": "https://i.ibb.co/JszDSqD/376789770.jpg"
+        },
+        {
+          "url": "https://i.ibb.co/kxRY2Gf/376789449.jpg"
+        }
+      ],
+      "galleryPhotos": [
+        {
+          "url": "https://i.ibb.co/xmbbv3m/calm-pool-with-deck-chairs-1203-1030.jpg"
+        },
+        {
+          "url": "https://i.ibb.co/f8wvPr7/406295566.jpg"
+        },
+        {
+          "url": "https://i.ibb.co/JszDSqD/376789770.jpg"
+        },
+        {
+          "url": "https://i.ibb.co/kxRY2Gf/376789449.jpg"
+        },
+        {
+          "url": "https://i.ibb.co/K2rsG5Y/153296557.jpg"
+        },
+        {
+          "url": "https://i.ibb.co/WxBBT24/376787360.jpg"
+        },
+        {
+          "url": "https://i.ibb.co/brxtFyF/376788522.jpg"
+        }
+      ],
+      "details": [
+        {
+          "url": "https://i.ibb.co/822dgpF/hotel.png",
+          "type": "Hotel"
+        },
+        {
+          "url": "https://i.ibb.co/vxSkbVv/bedroom.png",
+          "type": "5 Bedrooms"
+        },
+        {
+          "url": "https://i.ibb.co/cc6gCpj/bathroom.png",
+          "type": "3 Bathrooms"
+        },
+        {
+          "url": "https://i.ibb.co/zsBQcgW/sqft.png",
+          "type": "5000 sqft"
+        }
+      ],
+      "facilites": [
+        {
+          "type": "Swimming Pool",
+          "url": "https://i.ibb.co/sVQhCJq/Swimming-Pool.png"
+        },
+        {
+          "type": "Wifi",
+          "url": "https://i.ibb.co/VHZc4tZ/Wifi.png"
+        },
+        {
+          "type": "Restaurant",
+          "url": "https://i.ibb.co/JtXmcsj/Restaurant.png"
+        },
+        {
+          "type": "Parking",
+          "url": "https://i.ibb.co/j6yRggV/Parking.png"
+        },
+        {
+          "type": "Meeting Room",
+          "url": "https://i.ibb.co/12m0m7w/Meeting-Room.png"
+        },
+        {
+          "type": "Elevator",
+          "url": "https://i.ibb.co/zZjX3K4/Elevator.png"
+        },
+        {
+          "type": "Fitness Center",
+          "url": "https://i.ibb.co/qMPHj0L/Fitness-Center.png"
+        },
+        {
+          "type": "24-hours Open",
+          "url": "https://i.ibb.co/CmLM1gg/24-hours-Open.png"
+        }
+      ],
+      "allReviews": [
+        {
+          "id": 1,
+          "name": "Guy Hawkins",
+          "date": "Jun 24,2023",
+          "rate": "5",
+          "description": "Very beautiful hotel, my family and I are very satisfied with the service!",
+          "image": "https://i.ibb.co/ZTCNLQG/image2.png"
+        },
+        {
+          "id": 2,
+          "name": "Darrell Steward",
+          "date": "Dec 10,2024",
+          "rate": "3",
+          "description": "Extraordinary! I am very happy with the facilities and services provided! Highly recommended!",
+          "image": "https://i.ibb.co/n3HM9zM/Ellipse.png"
+        },
+        {
+          "id": 3,
+          "name": "Jenny Wilson",
+          "date": "Dec 10,2024",
+          "rate": "4",
+          "description": "Very nice and comfortable hotel, thank you for accompanying my vacation!",
+          "image": "https://i.ibb.co/Zc2vt1Z/image1.png"
+        }
+      ]
+    },
+    {
+      "id": 5,
+      "hotelName": "Oberoi Rajvilas",
+      "location": "Mumbai, India",
+      "price": "$30",
+      "rate": "3.5",
+      "review": "4,552",
+      "lat": 19.0760,
+      "lng": 72.8777,
+      "status": "New Arrive",
+      "image": "https://i.ibb.co/jbSKVZS/Mask-Group.png",
+      "Description": "Set 2 km from Chhatrapati Shivaji Maharaj International Airport, this laid-back airport hotel with a glass facade is 6 km from both Juhu Beach and Sanjay Gandhi National Park.\nRelaxed rooms feature Wi-Fi, flat-screen TVs and minibars, plus tea and coffeemaking facilities. Suites add separate living areas. Room service is available 24/7.\n\nAmenities include a bar/restaurant and a cafe, as well as an outdoor pool, a steam room, a gym and a spa. There's also meeting space. A breakfast buffet, an airport shuttle and parking are available.",
+      "images": [
+        {
+          "url": "https://i.ibb.co/jbSKVZS/Mask-Group.png"
+        },
+        {
+          "url": "https://i.ibb.co/f8wvPr7/406295566.jpg"
+        },
+        {
+          "url": "https://i.ibb.co/JszDSqD/376789770.jpg"
+        },
+        {
+          "url": "https://i.ibb.co/kxRY2Gf/376789449.jpg"
+        }
+      ],
+      "galleryPhotos": [
+        {
+          "url": "https://i.ibb.co/xmbbv3m/calm-pool-with-deck-chairs-1203-1030.jpg"
+        },
+        {
+          "url": "https://i.ibb.co/f8wvPr7/406295566.jpg"
+        },
+        {
+          "url": "https://i.ibb.co/JszDSqD/376789770.jpg"
+        },
+        {
+          "url": "https://i.ibb.co/kxRY2Gf/376789449.jpg"
+        },
+        {
+          "url": "https://i.ibb.co/K2rsG5Y/153296557.jpg"
+        },
+        {
+          "url": "https://i.ibb.co/WxBBT24/376787360.jpg"
+        },
+        {
+          "url": "https://i.ibb.co/brxtFyF/376788522.jpg"
+        }
+      ],
+      "details": [
+        {
+          "url": "https://i.ibb.co/822dgpF/hotel.png",
+          "type": "Hotel"
+        },
+        {
+          "url": "https://i.ibb.co/vxSkbVv/bedroom.png",
+          "type": "4 Bedrooms"
+        },
+        {
+          "url": "https://i.ibb.co/cc6gCpj/bathroom.png",
+          "type": "2 Bathrooms"
+        },
+        {
+          "url": "https://i.ibb.co/zsBQcgW/sqft.png",
+          "type": "3700 sqft"
+        }
+      ],
+      "facilites": [
+        {
+          "type": "Swimming Pool",
+          "url": "https://i.ibb.co/sVQhCJq/Swimming-Pool.png"
+        },
+        {
+          "type": "Wifi",
+          "url": "https://i.ibb.co/VHZc4tZ/Wifi.png"
+        },
+        {
+          "type": "Restaurant",
+          "url": "https://i.ibb.co/JtXmcsj/Restaurant.png"
+        },
+        {
+          "type": "Parking",
+          "url": "https://i.ibb.co/j6yRggV/Parking.png"
+        },
+        {
+          "type": "Meeting Room",
+          "url": "https://i.ibb.co/12m0m7w/Meeting-Room.png"
+        },
+        {
+          "type": "24-hours Open",
+          "url": "https://i.ibb.co/CmLM1gg/24-hours-Open.png"
+        }
+      ],
+      "allReviews": [
+        {
+          "id": 1,
+          "name": "Jenny Wilson",
+          "date": "Dec 10,2024",
+          "rate": "3",
+          "description": "Very nice and comfortable hotel, thank you for accompanying my vacation!",
+          "image": "https://i.ibb.co/Zc2vt1Z/image1.png"
+        },
+        {
+          "id": 2,
+          "name": "Guy Hawkins",
+          "date": "Jun 24,2023",
+          "rate": "4",
+          "description": "Very beautiful hotel, my family and I are very satisfied with the service!",
+          "image": "https://i.ibb.co/ZTCNLQG/image2.png"
+        },
+        {
+          "id": 3,
+          "name": "Kristin Watson",
+          "date": "Apr 17,2023",
+          "rate": "5",
+          "description": "The rooms are very comfortable and the natural views are amazing, can't wait to come back again!",
+          "image": "https://i.ibb.co/ch6KTYz/image3.png"
+        }
+      ]
+    },
+    {
+      "id": 6,
+      "hotelName": "Royal Palace Hotel",
+      "location": "Bryan, Russia",
+      "price": "$60",
+      "rate": "4.5",
+      "review": "2,252",
+      "lat": 19.0760,
+      "lng": 72.8777,
+      "status": "Recommended",
+      "image": "https://i.ibb.co/hcTpv18/Mask-Group-1.png",
+      "Description": "Set on a hillside overlooking the Arabian Sea, this upscale convention hotel is an 8-minute walk from Vainguinim Beach, 22 km from Aguada Fort and 28 km from Goa International Airport.\nPolished rooms have Wi-Fi, flat-screen TVs and minibars, as well as tea and coffeemaking facilities. Upgraded rooms offer sea views. Suites provide separate living rooms. Club quarters include access to a 24-hour private lounge.",
+      "images": [
+        {
+          "url": "https://i.ibb.co/hcTpv18/Mask-Group-1.png"
+        },
+        {
+          "url": "https://i.ibb.co/f8wvPr7/406295566.jpg"
+        },
+        {
+          "url": "https://i.ibb.co/JszDSqD/376789770.jpg"
+        },
+        {
+          "url": "https://i.ibb.co/kxRY2Gf/376789449.jpg"
+        }
+      ],
+      "galleryPhotos": [
+        {
+          "url": "https://i.ibb.co/xmbbv3m/calm-pool-with-deck-chairs-1203-1030.jpg"
+        },
+        {
+          "url": "https://i.ibb.co/f8wvPr7/406295566.jpg"
+        },
+        {
+          "url": "https://i.ibb.co/JszDSqD/376789770.jpg"
+        },
+        {
+          "url": "https://i.ibb.co/kxRY2Gf/376789449.jpg"
+        },
+        {
+          "url": "https://i.ibb.co/K2rsG5Y/153296557.jpg"
+        },
+        {
+          "url": "https://i.ibb.co/WxBBT24/376787360.jpg"
+        },
+        {
+          "url": "https://i.ibb.co/brxtFyF/376788522.jpg"
+        }
+      ],
+      "details": [
+        {
+          "url": "https://i.ibb.co/822dgpF/hotel.png",
+          "type": "Hotel"
+        },
+        {
+          "url": "https://i.ibb.co/vxSkbVv/bedroom.png",
+          "type": "3 Bedrooms"
+        },
+        {
+          "url": "https://i.ibb.co/cc6gCpj/bathroom.png",
+          "type": "3 Bathrooms"
+        },
+        {
+          "url": "https://i.ibb.co/zsBQcgW/sqft.png",
+          "type": "sqft"
+        }
+      ],
+      "facilites": [
+        {
+          "type": "Swimming Pool",
+          "url": "https://i.ibb.co/sVQhCJq/Swimming-Pool.png"
+        },
+        {
+          "type": "Wifi",
+          "url": "https://i.ibb.co/VHZc4tZ/Wifi.png"
+        },
+        {
+          "type": "Restaurant",
+          "url": "https://i.ibb.co/JtXmcsj/Restaurant.png"
+        },
+        {
+          "type": "Parking",
+          "url": "https://i.ibb.co/j6yRggV/Parking.png"
+        },
+        {
+          "type": "Fitness Center",
+          "url": "https://i.ibb.co/qMPHj0L/Fitness-Center.png"
+        },
+        {
+          "type": "24-hours Open",
+          "url": "https://i.ibb.co/CmLM1gg/24-hours-Open.png"
+        }
+      ],
+      "allReviews": [
+        {
+          "id": 1,
+          "name": "Darrell Steward",
+          "date": "Dec 10,2024",
+          "rate": "4",
+          "description": "Extraordinary! I am very happy with the facilities and services provided! Highly recommended!",
+          "image": "https://i.ibb.co/n3HM9zM/Ellipse.png"
+        },
+        {
+          "id": 2,
+          "name": "Jenny Wilson",
+          "date": "Dec 10,2024",
+          "rate": "5",
+          "description": "Very nice and comfortable hotel, thank you for accompanying my vacation!",
+          "image": "https://i.ibb.co/Zc2vt1Z/image1.png"
+        },
+        {
+          "id": 3,
+          "name": "Guy Hawkins",
+          "date": "Jun 24,2023",
+          "rate": "2",
+          "description": "Very beautiful hotel, my family and I are very satisfied with the service!",
+          "image": "https://i.ibb.co/ZTCNLQG/image2.png"
+        }
+      ]
+    },
+    {
+      "id": 7,
+      "hotelName": "Quirk Hotel",
+      "location": "Dubai, United Arab Emirates",
+      "price": "$44",
+      "rate": "4.2",
+      "review": "4,561",
+      "status": "Recommended",
+      "lat": 19.0760,
+      "lng": 72.8777,
+      "image": "https://i.ibb.co/9Hn9gts/photo-1577544728904-c1ae02851346.jpg",
+      "Description": "Opposite the Arabian Sea, this luxury hotel is a 6-minute walk from the Gateway of India and 3 km from the bustling Marine Drive.\nThe refined rooms come with free Wi-Fi, flat-screens and turndown service. Club-level rooms add butler service, marble bathrooms and access to a private lounge serving drinks and appetizers. Suites add living rooms, and the presidential suite provides a spa and a fitness room.",
+      "images": [
+        {
+          "url": "https://i.ibb.co/y6nDRDt/image1.jpg"
+        },
+        {
+          "url": "https://i.ibb.co/f8wvPr7/406295566.jpg"
+        },
+        {
+          "url": "https://i.ibb.co/JszDSqD/376789770.jpg"
+        },
+        {
+          "url": "https://i.ibb.co/kxRY2Gf/376789449.jpg"
+        }
+      ],
+      "galleryPhotos": [
+        {
+          "url": "https://i.ibb.co/xmbbv3m/calm-pool-with-deck-chairs-1203-1030.jpg"
+        },
+        {
+          "url": "https://i.ibb.co/f8wvPr7/406295566.jpg"
+        },
+        {
+          "url": "https://i.ibb.co/JszDSqD/376789770.jpg"
+        },
+        {
+          "url": "https://i.ibb.co/kxRY2Gf/376789449.jpg"
+        },
+        {
+          "url": "https://i.ibb.co/K2rsG5Y/153296557.jpg"
+        },
+        {
+          "url": "https://i.ibb.co/WxBBT24/376787360.jpg"
+        },
+        {
+          "url": "https://i.ibb.co/brxtFyF/376788522.jpg"
+        }
+      ],
+      "details": [
+        {
+          "url": "https://i.ibb.co/822dgpF/hotel.png",
+          "type": "Hotel"
+        },
+        {
+          "url": "https://i.ibb.co/vxSkbVv/bedroom.png",
+          "type": "2 Bedrooms"
+        },
+        {
+          "url": "https://i.ibb.co/cc6gCpj/bathroom.png",
+          "type": "2 Bathrooms"
+        },
+        {
+          "url": "https://i.ibb.co/zsBQcgW/sqft.png",
+          "type": "2000 sqft"
+        }
+      ],
+      "facilites": [
+        {
+          "type": "Wifi",
+          "url": "https://i.ibb.co/VHZc4tZ/Wifi.png"
+        },
+        {
+          "type": "Restaurant",
+          "url": "https://i.ibb.co/JtXmcsj/Restaurant.png"
+        },
+        {
+          "type": "Parking",
+          "url": "https://i.ibb.co/j6yRggV/Parking.png"
+        },
+        {
+          "type": "Meeting Room",
+          "url": "https://i.ibb.co/12m0m7w/Meeting-Room.png"
+        },
+        {
+          "type": "24-hours Open",
+          "url": "https://i.ibb.co/CmLM1gg/24-hours-Open.png"
+        }
+      ],
+      "allReviews": [
+        {
+          "id": 1,
+          "name": "Jenny Wilson",
+          "date": "Dec 10,2024",
+          "rate": "3",
+          "description": "Very nice and comfortable hotel, thank you for accompanying my vacation!",
+          "image": "https://i.ibb.co/Zc2vt1Z/image1.png"
+        },
+        {
+          "id": 2,
+          "name": "Darrell Steward",
+          "date": "Dec 10,2024",
+          "rate": "3",
+          "description": "Extraordinary! I am very happy with the facilities and services provided! Highly recommended!",
+          "image": "https://i.ibb.co/n3HM9zM/Ellipse.png"
+        },
+        {
+          "id": 3,
+          "name": "Guy Hawkins",
+          "date": "Jun 24,2023",
+          "rate": "5",
+          "description": "Very beautiful hotel, my family and I are very satisfied with the service!",
+          "image": "https://i.ibb.co/ZTCNLQG/image2.png"
+        }
+      ]
+    },
+    {
+      "id": 8,
+      "hotelName": "Amore Albergo",
+      "location": "New York, America",
+      "price": "$170",
+      "rate": "4.0",
+      "review": "1,552",
+      "lat": 19.0760,
+      "lng": 72.8777,
+      "status": "Trending",
+      "image": "https://i.ibb.co/JKy3LVt/photo-1576504445558-0edc67b0f7a4.jpg",
+      "Description": "Set 2 km from Chhatrapati Shivaji Maharaj International Airport, this laid-back airport hotel with a glass facade is 6 km from both Juhu Beach and Sanjay Gandhi National Park.\nRelaxed rooms feature Wi-Fi, flat-screen TVs and minibars, plus tea and coffeemaking facilities. Suites add separate living areas. Room service is available 24/7.\n\nAmenities include a bar/restaurant and a cafe, as well as an outdoor pool, a steam room, a gym and a spa. There's also meeting space. A breakfast buffet, an airport shuttle and parking are available.",
+      "images": [
+        {
+          "url": "https://i.ibb.co/y6nDRDt/image1.jpg"
+        },
+        {
+          "url": "https://i.ibb.co/f8wvPr7/406295566.jpg"
+        },
+        {
+          "url": "https://i.ibb.co/JszDSqD/376789770.jpg"
+        },
+        {
+          "url": "https://i.ibb.co/kxRY2Gf/376789449.jpg"
+        }
+      ],
+      "galleryPhotos": [
+        {
+          "url": "https://i.ibb.co/xmbbv3m/calm-pool-with-deck-chairs-1203-1030.jpg"
+        },
+        {
+          "url": "https://i.ibb.co/f8wvPr7/406295566.jpg"
+        },
+        {
+          "url": "https://i.ibb.co/JszDSqD/376789770.jpg"
+        },
+        {
+          "url": "https://i.ibb.co/kxRY2Gf/376789449.jpg"
+        },
+        {
+          "url": "https://i.ibb.co/K2rsG5Y/153296557.jpg"
+        },
+        {
+          "url": "https://i.ibb.co/WxBBT24/376787360.jpg"
+        },
+        {
+          "url": "https://i.ibb.co/brxtFyF/376788522.jpg"
+        }
+      ],
+      "details": [
+        {
+          "url": "https://i.ibb.co/822dgpF/hotel.png",
+          "type": "Hotel"
+        },
+        {
+          "url": "https://i.ibb.co/vxSkbVv/bedroom.png",
+          "type": "5 Bedrooms"
+        },
+        {
+          "url": "https://i.ibb.co/cc6gCpj/bathroom.png",
+          "type": "3 Bathrooms"
+        },
+        {
+          "url": "https://i.ibb.co/zsBQcgW/sqft.png",
+          "type": "5000 sqft"
+        }
+      ],
+      "facilites": [
+        {
+          "type": "Swimming Pool",
+          "url": "https://i.ibb.co/sVQhCJq/Swimming-Pool.png"
+        },
+        {
+          "type": "Wifi",
+          "url": "https://i.ibb.co/VHZc4tZ/Wifi.png"
+        },
+        {
+          "type": "Restaurant",
+          "url": "https://i.ibb.co/JtXmcsj/Restaurant.png"
+        },
+        {
+          "type": "Parking",
+          "url": "https://i.ibb.co/Xk35rQk/Parking.png"
+        },
+        {
+          "type": "Meeting Room",
+          "url": "https://i.ibb.co/12m0m7w/Meeting-Room.png"
+        },
+        {
+          "type": "Elevator",
+          "url": "https://i.ibb.co/zZjX3K4/Elevator.png"
+        },
+        {
+          "type": "Fitness Center",
+          "url": "https://i.ibb.co/qMPHj0L/Fitness-Center.png"
+        },
+        {
+          "type": "24-hours Open",
+          "url": "https://i.ibb.co/CmLM1gg/24-hours-Open.png"
+        }
+      ],
+      "allReviews": [
+        {
+          "id": 1,
+          "name": "Guy Hawkins",
+          "date": "Jun 24,2023",
+          "rate": "5",
+          "description": "Very beautiful hotel, my family and I are very satisfied with the service!",
+          "image": "https://i.ibb.co/ZTCNLQG/image2.png"
+        },
+        {
+          "id": 2,
+          "name": "Darrell Steward",
+          "date": "Dec 10,2024",
+          "rate": "3",
+          "description": "Extraordinary! I am very happy with the facilities and services provided! Highly recommended!",
+          "image": "https://i.ibb.co/n3HM9zM/Ellipse.png"
+        },
+        {
+          "id": 3,
+          "name": "Jenny Wilson",
+          "date": "Dec 10,2024",
+          "rate": "4",
+          "description": "Very nice and comfortable hotel, thank you for accompanying my vacation!",
+          "image": "https://i.ibb.co/Zc2vt1Z/image1.png"
+        }
+      ]
+    },
+    {
+      "id": 9,
+      "hotelName": "Royal Palace Hotel",
+      "location": "Bryan, Russia",
+      "price": "$60",
+      "rate": "4.5",
+      "review": "2,252",
+      "status": "Trending",
+      "lat": 19.0760,
+      "lng": 72.8777,
+      "image": "https://i.ibb.co/hcTpv18/Mask-Group-1.png",
+      "Description": "Set on a hillside overlooking the Arabian Sea, this upscale convention hotel is an 8-minute walk from Vainguinim Beach, 22 km from Aguada Fort and 28 km from Goa International Airport.\nPolished rooms have Wi-Fi, flat-screen TVs and minibars, as well as tea and coffeemaking facilities. Upgraded rooms offer sea views. Suites provide separate living rooms. Club quarters include access to a 24-hour private lounge.",
+      "images": [
+        {
+          "url": "https://i.ibb.co/hcTpv18/Mask-Group-1.png"
+        },
+        {
+          "url": "https://i.ibb.co/f8wvPr7/406295566.jpg"
+        },
+        {
+          "url": "https://i.ibb.co/JszDSqD/376789770.jpg"
+        },
+        {
+          "url": "https://i.ibb.co/kxRY2Gf/376789449.jpg"
+        }
+      ],
+      "galleryPhotos": [
+        {
+          "url": "https://i.ibb.co/xmbbv3m/calm-pool-with-deck-chairs-1203-1030.jpg"
+        },
+        {
+          "url": "https://i.ibb.co/f8wvPr7/406295566.jpg"
+        },
+        {
+          "url": "https://i.ibb.co/JszDSqD/376789770.jpg"
+        },
+        {
+          "url": "https://i.ibb.co/kxRY2Gf/376789449.jpg"
+        },
+        {
+          "url": "https://i.ibb.co/K2rsG5Y/153296557.jpg"
+        },
+        {
+          "url": "https://i.ibb.co/WxBBT24/376787360.jpg"
+        },
+        {
+          "url": "https://i.ibb.co/brxtFyF/376788522.jpg"
+        }
+      ],
+      "details": [
+        {
+          "url": "https://i.ibb.co/822dgpF/hotel.png",
+          "type": "Hotel"
+        },
+        {
+          "url": "https://i.ibb.co/vxSkbVv/bedroom.png",
+          "type": "3 Bedrooms"
+        },
+        {
+          "url": "https://i.ibb.co/cc6gCpj/bathroom.png",
+          "type": "3 Bathrooms"
+        },
+        {
+          "url": "https://i.ibb.co/zsBQcgW/sqft.png",
+          "type": "sqft"
+        }
+      ],
+      "facilites": [
+        {
+          "type": "Swimming Pool",
+          "url": "https://i.ibb.co/sVQhCJq/Swimming-Pool.png"
+        },
+        {
+          "type": "Wifi",
+          "url": "https://i.ibb.co/VHZc4tZ/Wifi.png"
+        },
+        {
+          "type": "Restaurant",
+          "url": "https://i.ibb.co/JtXmcsj/Restaurant.png"
+        },
+        {
+          "type": "Parking",
+          "url": "https://i.ibb.co/Xk35rQk/Parking.png"
+        },
+        {
+          "type": "Fitness Center",
+          "url": "https://i.ibb.co/qMPHj0L/Fitness-Center.png"
+        },
+        {
+          "type": "24-hours Open",
+          "url": "https://i.ibb.co/CmLM1gg/24-hours-Open.png"
+        }
+      ],
+      "allReviews": [
+        {
+          "id": 1,
+          "name": "Darrell Steward",
+          "date": "Dec 10,2024",
+          "rate": "4",
+          "description": "Extraordinary! I am very happy with the facilities and services provided! Highly recommended!",
+          "image": "https://i.ibb.co/n3HM9zM/Ellipse.png"
+        },
+        {
+          "id": 2,
+          "name": "Jenny Wilson",
+          "date": "Dec 10,2024",
+          "rate": "5",
+          "description": "Very nice and comfortable hotel, thank you for accompanying my vacation!",
+          "image": "https://i.ibb.co/Zc2vt1Z/image1.png"
+        },
+        {
+          "id": 3,
+          "name": "Guy Hawkins",
+          "date": "Jun 24,2023",
+          "rate": "2",
+          "description": "Very beautiful hotel, my family and I are very satisfied with the service!",
+          "image": "https://i.ibb.co/ZTCNLQG/image2.png"
+        }
+      ]
+    },
+    {
+      "id": 10,
+      "hotelName": "Quirk Hotel",
+      "location": "Dubai, United Arab Emirates",
+      "price": "$44",
+      "rate": "4.2",
+      "review": "4,561",
+      "lat": 19.0760,
+      "lng": 72.8777,
+      "status": "Trending",
+      "image": "https://i.ibb.co/9Hn9gts/photo-1577544728904-c1ae02851346.jpg",
+      "Description": "Opposite the Arabian Sea, this luxury hotel is a 6-minute walk from the Gateway of India and 3 km from the bustling Marine Drive.\nThe refined rooms come with free Wi-Fi, flat-screens and turndown service. Club-level rooms add butler service, marble bathrooms and access to a private lounge serving drinks and appetizers. Suites add living rooms, and the presidential suite provides a spa and a fitness room.",
+      "images": [
+        {
+          "url": "https://i.ibb.co/y6nDRDt/image1.jpg"
+        },
+        {
+          "url": "https://i.ibb.co/f8wvPr7/406295566.jpg"
+        },
+        {
+          "url": "https://i.ibb.co/JszDSqD/376789770.jpg"
+        },
+        {
+          "url": "https://i.ibb.co/kxRY2Gf/376789449.jpg"
+        }
+      ],
+      "galleryPhotos": [
+        {
+          "url": "https://i.ibb.co/xmbbv3m/calm-pool-with-deck-chairs-1203-1030.jpg"
+        },
+        {
+          "url": "https://i.ibb.co/f8wvPr7/406295566.jpg"
+        },
+        {
+          "url": "https://i.ibb.co/JszDSqD/376789770.jpg"
+        },
+        {
+          "url": "https://i.ibb.co/kxRY2Gf/376789449.jpg"
+        },
+        {
+          "url": "https://i.ibb.co/K2rsG5Y/153296557.jpg"
+        },
+        {
+          "url": "https://i.ibb.co/WxBBT24/376787360.jpg"
+        },
+        {
+          "url": "https://i.ibb.co/brxtFyF/376788522.jpg"
+        }
+      ],
+      "details": [
+        {
+          "url": "https://i.ibb.co/822dgpF/hotel.png",
+          "type": "Hotel"
+        },
+        {
+          "url": "https://i.ibb.co/vxSkbVv/bedroom.png",
+          "type": "2 Bedrooms"
+        },
+        {
+          "url": "https://i.ibb.co/cc6gCpj/bathroom.png",
+          "type": "2 Bathrooms"
+        },
+        {
+          "url": "https://i.ibb.co/zsBQcgW/sqft.png",
+          "type": "2000 sqft"
+        }
+      ],
+      "facilites": [
+        {
+          "type": "Wifi",
+          "url": "https://i.ibb.co/VHZc4tZ/Wifi.png"
+        },
+        {
+          "type": "Restaurant",
+          "url": "https://i.ibb.co/JtXmcsj/Restaurant.png"
+        },
+        {
+          "type": "Parking",
+          "url": "https://i.ibb.co/Xk35rQk/Parking.png"
+        },
+        {
+          "type": "Meeting Room",
+          "url": "https://i.ibb.co/12m0m7w/Meeting-Room.png"
+        },
+        {
+          "type": "24-hours Open",
+          "url": "https://i.ibb.co/CmLM1gg/24-hours-Open.png"
+        }
+      ],
+      "allReviews": [
+        {
+          "id": 1,
+          "name": "Jenny Wilson",
+          "date": "Dec 10,2024",
+          "rate": "3",
+          "description": "Very nice and comfortable hotel, thank you for accompanying my vacation!",
+          "image": "https://i.ibb.co/Zc2vt1Z/image1.png"
+        },
+        {
+          "id": 2,
+          "name": "Darrell Steward",
+          "date": "Dec 10,2024",
+          "rate": "3",
+          "description": "Extraordinary! I am very happy with the facilities and services provided! Highly recommended!",
+          "image": "https://i.ibb.co/n3HM9zM/Ellipse.png"
+        },
+        {
+          "id": 3,
+          "name": "Guy Hawkins",
+          "date": "Jun 24,2023",
+          "rate": "5",
+          "description": "Very beautiful hotel, my family and I are very satisfied with the service!",
+          "image": "https://i.ibb.co/ZTCNLQG/image2.png"
+        }
+      ]
+    },
+    {
+      "id": 11,
+      "hotelName": "Amore Albergo",
+      "location": "New York, America",
+      "price": "$170",
+      "rate": "4.0",
+      "review": "1,552",
+      "status": "Recommended",
+      "lat": 19.0760,
+      "lng": 72.8777,
+      "image": "https://i.ibb.co/JKy3LVt/photo-1576504445558-0edc67b0f7a4.jpg",
+      "Description": "Set 2 km from Chhatrapati Shivaji Maharaj International Airport, this laid-back airport hotel with a glass facade is 6 km from both Juhu Beach and Sanjay Gandhi National Park.\nRelaxed rooms feature Wi-Fi, flat-screen TVs and minibars, plus tea and coffeemaking facilities. Suites add separate living areas. Room service is available 24/7.\n\nAmenities include a bar/restaurant and a cafe, as well as an outdoor pool, a steam room, a gym and a spa. There's also meeting space. A breakfast buffet, an airport shuttle and parking are available.",
+      "images": [
+        {
+          "url": "https://i.ibb.co/y6nDRDt/image1.jpg"
+        },
+        {
+          "url": "https://i.ibb.co/f8wvPr7/406295566.jpg"
+        },
+        {
+          "url": "https://i.ibb.co/JszDSqD/376789770.jpg"
+        },
+        {
+          "url": "https://i.ibb.co/kxRY2Gf/376789449.jpg"
+        }
+      ],
+      "galleryPhotos": [
+        {
+          "url": "https://i.ibb.co/xmbbv3m/calm-pool-with-deck-chairs-1203-1030.jpg"
+        },
+        {
+          "url": "https://i.ibb.co/f8wvPr7/406295566.jpg"
+        },
+        {
+          "url": "https://i.ibb.co/JszDSqD/376789770.jpg"
+        },
+        {
+          "url": "https://i.ibb.co/kxRY2Gf/376789449.jpg"
+        },
+        {
+          "url": "https://i.ibb.co/K2rsG5Y/153296557.jpg"
+        },
+        {
+          "url": "https://i.ibb.co/WxBBT24/376787360.jpg"
+        },
+        {
+          "url": "https://i.ibb.co/brxtFyF/376788522.jpg"
+        }
+      ],
+      "details": [
+        {
+          "url": "https://i.ibb.co/822dgpF/hotel.png",
+          "type": "Hotel"
+        },
+        {
+          "url": "https://i.ibb.co/vxSkbVv/bedroom.png",
+          "type": "5 Bedrooms"
+        },
+        {
+          "url": "https://i.ibb.co/cc6gCpj/bathroom.png",
+          "type": "3 Bathrooms"
+        },
+        {
+          "url": "https://i.ibb.co/zsBQcgW/sqft.png",
+          "type": "5000 sqft"
+        }
+      ],
+      "facilites": [
+        {
+          "type": "Swimming Pool",
+          "url": "https://i.ibb.co/sVQhCJq/Swimming-Pool.png"
+        },
+        {
+          "type": "Wifi",
+          "url": "https://i.ibb.co/VHZc4tZ/Wifi.png"
+        },
+        {
+          "type": "Restaurant",
+          "url": "https://i.ibb.co/JtXmcsj/Restaurant.png"
+        },
+        {
+          "type": "Parking",
+          "url": "https://i.ibb.co/Xk35rQk/Parking.png"
+        },
+        {
+          "type": "Meeting Room",
+          "url": "https://i.ibb.co/12m0m7w/Meeting-Room.png"
+        },
+        {
+          "type": "Elevator",
+          "url": "https://i.ibb.co/zZjX3K4/Elevator.png"
+        },
+        {
+          "type": "Fitness Center",
+          "url": "https://i.ibb.co/qMPHj0L/Fitness-Center.png"
+        },
+        {
+          "type": "24-hours Open",
+          "url": "https://i.ibb.co/CmLM1gg/24-hours-Open.png"
+        }
+      ],
+      "allReviews": [
+        {
+          "id": 1,
+          "name": "Guy Hawkins",
+          "date": "Jun 24,2023",
+          "rate": "5",
+          "description": "Very beautiful hotel, my family and I are very satisfied with the service!",
+          "image": "https://i.ibb.co/ZTCNLQG/image2.png"
+        },
+        {
+          "id": 2,
+          "name": "Darrell Steward",
+          "date": "Dec 10,2024",
+          "rate": "3",
+          "description": "Extraordinary! I am very happy with the facilities and services provided! Highly recommended!",
+          "image": "https://i.ibb.co/n3HM9zM/Ellipse.png"
+        },
+        {
+          "id": 3,
+          "name": "Jenny Wilson",
+          "date": "Dec 10,2024",
+          "rate": "4",
+          "description": "Very nice and comfortable hotel, thank you for accompanying my vacation!",
+          "image": "https://i.ibb.co/Zc2vt1Z/image1.png"
+        }
+      ]
+    }
+  ]
+}

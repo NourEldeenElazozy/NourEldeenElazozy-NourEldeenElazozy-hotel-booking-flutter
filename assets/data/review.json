@@ -1,0 +1,52 @@
+{
+  "allReviews": [
+    {
+      "id": 1,
+      "name": "Jenny Wilson",
+      "date": "Dec 10,2024",
+      "rate": "3",
+      "description": "Very nice and comfortable hotel, thank you for accompanying my vacation!",
+      "image": "https://i.ibb.co/Zc2vt1Z/image1.png"
+    },
+    {
+      "id": 2,
+      "name": "Guy Hawkins",
+      "date": "Jun 24,2023",
+      "rate": "4",
+      "description": "Very beautiful hotel, my family and I are very satisfied with the service!",
+      "image": "https://i.ibb.co/ZTCNLQG/image2.png"
+    },
+    {
+      "id": 3,
+      "name": "Kristin Watson",
+      "date": "Apr 17,2023",
+      "rate": "5",
+      "description": "The rooms are very comfortable and the natural views are amazing, can't wait to come back again!",
+      "image": "https://i.ibb.co/ch6KTYz/image3.png"
+    },
+    {
+      "id": 4,
+      "name": "Sunniva Wang",
+      "date": "Jan 11,2024",
+      "rate": "2",
+      "description": "Everything about the hotel was exceptional. It was clean, stylish, roomy with excellent service in where we had dinner",
+      "image": "https://i.ibb.co/N9kVD0T/image.jpg"
+    },
+    {
+      "id": 5,
+      "name": "Diego Baruso",
+      "date": "Mar 20,2024",
+      "rate": "1",
+      "description": "The hotel's elegant design, combined with its top-notch amenities, made for a truly relaxing and enjoyable experience",
+      "image": "https://i.ibb.co/B6NdMCG/image1.jpg"
+    },
+    {
+      "id": 6,
+      "name": "George Ali",
+      "date": "Feb 30,2024",
+      "rate": "4",
+      "description": "The rooms are very comfortable and the natural views are amazing, can't wait to come back again!",
+      "image": "https://i.ibb.co/sKQNDJH/image2.jpg"
+    }
+  ]
+}

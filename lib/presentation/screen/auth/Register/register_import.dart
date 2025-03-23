@@ -1,0 +1,22 @@
+import 'dart:convert';
+import 'dart:io';
+import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter_svg/flutter_svg.dart';
+import 'package:flutter_svg/svg.dart';
+import 'package:hotel_booking/core/constants/my_colors.dart';
+import 'package:hotel_booking/core/constants/my_images.dart';
+import 'package:hotel_booking/core/constants/my_strings.dart';
+import 'package:hotel_booking/core/themes/themes_controller.dart';
+import 'package:hotel_booking/presentation/common_widgets/appbar.dart';
+import 'package:hotel_booking/presentation/common_widgets/custom_button.dart';
+import 'package:hotel_booking/presentation/common_widgets/dropdown_button_form_field.dart';
+import 'package:hotel_booking/presentation/common_widgets/textformfield.dart';
+import 'package:get/get.dart';
+import 'package:hotel_booking/presentation/screen/auth/login/login_import.dart';
+import 'package:hotel_booking/utils/validations.dart';
+import 'package:image_picker/image_picker.dart';
+
+part 'register.dart';
+part 'fill_profile.dart';
+part 'register_controller.dart';

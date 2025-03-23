@@ -1,0 +1,76 @@
+{
+  "recentlyBook":[
+    {
+      "id": 1,
+      "hotelName": "President Hotel",
+      "location": "Paris, France",
+      "rate": "4.5",
+      "review": "4,552",
+      "price": "$110",
+      "image": "https://i.ibb.co/Xy2nWg4/Image1.jpg"
+    },
+    {
+      "id": 2,
+      "hotelName": "Palms Casino",
+      "location": "Amsterdam, Netherlands",
+      "rate": "4.7",
+      "review": "2,592",
+      "price": "$90",
+      "image": "https://i.ibb.co/k6s1gH2/image2.jpg"
+    },
+    {
+      "id": 3,
+      "hotelName": "Palazzo Versace",
+      "location": "Rome, Italia",
+      "rate": "4.1",
+      "review": "3,990",
+      "price": "$40",
+      "image": "https://i.ibb.co/7brrCxQ/image3.jpg"
+    },
+    {
+      "id": 4,
+      "hotelName": "Bulgari Resort",
+      "location": "Istanbul, Turkiye",
+      "rate": "4.3",
+      "review": "3,443",
+      "price": "$40",
+      "image": "https://i.ibb.co/vdxn79n/image4.jpg"
+    },
+    {
+      "id": 5,
+      "hotelName": "Martinez Cannes",
+      "location": "London, United Kingdom",
+      "rate": "4.9",
+      "review": "5,470",
+      "price": "$85",
+      "image": "https://i.ibb.co/7tHLkVw/image5.jpg"
+    },
+    {
+      "id": 6,
+      "hotelName": "Oberoi Rajvilas",
+      "location": "Mumbai, India",
+      "rate": "3.5",
+      "review": "2,220",
+      "price": "$30",
+      "image": "https://i.ibb.co/Lv7qR7V/image6.jpg"
+    },
+    {
+      "id": 7,
+      "hotelName": "Royal Palace Hotel",
+      "location": "Bryan, Russia",
+      "rate": "4.5",
+      "review": "2,260",
+      "price": "$60",
+      "image": "https://i.ibb.co/NCbcH19/image7.jpg"
+    },
+    {
+      "id": 8,
+      "hotelName": "Quirk Hotel",
+      "location": "Dubai, United Arab Emirates",
+      "rate": "4.2",
+      "review": "2,260",
+      "price": "$44",
+      "image": "https://i.ibb.co/28wRWfs/Rectangle.jpg"
+    }
+  ]
+}

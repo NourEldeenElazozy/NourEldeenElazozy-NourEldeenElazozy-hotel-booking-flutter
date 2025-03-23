@@ -1,0 +1,76 @@
+{
+  "selectRoom": [
+    {
+      "id": 1,
+      "roomType": "Single Room",
+      "available": "Available for 1 people",
+      "rate": "4.5",
+      "review": "4,552",
+      "price": "$110",
+      "image": "https://i.ibb.co/Xy2nWg4/Image1.jpg"
+    },
+    {
+      "id": 2,
+      "roomType": "Double Room",
+      "available": "Available for 2 people",
+      "rate": "4.7",
+      "review": "2,592",
+      "price": "$90",
+      "image": "https://i.ibb.co/k6s1gH2/image2.jpg"
+    },
+    {
+      "id": 3,
+      "roomType": "Triple Room",
+      "available": "Available for 3 people",
+      "rate": "4.1",
+      "review": "3,990",
+      "price": "$40",
+      "image": "https://i.ibb.co/7brrCxQ/image3.jpg"
+    },
+    {
+      "id": 4,
+      "roomType": "Quad Room",
+      "available": "Available for 4 people",
+      "rate": "4.3",
+      "review": "3,443",
+      "price": "$40",
+      "image": "https://i.ibb.co/vdxn79n/image4.jpg"
+    },
+    {
+      "id": 5,
+      "roomType": "Queen Room",
+      "available": "Multiperson Room",
+      "rate": "4.9",
+      "review": "5,470",
+      "price": "$85",
+      "image": "https://i.ibb.co/7tHLkVw/image5.jpg"
+    },
+    {
+      "id": 6,
+      "roomType": "King Room",
+      "available": "Multiperson Room",
+      "rate": "3.5",
+      "review": "2,220",
+      "price": "$30",
+      "image": "https://i.ibb.co/Lv7qR7V/image6.jpg"
+    },
+    {
+      "id": 7,
+      "roomType": "Triple Room",
+      "available": "Available for 3 people",
+      "rate": "4.5",
+      "review": "2,260",
+      "price": "$60",
+      "image": "https://i.ibb.co/NCbcH19/image7.jpg"
+    },
+    {
+      "id": 8,
+      "roomType": "Single Room",
+      "available": "Available for 1 person",
+      "rate": "4.2",
+      "review": "2,260",
+      "price": "$44",
+      "image": "https://i.ibb.co/28wRWfs/Rectangle.jpg"
+    }
+  ]
+}
