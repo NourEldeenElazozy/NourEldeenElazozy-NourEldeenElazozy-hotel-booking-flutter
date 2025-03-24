@@ -5,6 +5,7 @@ import 'package:hotel_booking/core/constants/my_colors.dart';
 import 'package:hotel_booking/core/constants/my_images.dart';
 import 'package:hotel_booking/presentation/common_widgets/custom_button.dart';
 import 'package:hotel_booking/presentation/screen/home/home_import.dart';
+import 'package:hotel_booking/presentation/screen/home/home_model.dart';
 
 class VerticalView extends StatefulWidget {
   final int index;
@@ -32,7 +33,19 @@ class _VerticalViewState extends State<VerticalView> {
       children: [
         InkWell(
           onTap: () {
-            Get.toNamed("/hotelDetail", arguments: {'data' : controller.homeDetails[widget.index]});
+            var reservation = controller.recently[widget.index]; // الوصول إلى بيانات الحجز
+            print("----------------------");
+            print(controller.recently[widget.index]["description"]);
+            print("----------------------");
+            Detail detail = Detail.fromJson(reservation);
+
+            // إضافة الكائن إلى homeDetails إذا كان ذلك مطلوبًا
+            controller.homeDetails.add(detail);
+
+
+            Get.toNamed("/hotelDetail", arguments: {'data': reservation});
+            print("reservation");
+            print(reservation);
           },
           child: Container(
             padding: const EdgeInsets.all(12),
@@ -40,11 +53,14 @@ class _VerticalViewState extends State<VerticalView> {
             decoration: BoxDecoration(
               color: controller.themeController.isDarkMode.value ? MyColors.darkSearchTextFieldColor : MyColors.white,
               borderRadius: BorderRadius.circular(15),
-              boxShadow: [BoxShadow(
-                color: controller.themeController.isDarkMode.value
-                  ? Colors.transparent
-                  : Colors.grey.shade200,
-                blurRadius: 10)],
+              boxShadow: [
+                BoxShadow(
+                  color: controller.themeController.isDarkMode.value
+                      ? Colors.transparent
+                      : Colors.grey.shade200,
+                  blurRadius: 10,
+                ),
+              ],
             ),
             child: Row(
               children: [
@@ -53,33 +69,45 @@ class _VerticalViewState extends State<VerticalView> {
                   width: 90,
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(15),
-                    image: DecorationImage(image: NetworkImage("${controller.recentlyBooked[widget.index].image}"))
+                    image: DecorationImage(
+                      image: NetworkImage("http://10.0.2.2:8000/storage/${controller.recently[widget.index]['main_image']}"),
+                      fit: BoxFit.cover,
+                    ),
                   ),
-                  // child: Image.asset(MyImages.hotelSmall),
                 ),
                 const SizedBox(width: 10),
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text("${controller.recentlyBooked[widget.index].hotelName}", style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 16),maxLines: 1, overflow: TextOverflow.ellipsis,),
+                      Text(
+                        "${controller.recently[widget.index]['name']}",
+                        style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 16),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      ),
                       const SizedBox(height: 5),
-                      Text("${controller.recentlyBooked[widget.index].location}", style: TextStyle(
-                        color: controller.themeController.isDarkMode.value ? MyColors.switchOffColor : MyColors.textPaymentInfo,
+                      Text(
+                        "${controller.recently[widget.index]['location']}",
+                        style: TextStyle(
+                          color: controller.themeController.isDarkMode.value ? MyColors.switchOffColor : MyColors.textPaymentInfo,
                           fontWeight: FontWeight.w400,
-                          fontSize: 12), maxLines: 1, overflow: TextOverflow.ellipsis,),
+                          fontSize: 12,
+                        ),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      ),
                       const SizedBox(height: 5),
                       Row(
                         children: [
                           SvgPicture.asset(MyImages.yellowStar),
                           const SizedBox(width: 5),
-                          Text("${controller.recentlyBooked[widget.index].rate}", style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 13),),
-                          const SizedBox(width: 5),
-                          Text("(${controller.recentlyBooked[widget.index].review} reviews)", style: TextStyle(
-                              color: controller.themeController.isDarkMode.value ? MyColors.switchOffColor : MyColors.textPaymentInfo,
-                              fontWeight: FontWeight.w400,
-                              fontSize: 12),
+                          Text(
+                            "${controller.recently[widget.index]['rating']}", // استخدام "rating" بدلاً من "rate"
+                            style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 13),
                           ),
+                          const SizedBox(width: 5),
+
                         ],
                       ),
                     ],
@@ -89,8 +117,22 @@ class _VerticalViewState extends State<VerticalView> {
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.end,
                   children: [
-                    Text("${controller.recentlyBooked[widget.index].price}", style: TextStyle(color: controller.themeController.isDarkMode.value ? MyColors.white : MyColors.primaryColor,fontWeight: FontWeight.w700, fontSize: 18),),
-                    Text("/ night", style: TextStyle(color: controller.themeController.isDarkMode.value ? MyColors.switchOffColor : MyColors.textPaymentInfo, fontWeight: FontWeight.w400, fontSize: 8)),
+                    Text(
+                      "${controller.recently[widget.index]['price']} د.ل",
+                      style: TextStyle(
+                        color: controller.themeController.isDarkMode.value ? MyColors.white : MyColors.primaryColor,
+                        fontWeight: FontWeight.w700,
+                        fontSize: 18,
+                      ),
+                    ),
+                    Text(
+                      "/ night",
+                      style: TextStyle(
+                        color: controller.themeController.isDarkMode.value ? MyColors.switchOffColor : MyColors.textPaymentInfo,
+                        fontWeight: FontWeight.w400,
+                        fontSize: 8,
+                      ),
+                    ),
                     const SizedBox(height: 12),
                     InkWell(
                       onTap: () {
@@ -99,8 +141,20 @@ class _VerticalViewState extends State<VerticalView> {
                         });
                       },
                       child: controller.bookMark.value
-                        ? SvgPicture.asset(MyImages.selectedBookMarkBlack, colorFilter: ColorFilter.mode(controller.themeController.isDarkMode.value ? MyColors.white : MyColors.black, BlendMode.srcIn))
-                        : SvgPicture.asset(MyImages.unSelectBookMark, colorFilter: ColorFilter.mode(controller.themeController.isDarkMode.value ? MyColors.white : MyColors.black, BlendMode.srcIn))
+                          ? SvgPicture.asset(
+                        MyImages.selectedBookMarkBlack,
+                        colorFilter: ColorFilter.mode(
+                          controller.themeController.isDarkMode.value ? MyColors.white : MyColors.black,
+                          BlendMode.srcIn,
+                        ),
+                      )
+                          : SvgPicture.asset(
+                        MyImages.unSelectBookMark,
+                        colorFilter: ColorFilter.mode(
+                          controller.themeController.isDarkMode.value ? MyColors.white : MyColors.black,
+                          BlendMode.srcIn,
+                        ),
+                      ),
                     ),
                   ],
                 ),
@@ -137,18 +191,21 @@ class _HorizontalViewState extends State<HorizontalView> {
   Widget build(BuildContext context) {
     return InkWell(
       onTap: () {
+        print('------------');
+        print(controller.homeDetails[widget.index]);
+        print('------------');
         Get.toNamed("/hotelDetail", arguments: {'data' : controller.homeDetails[widget.index]});
       },
       child: Container(
         padding: const EdgeInsets.all(15),
         decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(20),
-          color: controller.themeController.isDarkMode.value ? MyColors.darkSearchTextFieldColor : MyColors.white,
-          boxShadow: [BoxShadow(
-            color: controller.themeController.isDarkMode.value
-              ? Colors.transparent
-              : Colors.grey.shade200,
-            blurRadius: 10)]
+            borderRadius: BorderRadius.circular(20),
+            color: controller.themeController.isDarkMode.value ? MyColors.darkSearchTextFieldColor : MyColors.white,
+            boxShadow: [BoxShadow(
+                color: controller.themeController.isDarkMode.value
+                    ? Colors.transparent
+                    : Colors.grey.shade200,
+                blurRadius: 10)]
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -157,28 +214,28 @@ class _HorizontalViewState extends State<HorizontalView> {
               height: 100,
               width: MediaQuery.of(context).size.width,
               decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(15),
-                  image: DecorationImage(image: NetworkImage("${controller.recentlyBooked[widget.index].image}"), fit: BoxFit.cover)
+                  borderRadius: BorderRadius.circular(15),
+                  image: DecorationImage(image: NetworkImage("${controller.recently[widget.index].mainImage}"), fit: BoxFit.cover)
               ),
             ),
             const SizedBox(height: 8),
             Flexible(
-              child: Text("${controller.recentlyBooked[widget.index].hotelName}", style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 16),
-                  maxLines: 1,overflow: TextOverflow.ellipsis,),
+              child: Text("${controller.recently[widget.index].name}", style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 16),
+                maxLines: 1,overflow: TextOverflow.ellipsis,),
             ),
             const SizedBox(height: 5),
             Row(
               children: [
                 SvgPicture.asset(MyImages.yellowStar),
                 const SizedBox(width: 3),
-                Text("${controller.recentlyBooked[widget.index].rate}", style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 12)),
+                Text("${controller.recently[widget.index].rating}", style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 12)),
                 const SizedBox(width: 5),
                 Flexible(
-                  child: Text("${controller.recentlyBooked[widget.index].location}",
+                  child: Text("${controller.recently[widget.index].location}",
                     style: TextStyle(
                       color: controller.themeController.isDarkMode.value ? MyColors.switchOffColor : MyColors.textPaymentInfo,
-                        fontWeight: FontWeight.w400,
-                        fontSize: 11,
+                      fontWeight: FontWeight.w400,
+                      fontSize: 11,
                     ),
                     maxLines: 1,overflow: TextOverflow.ellipsis,),
                 ),
@@ -187,7 +244,7 @@ class _HorizontalViewState extends State<HorizontalView> {
             const SizedBox(height: 5),
             Row(
               children: [
-                Text("${controller.recentlyBooked[widget.index].price}", style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 18),),
+                Text("${controller.recently[widget.index].price}", style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 18),),
                 Text(" / night", style: TextStyle(color: controller.themeController.isDarkMode.value ? MyColors.switchOffColor : MyColors.textPaymentInfo, fontWeight: FontWeight.w400, fontSize: 10),),
                 const Spacer(),
                 InkWell(

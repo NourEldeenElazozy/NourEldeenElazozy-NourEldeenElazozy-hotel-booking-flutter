@@ -5,6 +5,7 @@ class HomeController extends GetxController {
    var sliderValue = RangeValues(0, 100).obs; // القيم الافتراضية لشريط التمرير
    var priceMin = 0.obs; // الحد الأدنى للسعر
    var priceMax = 0.obs; // الحد الأقصى للسعر
+
    RxInt selectedButton = 0.obs;
    RxBool bookMark = false.obs;
    RxInt selectedItem = 0.obs;
@@ -14,13 +15,16 @@ class HomeController extends GetxController {
    RxList<Detail> homeDetails = <Detail>[].obs;
    List<Detail> filterListView = <Detail>[].obs;
    var selectedGeoArea = "وسط البلاد".obs; // قيمة افتراضية
-   RxList<RecentlyBook> recentlyBooked = <RecentlyBook>[].obs;
+   var recentlyBooked = [].obs;
+   var recently = [].obs;
    RxList<bool> selectedFacilities = List.generate(MyString.facilities.length, (index) => false).obs;
    var restAreas = [].obs; // تخزين البيانات هنا
     @override
     void onInit() {
-        getRecentlyBooked();
+        //getRecentlyBooked();
+        fetchRecentlyBooked(); // جلب البيانات عند بدء التطبيق
         getReservations();
+        getRestAreas();
       super.onInit();
    }
    static Map<String, String> facilitiesMap = {
@@ -69,6 +73,7 @@ class HomeController extends GetxController {
      }
    }
 
+  /*
    Future<List<RecentlyBook>> getRecentlyBooked() async {
       String jsonData = await rootBundle.loadString("assets/data/recentlyBookHotel.json");
       dynamic data = json.decode(jsonData);
@@ -78,6 +83,7 @@ class HomeController extends GetxController {
       }
       return recentlyBooked;
    }
+   */
    Future<void> getReservations() async {
      try {
        isLoading.value = true;
@@ -90,7 +96,7 @@ class HomeController extends GetxController {
          print( reservations.value);
 
        } else {
-         Get.snackbar('خطأ', 'فشل في جلب البيانات');
+         Get.snackbar('خطأ', 'فشل في جلب البيانات') ;
        }
      } catch (e) {
        Get.snackbar('خطأ', 'حدث خطأ أثناء جلب البيانات: $e');
@@ -122,7 +128,7 @@ class HomeController extends GetxController {
        final queryParameters = <String, dynamic>{};
 
        // إضافة area_type إذا كان موجودًا
-       if (areaTypes != "") {
+       if (areaTypes != "" && areaTypes!=null) {
          print("areaTypes $areaTypes");
          queryParameters['area_type[]'] = areaTypes;
        }
@@ -143,7 +149,7 @@ class HomeController extends GetxController {
        }
 
        // إضافة rating إذا كان موجودًا
-       if ( rating != -1) {
+       if ( rating != -1 && rating!=null && rating != 0) {
          queryParameters['rating'] = rating;
        }
        // إضافة max_guests إذا كان موجودًا
@@ -176,16 +182,36 @@ class HomeController extends GetxController {
          'http://10.0.2.2:8000/api/rest-areas/filter',
          queryParameters: queryParameters,
        );
-
+       restAreas.clear();
        if (response.statusCode == 200) {
          restAreas.value = response.data; // تخزين البيانات في المتغير
          print(restAreas.value);
        } else {
-         Get.snackbar('خطأ', 'فشل في جلب البيانات');
+         restAreas.clear();
+
        }
      } catch (e) {
        Get.snackbar('خطأ', 'حدث خطأ أثناء جلب البيانات: $e');
        print('حدث خطأ أثناء جلب البيانات: $e');
+     } finally {
+       isLoading.value = false;
+     }
+   }
+   Future<void> fetchRecentlyBooked({String? filter}) async {
+     isLoading.value = true;
+
+     try {
+       String url = 'http://10.0.2.2:8000/api/most-booked';
+       final response = await Dio().get(url);
+
+       // تحويل البيانات إلى كائنات RestArea
+       print("done $response");
+       recently.value =response.data;
+
+       print("recently booked: $recently");
+       print(recently[0]['name']);
+     } catch (e) {
+       print("Error fetching recently booked: $e");
      } finally {
        isLoading.value = false;
      }

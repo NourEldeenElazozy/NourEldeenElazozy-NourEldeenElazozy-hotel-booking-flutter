@@ -32,6 +32,7 @@ class _HomeState extends State<Home> {
   @override
   Widget build(BuildContext context) {
     //controller.getRestAreas(cityId: 1);
+    //controller.getRestAreas();
    controller.getReservations();
     return Directionality(
       textDirection: TextDirection.rtl,
@@ -397,7 +398,7 @@ class _HomeState extends State<Home> {
                         const Text(MyString.recentlyBooked, style: TextStyle(fontWeight: FontWeight.w700, fontSize: 16)),
                         InkWell(
                           onTap: () {
-                            Get.toNamed("/RecentlyBooked");
+
                           },
                           child: const Text(MyString.seeAll, style: TextStyle(fontWeight: FontWeight.w700, fontSize: 14)),
                         ),
@@ -412,7 +413,7 @@ class _HomeState extends State<Home> {
                         itemBuilder: (context, index) {
                           return InkWell(
                             onTap: () {
-                              Get.toNamed("/hotelDetail", arguments: {'data' : controller.homeDetails[index]});
+
                             },
                               child: VerticalView(index: index),
                           );
