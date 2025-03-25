@@ -36,7 +36,8 @@ class _MyAppState extends State<MyApp> {
                     : Themes.lightTheme,
                 // darkTheme: Themes().darkTheme,
                 // themeMode: ThemeMode.system,
-                initialRoute: "/welcome",
+               // initialRoute: "/welcome",
+               initialRoute: "/bottomBar",
                 getPages: Routes.navigator,
                 // home: Practice(),
               ));

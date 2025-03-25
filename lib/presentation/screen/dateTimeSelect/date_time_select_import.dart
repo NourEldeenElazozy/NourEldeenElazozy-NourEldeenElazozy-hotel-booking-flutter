@@ -6,7 +6,7 @@ import 'package:hotel_booking/core/themes/themes_controller.dart';
 import 'package:hotel_booking/presentation/common_widgets/appbar.dart';
 import 'package:hotel_booking/presentation/common_widgets/custom_button.dart';
 import 'package:hotel_booking/presentation/common_widgets/snackbar.dart';
-import 'package:intl/intl.dart';
+import 'package:intl/intl.dart' as intl ;
 import 'package:table_calendar/table_calendar.dart';
 
 import '../../../core/constants/my_colors.dart';

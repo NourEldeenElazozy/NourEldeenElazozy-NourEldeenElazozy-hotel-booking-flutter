@@ -69,400 +69,386 @@ class _DateTimeSelectState extends State<DateTimeSelect> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return Directionality(
+      textDirection: TextDirection.rtl,
+      child: Scaffold(
 
-      appBar: const CustomFullAppBar(
-        title: MyString.selectDate
-      ),
-      bottomNavigationBar: Container(
-        height: 90,
-        padding: const EdgeInsets.all(15),
-        child: Button(
-          onpressed: () {
-            return controller.dateTimeValidation(context);
-            // Get.toNamed("/dateTimeSelect");
-          },
-          text: MyString.continueButton,
-          textSize: 16,
-          fontBold: FontWeight.w700,
-          textColor: MyColors.white,
+        appBar: const CustomFullAppBar(
+          title: MyString.selectDate
         ),
-      ),
-      body: SingleChildScrollView(
-        child: Obx(() => Padding(
+        bottomNavigationBar: Container(
+          height: 90,
           padding: const EdgeInsets.all(15),
-          child: Form(
-            key: controller.dateTimeKey,
-            child: Column(
-              children: [
-                Container(
-                  padding: const EdgeInsets.all(10),
-                  decoration: BoxDecoration(
-                    color: controller.themeController.isDarkMode.value ? MyColors.darkTextFieldColor : Colors.green.shade50,
-                    borderRadius: BorderRadius.circular(15),
-                  ),
-                  child: TableCalendar(
-                    focusedDay: _focusedDay,
-                    firstDay: DateTime.utc(1950),
-                    lastDay: DateTime.utc(2050),
-                    selectedDayPredicate: (day) {
-                      return isSameDay(_selectedDay, day);
-                    },
-                    rangeStartDay: _rangeStart,
-                    rangeEndDay: _rangeEnd,
-                    calendarFormat: _calendarFormat,
-                    rangeSelectionMode: _rangeSelectionMode,
-                    calendarStyle: CalendarStyle(
-                      rangeHighlightColor: controller.themeController.isDarkMode.value ? Colors.black : Colors.grey.shade300,
-                      rangeStartDecoration: const BoxDecoration(
-                        shape: BoxShape.circle,
-                        color: Colors.green,
+          child: Button(
+            onpressed: () {
+              return controller.dateTimeValidation(context);
+              // Get.toNamed("/dateTimeSelect");
+            },
+            text: MyString.continueButton,
+            textSize: 16,
+            fontBold: FontWeight.w700,
+            textColor: MyColors.white,
+          ),
+        ),
+        body: SingleChildScrollView(
+          child: Obx(() => Padding(
+            padding: const EdgeInsets.all(15),
+              child: Form(
+                key: controller.dateTimeKey,
+                child: Column(
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.all(10),
+                      decoration: BoxDecoration(
+                        color: controller.themeController.isDarkMode.value ? MyColors.darkTextFieldColor : Colors.green.shade50,
+                        borderRadius: BorderRadius.circular(15),
                       ),
-                      rangeEndDecoration: const BoxDecoration(
-                        shape: BoxShape.circle,
-                        color: Colors.green,
-                      ),
-                    ),
-                    onDaySelected: (selectedDay, focusedDay) {
-                      if (!isSameDay(_selectedDay, selectedDay)) {
-                        setState(() {
-                          _selectedDay = selectedDay;
+                      child: TableCalendar(
+                        focusedDay: _focusedDay,
+                        firstDay: DateTime.utc(1950),
+                        lastDay: DateTime.utc(2050),
+                        selectedDayPredicate: (day) {
+                          return isSameDay(_selectedDay, day);
+                        },
+                        rangeStartDay: _rangeStart,
+                        rangeEndDay: _rangeEnd,
+                        calendarFormat: _calendarFormat,
+                        rangeSelectionMode: _rangeSelectionMode,
+                        calendarStyle: CalendarStyle(
+                          rangeHighlightColor: controller.themeController.isDarkMode.value ? Colors.black : Colors.grey.shade300,
+                          rangeStartDecoration: const BoxDecoration(
+                            shape: BoxShape.circle,
+                            color: Colors.green,
+                          ),
+                          rangeEndDecoration: const BoxDecoration(
+                            shape: BoxShape.circle,
+                            color: Colors.green,
+                          ),
+                        ),
+                        onDaySelected: (selectedDay, focusedDay) {
+                          if (!isSameDay(_selectedDay, selectedDay)) {
+                            setState(() {
+                              _selectedDay = selectedDay;
+                              _focusedDay = focusedDay;
+                              _rangeStart = null; // Important to clean those
+                              _rangeEnd = null;
+                              _rangeSelectionMode = RangeSelectionMode.toggledOff;
+                            });
+                          }
+                        },
+                        onRangeSelected: (start, end, focusedDay) {
+                          setState(() {
+                            _selectedDay = null;
+                            _focusedDay = focusedDay;
+                            _rangeStart = start;
+                            _rangeEnd = end;
+                            _rangeSelectionMode = RangeSelectionMode.toggledOn;
+                          });
+                        },
+                        onFormatChanged: (format) {
+                          if (_calendarFormat != format) {
+                            setState(() {
+                              _calendarFormat = format;
+                            });
+                          }
+                        },
+                        onPageChanged: (focusedDay) {
                           _focusedDay = focusedDay;
-                          _rangeStart = null; // Important to clean those
-                          _rangeEnd = null;
-                          _rangeSelectionMode = RangeSelectionMode.toggledOff;
-                        });
-                      }
-                    },
-                    onRangeSelected: (start, end, focusedDay) {
-                      setState(() {
-                        _selectedDay = null;
-                        _focusedDay = focusedDay;
-                        _rangeStart = start;
-                        _rangeEnd = end;
-                        _rangeSelectionMode = RangeSelectionMode.toggledOn;
-                      });
-                    },
-                    onFormatChanged: (format) {
-                      if (_calendarFormat != format) {
-                        setState(() {
-                          _calendarFormat = format;
-                        });
-                      }
-                    },
-                    onPageChanged: (focusedDay) {
-                      _focusedDay = focusedDay;
-                    },
-                  ),
-                ),
-                const SizedBox(height: 15),
-                Row(
-                  children: [
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          const Text("Check In Date", style: TextStyle(fontWeight: FontWeight.w700)),
-                          const SizedBox(height: 7),
-                          Obx(() => InkWell(
-                            onTap: () {
-                              _selectDate(context, true);
-                              // controller.checkInDate(context);
-                            },
-                            child: AbsorbPointer(
-                              child: SizedBox(
-                                child: TextFormField(
-
-                                  controller: controller.checkInDateController.value,
-                                  // validator: (value) {
-                                  //   return controller.checkInDateValidation(value!);
-                                  // },
-                                  style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 14),
-                                  decoration: InputDecoration(
-                                    filled: true,
-                                    fillColor: controller.themeController.isDarkMode.value ? MyColors.darkTextFieldColor : MyColors.disabledTextFieldColor,
-                                    border: OutlineInputBorder(
-                                      borderRadius: BorderRadius.circular(15),
-                                      borderSide: BorderSide.none,
+                        },
+                      ),
+                    ),
+                    const SizedBox(height: 15),
+                    Row(
+                      children: [
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              const Text("تاريخ الوصول", style: TextStyle(fontWeight: FontWeight.w700)),
+                              const SizedBox(height: 7),
+                              Obx(() => InkWell(
+                                onTap: () {
+                                  _selectDate(context, true);
+                                },
+                                child: AbsorbPointer(
+                                  child: SizedBox(
+                                    child: TextFormField(
+                                      controller: controller.checkInDateController.value,
+                                      style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 14),
+                                      decoration: InputDecoration(
+                                        filled: true,
+                                        fillColor: controller.themeController.isDarkMode.value ? MyColors.darkTextFieldColor : MyColors.disabledTextFieldColor,
+                                        border: OutlineInputBorder(
+                                          borderRadius: BorderRadius.circular(15),
+                                          borderSide: BorderSide.none,
+                                        ),
+                                        hintText: "تاريخ الوصول",
+                                        hintStyle: const TextStyle(color: Colors.grey, fontWeight: FontWeight.w400, fontSize: 13),
+                                        suffixIcon: Padding(
+                                          padding: const EdgeInsets.all(15),
+                                          child: SvgPicture.asset(MyImages.datePicker),
+                                        ),
+                                      ),
                                     ),
-                                    hintText: MyString.checkInDate,
-                                    hintStyle: const TextStyle(color: Colors.grey, fontWeight: FontWeight.w400, fontSize: 13),
-                                    suffixIcon: Padding(
-                                      padding: const EdgeInsets.all(15),
-                                      child: SvgPicture.asset(MyImages.datePicker),
+                                  ),
+                                ),
+                              ),)
+                            ],
+                          ),
+                        ),
+                        const SizedBox(width: 10),
+                        Column(
+                          children: [
+                            const SizedBox(height: 20),
+                            SvgPicture.asset(MyImages.dateTimeArrow),
+                          ],
+                        ),
+                        const SizedBox(width: 10),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              const Text("تاريخ المغادرة", style: TextStyle(fontWeight: FontWeight.w700)),
+                              const SizedBox(height: 7),
+                              InkWell(
+                                onTap: () {
+                                  _selectDate(context, false);
+                                },
+                                child: AbsorbPointer(
+                                  child: SizedBox(
+                                    child: TextFormField(
+                                      readOnly: true,
+                                      controller: controller.checkOutDateController.value,
+                                      style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 14),
+                                      decoration: InputDecoration(
+                                        filled: true,
+                                        fillColor: controller.themeController.isDarkMode.value ? MyColors.darkTextFieldColor : MyColors.disabledTextFieldColor,
+                                        border: OutlineInputBorder(
+                                          borderRadius: BorderRadius.circular(15),
+                                          borderSide: BorderSide.none,
+                                        ),
+                                        hintText: "تاريخ المغادرة",
+                                        hintStyle: const TextStyle(color: Colors.grey, fontWeight: FontWeight.w400, fontSize: 13),
+                                        suffixIcon: Padding(
+                                          padding: const EdgeInsets.all(15),
+                                          child: SvgPicture.asset(MyImages.datePicker),
+                                        ),
+                                      ),
                                     ),
                                   ),
                                 ),
                               ),
-                            ),
-                          ),)
-                        ],
-                      ),
-                    ),
-                    const SizedBox(width: 10),
-                    Column(
-                      children: [
-                        const SizedBox(height: 20),
-                        SvgPicture.asset(MyImages.dateTimeArrow),
+                            ],
+                          ),
+                        ),
                       ],
                     ),
-                    const SizedBox(width: 10),
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          const Text("Check Out Date", style: TextStyle(fontWeight: FontWeight.w700)),
-                          const SizedBox(height: 7),
-                          InkWell(
-                            onTap: () {
-                              // controller.checkOutDate(context);
-                              _selectDate(context, false);
-                            },
-                            child: AbsorbPointer(
-                              child: SizedBox(
-                                child: TextFormField(
-                                  readOnly: true,
-                                  controller: controller.checkOutDateController.value,
-                                  // validator: (value) {
-                                  //   return controller.checkOutDateValidation(value!);
-                                  // },
-                                  style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 14),
-                                  decoration: InputDecoration(
-                                    filled: true,
-                                    fillColor: controller.themeController.isDarkMode.value ? MyColors.darkTextFieldColor : MyColors.disabledTextFieldColor,
-                                    border: OutlineInputBorder(
-                                      borderRadius: BorderRadius.circular(15),
-                                      borderSide: BorderSide.none,
-                                    ),
-                                    hintText: MyString.checkOutDate,
-                                    hintStyle: const TextStyle(color: Colors.grey, fontWeight: FontWeight.w400, fontSize: 13),
-                                    suffixIcon: Padding(
-                                      padding: const EdgeInsets.all(15),
-                                      child: SvgPicture.asset(MyImages.datePicker),
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 20),
-                Row(
-                  children: [
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          const Text("Check In Time", style: TextStyle(fontWeight: FontWeight.w700)),
-                          const SizedBox(height: 7),
-                          InkWell(
-                            onTap: () {
-                              controller.checkInTime(context);
-                            },
-                            child: AbsorbPointer(
-                              child: SizedBox(
-                                child: TextFormField(
-                                  // readOnly: true,
-                                  controller: controller.checkInTimeController.value,
-                                  // validator: (value) {
-                                  //   return controller.checkInTimeValidation(value!);
-                                  // },
-                                  style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 14),
-                                  decoration: InputDecoration(
-                                    filled: true,
-                                    fillColor: controller.themeController.isDarkMode.value ? MyColors.darkTextFieldColor : MyColors.disabledTextFieldColor,
-                                    border: OutlineInputBorder(
-                                      borderRadius: BorderRadius.circular(15),
-                                      borderSide: BorderSide.none,
-                                    ),
-                                    hintText: MyString.checkInTime,
-                                    hintStyle: const TextStyle(color: Colors.grey, fontWeight: FontWeight.w400, fontSize: 13),
-                                    suffixIcon: Padding(
-                                      padding: const EdgeInsets.all(15),
-                                      child: SvgPicture.asset(MyImages.timePicker),
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    const SizedBox(width: 10),
-                    Column(
+                    const SizedBox(height: 20),
+                    Row(
                       children: [
-                        const SizedBox(height: 20),
-                        SvgPicture.asset(MyImages.dateTimeArrow),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              const Text("وقت الوصول", style: TextStyle(fontWeight: FontWeight.w700)),
+                              const SizedBox(height: 7),
+                              InkWell(
+                                onTap: () {
+                                  controller.checkInTime(context);
+                                },
+                                child: AbsorbPointer(
+                                  child: SizedBox(
+                                    child: TextFormField(
+                                      controller: controller.checkInTimeController.value,
+                                      style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 14),
+                                      decoration: InputDecoration(
+                                        filled: true,
+                                        fillColor: controller.themeController.isDarkMode.value ? MyColors.darkTextFieldColor : MyColors.disabledTextFieldColor,
+                                        border: OutlineInputBorder(
+                                          borderRadius: BorderRadius.circular(15),
+                                          borderSide: BorderSide.none,
+                                        ),
+                                        hintText: "وقت الوصول",
+                                        hintStyle: const TextStyle(color: Colors.grey, fontWeight: FontWeight.w400, fontSize: 13),
+                                        suffixIcon: Padding(
+                                          padding: const EdgeInsets.all(15),
+                                          child: SvgPicture.asset(MyImages.timePicker),
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        const SizedBox(width: 10),
+                        Column(
+                          children: [
+                            const SizedBox(height: 20),
+                            SvgPicture.asset(MyImages.dateTimeArrow),
+                          ],
+                        ),
+                        const SizedBox(width: 10),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              const Text("وقت المغادرة", style: TextStyle(fontWeight: FontWeight.w700)),
+                              const SizedBox(height: 7),
+                              InkWell(
+                                onTap: () {
+                                  controller.checkOutTime(context);
+                                },
+                                child: AbsorbPointer(
+                                  child: SizedBox(
+                                    child: TextFormField(
+                                      readOnly: true,
+                                      controller: controller.checkOutTimeController.value,
+                                      style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 14),
+                                      decoration: InputDecoration(
+                                        filled: true,
+                                        fillColor: controller.themeController.isDarkMode.value ? MyColors.darkTextFieldColor : MyColors.disabledTextFieldColor,
+                                        border: OutlineInputBorder(
+                                          borderRadius: BorderRadius.circular(15),
+                                          borderSide: BorderSide.none,
+                                        ),
+                                        hintText: "وقت المغادرة",
+                                        hintStyle: const TextStyle(color: Colors.grey, fontWeight: FontWeight.w400, fontSize: 13),
+                                        suffixIcon: Padding(
+                                          padding: const EdgeInsets.all(15),
+                                          child: SvgPicture.asset(MyImages.timePicker),
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
                       ],
                     ),
-                    const SizedBox(width: 10),
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          const Text("Check Out Time", style: TextStyle(fontWeight: FontWeight.w700)),
-                          const SizedBox(height: 7),
-                          InkWell(
-                            onTap: () {
-                              controller.checkOutTime(context);
-                            },
-                            child: AbsorbPointer(
-                              child: SizedBox(
-                                child: TextFormField(
-                                  readOnly: true,
-                                  controller: controller.checkOutTimeController.value,
-                                  // validator: (value) {
-                                  //   return controller.checkOutTimeValidation(value!);
-                                  // },
-                                  style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 14),
-                                  decoration: InputDecoration(
-                                    filled: true,
-                                    fillColor: controller.themeController.isDarkMode.value ? MyColors.darkTextFieldColor : MyColors.disabledTextFieldColor,
-                                    border: OutlineInputBorder(
-                                      borderRadius: BorderRadius.circular(15),
-                                      borderSide: BorderSide.none,
+                    const SizedBox(height: 20),
+                    Row(
+                      children: [
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              const Text("عدد النزلاء (البالغين)", style: TextStyle(fontWeight: FontWeight.w700)),
+                              const SizedBox(height: 7),
+                              Container(
+                                padding: const EdgeInsets.symmetric(horizontal: 12),
+                                height: 50,
+                                decoration: BoxDecoration(
+                                  color: controller.themeController.isDarkMode.value ? MyColors.darkTextFieldColor : Colors.transparent,
+                                  borderRadius: BorderRadius.circular(12),
+                                  border: Border.all(color: controller.themeController.isDarkMode.value ? Colors.grey.shade700 : Colors.black.withOpacity(0.2)),
+                                ),
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    InkWell(
+                                      onTap: () {
+                                        return controller.adultDecrement();
+                                      },
+                                      child: Container(
+                                        alignment: Alignment.center,
+                                        height: 30,
+                                        width: 30,
+                                        decoration: BoxDecoration(
+                                          color: controller.themeController.isDarkMode.value ? Colors.grey.shade700 :  Colors.black.withOpacity(0.2),
+                                          borderRadius: BorderRadius.circular(8),
+                                        ),
+                                        child: const Text("-", style: TextStyle(fontWeight: FontWeight.w500, fontSize: 20)),
+                                      ),
                                     ),
-                                    hintText: MyString.checkOutTime,
-                                    hintStyle: const TextStyle(color: Colors.grey, fontWeight: FontWeight.w400, fontSize: 13),
-                                    suffixIcon: Padding(
-                                      padding: const EdgeInsets.all(15),
-                                      child: SvgPicture.asset(MyImages.timePicker),
+                                    Text("${controller.adult.value}", style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 24)),
+                                    InkWell(
+                                      onTap: () {
+                                        return controller.adultIncrement();
+                                      },
+                                      child: Container(
+                                        alignment: Alignment.center,
+                                        height: 30,
+                                        width: 30,
+                                        decoration: BoxDecoration(
+                                          color: controller.themeController.isDarkMode.value ? Colors.grey.shade700 : Colors.black.withOpacity(0.2),
+                                          borderRadius: BorderRadius.circular(8),
+                                        ),
+                                        child: const Text("+", style: TextStyle(fontWeight: FontWeight.w500, fontSize: 20)),
+                                      ),
                                     ),
-                                  ),
+                                  ],
                                 ),
                               ),
-                            ),
+                            ],
                           ),
-                        ],
-                      ),
+                        ),
+                        const SizedBox(width: 30),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              const Text("عدد النزلاء (الأطفال)", style: TextStyle(fontWeight: FontWeight.w700)),
+                              const SizedBox(height: 7),
+                              Container(
+                                padding: const EdgeInsets.symmetric(horizontal: 12),
+                                height: 50,
+                                decoration: BoxDecoration(
+                                  color: controller.themeController.isDarkMode.value ? MyColors.darkTextFieldColor : Colors.transparent,
+                                  borderRadius: BorderRadius.circular(12),
+                                  border: Border.all(color: controller.themeController.isDarkMode.value ? Colors.grey.shade700 : Colors.black.withOpacity(0.2)),
+                                ),
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    InkWell(
+                                      onTap: () {
+                                        return controller.childrenDecrement();
+                                      },
+                                      child: Container(
+                                        alignment: Alignment.center,
+                                        height: 30,
+                                        width: 30,
+                                        decoration: BoxDecoration(
+                                          color: controller.themeController.isDarkMode.value ? Colors.grey.shade700 : Colors.black.withOpacity(0.2),
+                                          borderRadius: BorderRadius.circular(8),
+                                        ),
+                                        child: const Text("-", style: TextStyle(fontWeight: FontWeight.w500, fontSize: 20)),
+                                      ),
+                                    ),
+                                    Text("${controller.children.value}", style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 24)),
+                                    InkWell(
+                                      onTap: () {
+                                        return controller.childrenIncrement();
+                                      },
+                                      child: Container(
+                                        alignment: Alignment.center,
+                                        height: 30,
+                                        width: 30,
+                                        decoration: BoxDecoration(
+                                          color: controller.themeController.isDarkMode.value ? Colors.grey.shade700 : Colors.black.withOpacity(0.2),
+                                          borderRadius: BorderRadius.circular(8),
+                                        ),
+                                        child: const Text("+", style: TextStyle(fontWeight: FontWeight.w500, fontSize: 20)),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ],
+                          ),
+                        )
+                      ],
                     ),
                   ],
                 ),
-                const SizedBox(height: 20),
-                Row(
-                  children: [
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          const Text("Guest (Adult)", style: TextStyle(fontWeight: FontWeight.w700)),
-                          const SizedBox(height: 7),
-                          Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 12),
-                            height: 50,
-                            decoration: BoxDecoration(
-                              color: controller.themeController.isDarkMode.value ? MyColors.darkTextFieldColor : Colors.transparent,
-                              borderRadius: BorderRadius.circular(12),
-                              border: Border.all(color: controller.themeController.isDarkMode.value ? Colors.grey.shade700 : Colors.black.withOpacity(0.2)),
-                            ),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                InkWell(
-                                  onTap: () {
-                                    return controller.adultDecrement();
-                                  },
-                                  child: Container(
-                                    alignment: Alignment.center,
-                                    height: 30,
-                                    width: 30,
-                                    decoration: BoxDecoration(
-                                      color: controller.themeController.isDarkMode.value ? Colors.grey.shade700 :  Colors.black.withOpacity(0.2),
-                                      borderRadius: BorderRadius.circular(8)
-                                    ),
-                                    child: const Text("-", style: TextStyle(fontWeight: FontWeight.w500, fontSize: 20),),
-                                  ),
-                                ),
-                                Text("${controller.adult.value}", style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 24),),
-                                InkWell(
-                                  onTap: () {
-                                    return controller.adultIncrement();
-                                  },
-                                  child: Container(
-                                    alignment: Alignment.center,
-                                    height: 30,
-                                    width: 30,
-                                    decoration: BoxDecoration(
-                                        color: controller.themeController.isDarkMode.value ? Colors.grey.shade700 : Colors.black.withOpacity(0.2),
-                                        borderRadius: BorderRadius.circular(8)
-                                    ),
-                                    child: const Text("+", style: TextStyle(fontWeight: FontWeight.w500, fontSize: 20),),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                          // Text()
-                        ],
-                      ),
-                    ),
-                    const SizedBox(width: 30),
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          const Text("Guest (Children)", style: TextStyle(fontWeight: FontWeight.w700)),
-                          const SizedBox(height: 7),
-                          Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 12),
-                            height: 50,
-                            decoration: BoxDecoration(
-                              color: controller.themeController.isDarkMode.value ? MyColors.darkTextFieldColor : Colors.transparent,
-                              borderRadius: BorderRadius.circular(12),
-                              border: Border.all(color: controller.themeController.isDarkMode.value ? Colors.grey.shade700 : Colors.black.withOpacity(0.2)),
-                            ),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                InkWell(
-                                  onTap: () {
-                                    return controller.childrenDecrement();
-                                  },
-                                  child: Container(
-                                    alignment: Alignment.center,
-                                    height: 30,
-                                    width: 30,
-                                    decoration: BoxDecoration(
-                                        color: controller.themeController.isDarkMode.value ? Colors.grey.shade700 : Colors.black.withOpacity(0.2),
-                                        borderRadius: BorderRadius.circular(8)
-                                    ),
-                                    child: const Text("-", style: TextStyle(fontWeight: FontWeight.w500, fontSize: 20),),
-                                  ),
-                                ),
-                                Text("${controller.children.value}", style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 24),),
-                                InkWell(
-                                  onTap: () {
-                                    return controller.childrenIncrement();
-                                  },
-                                  child: Container(
-                                    alignment: Alignment.center,
-                                    height: 30,
-                                    width: 30,
-                                    decoration: BoxDecoration(
-                                        color: controller.themeController.isDarkMode.value ? Colors.grey.shade700 : Colors.black.withOpacity(0.2),
-                                        borderRadius: BorderRadius.circular(8),
-                                    ),
-                                    child: const Text("+", style: TextStyle(fontWeight: FontWeight.w500, fontSize: 20),),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ],
-                      ),
-                    )
-                  ],
-                ),
-              ],
-            ),
-          )
-        ),),
-      )
+              )
+          ),),
+        )
+      ),
     );
   }
 }

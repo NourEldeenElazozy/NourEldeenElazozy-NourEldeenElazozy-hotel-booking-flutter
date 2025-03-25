@@ -229,7 +229,7 @@ print(controller.detail.detailsImages.length);
                           shrinkWrap: true,
                           padding: EdgeInsets.zero,
                           physics: const NeverScrollableScrollPhysics(),
-                          itemCount: 13, // عدد العناصر التي تريد عرضها
+                          itemCount: 9, // عدد العناصر التي تريد عرضها
                           gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                             crossAxisCount: 3, // عدد الأعمدة
                             mainAxisExtent: 100, // ارتفاع العنصر
@@ -252,11 +252,7 @@ print(controller.detail.detailsImages.length);
                                 "label": "المطبخ",
                                 "value": controller.detail.details[0].kitchenAvailable == true ? "متوفر" : "غير متوفر",
                               },
-                              {
-                                "icon": Icons.pool,
-                                "label": "نوع المسبح",
-                                "value": controller.detail.details[0].poolType ?? "لا يوجد",
-                              },
+
                               {
                                 "icon": Icons.bathtub,
                                 "label": "حمامات داخلية",
@@ -287,41 +283,13 @@ print(controller.detail.detailsImages.length);
                                 "label": "ألعاب ترفيهية",
                                 "value": controller.detail.details[0].entertainmentGames ?? "لا توجد ألعاب",
                               },
-                              {
-                                "icon": Icons.outdoor_grill, // أيقونة المطبخ الخارجي
-                                "label": "مطبخ خارجي",
-                                "value": controller.detail.details[0].outdoorKitchen == true ? "متوفر" : "غير متوفر",
-                              },
-                              {
-                                "icon": Icons.business_center, // أيقونة المساحة الخارجية
-                                "label": "مساحة خارجية",
-                                "value": controller.detail.details[0].outdoorSpace == true ? "متوفر" : "غير متوفر",
-                              },
-                              {
-                                "icon": Icons.grass, // أيقونة المساحة العشبية
-                                "label": "مساحة عشبية",
-                                "value": controller.detail.details[0].grassSpace == true ? "متوفر" : "غير متوفر",
-                              },
-                              {
-                                "icon": Icons.pool, // أيقونة المسبح
-                                "label": "عمق المسبح",
-                                "value": "${controller.detail.details[0].poolDepth ?? 0}",
-                              },
-                              {
-                                "icon": Icons.local_play, // أيقونة مكان الذبح
-                                "label": "مكان الذبح",
-                                "value": controller.detail.details[0].slaughterPlace == true ? "متوفر" : "غير متوفر",
-                              },
-                              {
-                                "icon": Icons.local_hospital, // أيقونة البئر
-                                "label": "بئر",
-                                "value": controller.detail.details[0].well == true ? "متوفر" : "غير متوفر",
-                              },
-                              {
-                                "icon": Icons.power, // أيقونة المولد الكهربائي
-                                "label": "مولد كهربائي",
-                                "value": controller.detail.details[0].powerGenerator == true ? "متوفر" : "غير متوفر",
-                              },
+
+
+
+
+
+
+
                             ];
 
                             return Container(

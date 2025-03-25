@@ -17,6 +17,7 @@ class _HomeState extends State<Home> {
   @override
   void initState() {
     super.initState();
+
     controller.getHomeDetail();
     controller.selectedItem.value = 0;
     controller.passingStatus.value = "Recommended";
@@ -34,6 +35,8 @@ class _HomeState extends State<Home> {
     //controller.getRestAreas(cityId: 1);
     //controller.getRestAreas();
    controller.getReservations();
+   controller.fetchRecentlyBooked();
+
     return Directionality(
       textDirection: TextDirection.rtl,
       child: Scaffold(
@@ -47,7 +50,14 @@ class _HomeState extends State<Home> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     const SizedBox(height: 10),
-                    Text("مرحبا ${userName.value} 👋", style: TextStyle(color: controller.themeController.isDarkMode.value ? MyColors.white : MyColors.successColor, fontWeight: FontWeight.w700, fontSize: 26)),
+                    Text(
+                      userName.value.isNotEmpty ? "مرحبا ${userName.value} 👋" : "مرحبا زائر 👋",
+                      style: TextStyle(
+                        color: controller.themeController.isDarkMode.value ? MyColors.white : MyColors.successColor,
+                        fontWeight: FontWeight.w700,
+                        fontSize: 26,
+                      ),
+                    ),
                     const SizedBox(height: 18),
                     InkWell(
                       onTap: () {
@@ -388,39 +398,43 @@ class _HomeState extends State<Home> {
                 ),
               ),
               const SizedBox(height: 15),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 15),
-                child: Column(
-                  children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        const Text(MyString.recentlyBooked, style: TextStyle(fontWeight: FontWeight.w700, fontSize: 16)),
-                        InkWell(
-                          onTap: () {
+              Container(
 
-                          },
-                          child: const Text(MyString.seeAll, style: TextStyle(fontWeight: FontWeight.w700, fontSize: 14)),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 15),
-                    SizedBox(
-                      child: ListView.builder(
-                        physics: const NeverScrollableScrollPhysics(),
-                        shrinkWrap: true,
-                        itemCount: controller.recentlyBooked.length,
-                        itemBuilder: (context, index) {
-                          return InkWell(
+
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 15),
+                  child: Column(
+                    children: [
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          const Text(MyString.recentlyBooked, style: TextStyle(fontWeight: FontWeight.w700, fontSize: 16)),
+                          InkWell(
                             onTap: () {
 
                             },
-                              child: VerticalView(index: index),
-                          );
-                        },
+                            child: const Text(MyString.seeAll, style: TextStyle(fontWeight: FontWeight.w700, fontSize: 14)),
+                          ),
+                        ],
                       ),
-                    ),
-                  ],
+                      const SizedBox(height: 15),
+                      SizedBox(
+                        child: ListView.builder(
+                          physics: const NeverScrollableScrollPhysics(),
+                          shrinkWrap: true,
+                          itemCount: controller.recently.length,
+                          itemBuilder: (context, index) {
+                            return InkWell(
+                              onTap: () {
+
+                              },
+                                child: VerticalView(index: index),
+                            );
+                          },
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ],

@@ -17,12 +17,12 @@ class DateTimeSelectController extends GetxController {
 
   void setFromDate(DateTime date) {
     fromDate.value = date;
-    checkInDateController.value.text=  DateFormat('dd MMM yyyy').format(fromDate.value);
+    checkInDateController.value.text=  intl.DateFormat('dd MMM yyyy').format(fromDate.value);
   }
 
   void setToDate(DateTime date) {
     toDate.value = date;
-    checkOutDateController.value.text=  DateFormat('dd MMM yyyy').format(toDate.value);
+    checkOutDateController.value.text=  intl.DateFormat('dd MMM yyyy').format(toDate.value);
   }
 
   bool isToDateSelectable(DateTime day) {
