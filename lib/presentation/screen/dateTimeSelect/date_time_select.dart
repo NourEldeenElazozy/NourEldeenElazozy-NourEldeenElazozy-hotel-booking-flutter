@@ -76,25 +76,39 @@ class _DateTimeSelectState extends State<DateTimeSelect> {
         appBar: const CustomFullAppBar(
           title: MyString.selectDate
         ),
-        bottomNavigationBar: Container(
-          height: 90,
-          padding: const EdgeInsets.all(15),
-          child: Button(
-            onpressed: () {
-              String dateText = controller.checkInDateController.value.text; // "27 Mar 2025"
-              DateTime date = intl.DateFormat("dd MMM yyyy").parse(dateText);
-              String formattedDate = intl.DateFormat("dd/MM/yyyy").format(date);
+          bottomNavigationBar: Container(
+            height: 90,
+            padding: const EdgeInsets.all(15),
+            child: Obx(() => controller.isLoading.value
+                ? Center(child: CircularProgressIndicator()) // عرض دائرة التحميل
+                : Button(
+              onpressed: () async {
+                // استدعاء دالة التحميل
+                controller.loading();
 
-              print(formattedDate); // سيظهر 27/03/2025
-              return controller.dateTimeValidation(context);
-              // Get.toNamed("/dateTimeSelect");
-            },
-            text: MyString.continueButton,
-            textSize: 16,
-            fontBold: FontWeight.w700,
-            textColor: MyColors.white,
+                // معالجة التاريخ
+                String dateText = controller.checkInDateController.value.text; // "27 Mar 2025"
+                DateTime date = intl.DateFormat("dd MMM yyyy").parse(dateText);
+                String formattedDate = intl.DateFormat("dd/MM/yyyy").format(date);
+
+                print(formattedDate); // سيظهر 27/03/2025
+
+                // تنفيذ التحقق من التاريخ
+                 //controller.dateTimeValidation(context);
+
+                // إغلاق التحميل بعد الانتهاء من العملية
+                controller.dismissLoading();
+                Get.toNamed("/selectRoom");
+                // يمكنك الانتقال إلى صفحة أخرى إذا كان ذلك مطلوبًا
+                // Get.toNamed("/dateTimeSelect");
+              },
+              text: MyString.continueButton,
+              textSize: 16,
+              fontBold: FontWeight.w700,
+              textColor: MyColors.white,
+            ),
+            ),
           ),
-        ),
         body: SingleChildScrollView(
           child: Obx(() => Padding(
             padding: const EdgeInsets.all(15),

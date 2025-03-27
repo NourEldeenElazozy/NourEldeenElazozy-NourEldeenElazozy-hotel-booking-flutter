@@ -2,7 +2,7 @@ part of 'date_time_select_import.dart';
 
 class DateTimeSelectController extends GetxController {
   ThemeController themeController = Get.put(ThemeController());
-
+  var isLoading = false.obs; // حالة التحميل
   final GlobalKey<FormState> dateTimeKey = GlobalKey<FormState>();
 
   Rx<TextEditingController> checkInDateController = TextEditingController().obs;
@@ -28,7 +28,13 @@ class DateTimeSelectController extends GetxController {
   bool isToDateSelectable(DateTime day) {
     return day.isAfter(fromDate.value.subtract(const Duration(days: 1))) || day.isAtSameMomentAs(fromDate.value);
   }
+  void loading() {
+    isLoading.value = true; // تعيين حالة التحميل إلى true
+  }
 
+  void dismissLoading() {
+    isLoading.value = false; // تعيين حالة التحميل إلى false
+  }
  /* Future<void> checkInDate(BuildContext context) async {
     DateTime? pickedDate = await showDatePicker(
       context: context,
@@ -121,8 +127,7 @@ class DateTimeSelectController extends GetxController {
       showErrorMsg(context: context, message: "Select Check In Time");
     } else if(checkOutTimeController.value.text.isEmpty) {
       showErrorMsg(context: context, message: "Select Check Out Time");
-    } else if(adult <= 0) {
-      showErrorMsg(context: context, message: "1 Adult Compulsory");
+
     } else {
       Get.toNamed("/selectRoom");
     }
