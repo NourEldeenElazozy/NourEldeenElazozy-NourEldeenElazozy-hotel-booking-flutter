@@ -81,6 +81,11 @@ class _DateTimeSelectState extends State<DateTimeSelect> {
           padding: const EdgeInsets.all(15),
           child: Button(
             onpressed: () {
+              String dateText = controller.checkInDateController.value.text; // "27 Mar 2025"
+              DateTime date = intl.DateFormat("dd MMM yyyy").parse(dateText);
+              String formattedDate = intl.DateFormat("dd/MM/yyyy").format(date);
+
+              print(formattedDate); // سيظهر 27/03/2025
               return controller.dateTimeValidation(context);
               // Get.toNamed("/dateTimeSelect");
             },
@@ -103,6 +108,7 @@ class _DateTimeSelectState extends State<DateTimeSelect> {
                         color: controller.themeController.isDarkMode.value ? MyColors.darkTextFieldColor : Colors.green.shade50,
                         borderRadius: BorderRadius.circular(15),
                       ),
+                      /*
                       child: TableCalendar(
                         focusedDay: _focusedDay,
                         firstDay: DateTime.utc(1950),
@@ -156,6 +162,7 @@ class _DateTimeSelectState extends State<DateTimeSelect> {
                           _focusedDay = focusedDay;
                         },
                       ),
+                       */
                     ),
                     const SizedBox(height: 15),
                     Row(

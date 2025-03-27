@@ -324,7 +324,7 @@ print(controller.detail.detailsImages.length);
                                   color: Colors.white, // لون الخلفية
                                   borderRadius: BorderRadius.circular(10), // زوايا مستديرة
                                   boxShadow: [
-                                    BoxShadow(
+                                    const BoxShadow(
                                       color: Colors.black26,
                                       blurRadius: 5,
                                       offset: Offset(2, 2), // ظل بسيط
@@ -342,13 +342,13 @@ print(controller.detail.detailsImages.length);
                                     const SizedBox(height: 5),
                                     Text(
                                       detailsData[index]['label'],
-                                      style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
+                                      style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
                                       textAlign: TextAlign.center,
                                     ),
                                     const SizedBox(height: 5),
                                     Text(
                                       detailsData[index]['value'],
-                                      style: TextStyle(fontSize: 12, color: Colors.grey),
+                                      style: const TextStyle(fontSize: 12, color: Colors.grey),
                                       textAlign: TextAlign.center,
                                     ),
                                   ],
@@ -373,7 +373,7 @@ print(controller.detail.detailsImages.length);
                                 ),
       
       
-                           SizedBox(height: 20),
+                           const SizedBox(height: 20),
                           titleText(MyString.facilites, controller.isDarkMode,
                               false, () {}),
                           const SizedBox(height: 20),
@@ -474,7 +474,7 @@ print(controller.detail.detailsImages.length);
                                   color: Colors.white, // لون الخلفية
                                   borderRadius: BorderRadius.circular(10), // زوايا مستديرة
                                   boxShadow: [
-                                    BoxShadow(
+                                    const BoxShadow(
                                       color: Colors.black26,
                                       blurRadius: 5,
                                       offset: Offset(2, 2), // ظل بسيط
@@ -492,13 +492,13 @@ print(controller.detail.detailsImages.length);
                                     const SizedBox(height: 5),
                                     Text(
                                       detailsData[index]['label'],
-                                      style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
+                                      style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
                                       textAlign: TextAlign.center,
                                     ),
                                     const SizedBox(height: 5),
                                     Text(
                                       detailsData[index]['value'],
-                                      style: TextStyle(fontSize: 12, color: Colors.grey),
+                                      style: const TextStyle(fontSize: 12, color: Colors.grey),
                                       textAlign: TextAlign.center,
                                     ),
                                   ],
