@@ -1,11 +1,9 @@
-import 'dart:convert';
 
 import 'package:hotel_booking/presentation/screen/hotelDetails/Modelclass/review_model.dart';
 
 import '../hotelDetails/Modelclass/details_model.dart';
 import '../hotelDetails/Modelclass/facilites_model.dart';
 import '../galleryPhoto/gallery_photo_model.dart';
-import '../hotelDetails/Modelclass/images_model.dart';
 
 class Detail {
   int? id;

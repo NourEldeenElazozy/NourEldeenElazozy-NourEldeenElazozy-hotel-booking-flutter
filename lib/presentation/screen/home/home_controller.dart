@@ -2,7 +2,7 @@ part of 'home_import.dart';
 
 class HomeController extends GetxController {
    final ThemeController themeController = Get.put(ThemeController());
-   var sliderValue = RangeValues(0, 100).obs; // القيم الافتراضية لشريط التمرير
+   var sliderValue = const RangeValues(0, 100).obs; // القيم الافتراضية لشريط التمرير
    var priceMin = 0.obs; // الحد الأدنى للسعر
    var priceMax = 0.obs; // الحد الأقصى للسعر
 

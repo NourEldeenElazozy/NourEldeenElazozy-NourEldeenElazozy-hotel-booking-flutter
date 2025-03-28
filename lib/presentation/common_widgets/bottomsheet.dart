@@ -64,7 +64,7 @@ class FilterBottomSheet extends StatelessWidget {
                             height: 40,
                             child: Obx(() {
                               if (controller.isLoading.value) {
-                                return Center(child: CircularProgressIndicator());
+                                return const Center(child: CircularProgressIndicator());
                               }
 
                               return ListView.builder(
@@ -205,18 +205,18 @@ class FilterBottomSheet extends StatelessWidget {
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Text(
+                                const Text(
                                   'المنطقة الجغرافية',
                                   style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                                 ),
-                                SizedBox(height: 8),
+                                const SizedBox(height: 8),
                                 Obx(() => Container(
-                                  padding: EdgeInsets.symmetric(horizontal: 16, vertical: 5),
+                                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 5),
                                   decoration: BoxDecoration(
                                     color: Colors.white, // لون الخلفية
                                     borderRadius: BorderRadius.circular(12), // الحواف الدائرية
                                     border: Border.all(color: Colors.grey.shade300, width: 1), // حدود ناعمة
-                                    boxShadow: [
+                                    boxShadow: const [
                                       BoxShadow(
                                         color: Colors.black12, // ظل خفيف
                                         blurRadius: 5,
@@ -228,14 +228,14 @@ class FilterBottomSheet extends StatelessWidget {
                                     child: DropdownButton<String>(
                                       value: homecontroller.selectedGeoArea.value, // القيمة الحالية
                                       isExpanded: true, // يجعل القائمة تمتد بعرض `Container`
-                                      icon: Icon(Icons.arrow_drop_down, color: Colors.black54), // أيقونة السهم
+                                      icon: const Icon(Icons.arrow_drop_down, color: Colors.black54), // أيقونة السهم
                                       dropdownColor: Colors.white, // لون القائمة عند الفتح
-                                      style: TextStyle(
+                                      style: const TextStyle(
                                         color: Colors.black87, // لون النص
                                         fontSize: 16,
                                         fontWeight: FontWeight.w500,
                                       ),
-                                      items: [
+                                      items: const [
                                         DropdownMenuItem(
                                           value: "مطلة على البحر",
                                           child: Row(
@@ -293,24 +293,24 @@ class FilterBottomSheet extends StatelessWidget {
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Text(
+                                const Text(
                                   'عدد الضيوف',
                                   style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                                 ),
-                                SizedBox(height: 8),
+                                const SizedBox(height: 8),
 
 
                                 TextField(
                                   controller: guestController,
                                   keyboardType: TextInputType.number,
-                                  decoration: InputDecoration(
+                                  decoration: const InputDecoration(
                                     border: OutlineInputBorder(),
                                     labelText: 'أدخل عدد الضيوف',
                                     hintText: 'مثل: 2',
                                     prefixIcon: Icon(Icons.person),
                                   ),
                                 ),
-                                SizedBox(height: 16),
+                                const SizedBox(height: 16),
 
                               ],
                             ),
@@ -679,7 +679,7 @@ class FilterBottomSheet extends StatelessWidget {
                                 // استخدم maxGuests في دالة getRestAreas
                                 Get.find<HomeController>().getRestAreas(maxGuests: maxGuests);
                               }
-                              print("  maxGuests ${maxGuests}");
+                              print("  maxGuests $maxGuests");
                               print("  cityId ${controller.selectedCityIndex.value}");
                               print("  priceMin ${homecontroller.priceMin.value}");
                               print("  priceMax ${homecontroller.priceMax.value}");

@@ -323,8 +323,8 @@ print(controller.detail.detailsImages.length);
                                 decoration: BoxDecoration(
                                   color: Colors.white, // لون الخلفية
                                   borderRadius: BorderRadius.circular(10), // زوايا مستديرة
-                                  boxShadow: [
-                                    const BoxShadow(
+                                  boxShadow: const [
+                                    BoxShadow(
                                       color: Colors.black26,
                                       blurRadius: 5,
                                       offset: Offset(2, 2), // ظل بسيط
@@ -473,8 +473,8 @@ print(controller.detail.detailsImages.length);
                                 decoration: BoxDecoration(
                                   color: Colors.white, // لون الخلفية
                                   borderRadius: BorderRadius.circular(10), // زوايا مستديرة
-                                  boxShadow: [
-                                    const BoxShadow(
+                                  boxShadow: const [
+                                    BoxShadow(
                                       color: Colors.black26,
                                       blurRadius: 5,
                                       offset: Offset(2, 2), // ظل بسيط

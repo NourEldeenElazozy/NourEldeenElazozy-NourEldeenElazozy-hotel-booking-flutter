@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:get/state_manager.dart';
 import 'package:hotel_booking/Model/City.dart';
 import 'package:hotel_booking/core/constants/my_strings.dart';
 import 'package:hotel_booking/core/themes/themes_controller.dart';

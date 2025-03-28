@@ -13,7 +13,7 @@ class _HomeState extends State<Home> {
   late HomeController controller = Get.put(HomeController());
   late bool isDarkMode;
   var userName = ''.obs; // استخدام Rx لتحديث الواجهة عند تغيير القيمة
-
+  var Token = ''.obs; // استخدام Rx لتحديث الواجهة عند تغيير القيمة
   @override
   void initState() {
     super.initState();
@@ -23,21 +23,34 @@ class _HomeState extends State<Home> {
     controller.passingStatus.value = "Recommended";
     controller.filterList("Recommended");
     _loadUserName(); // استدعاء دالة تحميل الاسم
+    _loadToken();
   }
 
   Future<void> _loadUserName() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     userName.value = prefs.getString('userName') ?? '';
-  }
 
+  }
+  Future<void> removeToken() async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.remove('token'); // حذف التوكن
+    print("تم حذف التوكن بنجاح!"); // اختبار للتأكد
+  }
+  Future<void> _loadToken() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    Token.value = prefs.getString('token') ?? '';
+
+  }
   @override
   Widget build(BuildContext context) {
     //controller.getRestAreas(cityId: 1);
     //controller.getRestAreas();
    controller.getReservations();
    controller.fetchRecentlyBooked();
+   //removeToken();
+   print(" token ${Token.value}");
 
-    return Directionality(
+   return Directionality(
       textDirection: TextDirection.rtl,
       child: Scaffold(
         appBar: homeAppBar(MyString.bookNest, true, controller.themeController.isDarkMode.value),
@@ -354,7 +367,7 @@ class _HomeState extends State<Home> {
                                       mainAxisAlignment: MainAxisAlignment.center,
                                       children: [
                                         SvgPicture.asset(MyImages.whiteStar, width: 10),
-                                        SizedBox(width: 5),
+                                        const SizedBox(width: 5),
                                         Text(
                                           reservation['rating'].toString(), // عرض تقييم المنطقة
                                           style: const TextStyle(color: MyColors.white, fontWeight: FontWeight.w600, fontSize: 12),

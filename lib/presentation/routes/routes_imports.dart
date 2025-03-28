@@ -1,3 +1,5 @@
+import 'package:flutter/cupertino.dart';
+import 'package:get/get.dart';
 import 'package:get/get_navigation/src/routes/get_route.dart';
 import 'package:get/get_navigation/src/routes/transitions_type.dart';
 import 'package:hotel_booking/presentation/common_widgets/bottom_navigation_bar.dart';
@@ -14,6 +16,7 @@ import 'package:hotel_booking/presentation/screen/profile/profile_import.dart';
 import 'package:hotel_booking/presentation/screen/reservation/reservation_import.dart';
 import 'package:hotel_booking/presentation/screen/search/search_import.dart';
 import 'package:hotel_booking/presentation/screen/selectRoom/select_room_import.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../../core/constants/my_images.dart';
 import '../../core/constants/my_strings.dart';
 import '../screen/auth/login/login_import.dart';

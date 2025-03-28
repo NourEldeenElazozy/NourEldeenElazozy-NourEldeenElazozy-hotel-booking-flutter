@@ -125,6 +125,7 @@ class Routes {
       name: "/dateTimeSelect",
       page: () => const DateTimeSelect(),
       transition: Transition.leftToRight,
+      middlewares: [AuthMiddleware()], // ✅ إضافة الوسيط هنا
       transitionDuration: const Duration(milliseconds: 600),
     ),
     GetPage(
@@ -200,4 +201,29 @@ class Routes {
       transitionDuration: const Duration(milliseconds: 600),
     ),
   ];
+}
+
+
+class AuthMiddleware extends GetMiddleware {
+  var token = ''.obs; // تخزين التوكن باستخدام RxString
+
+  // تحميل التوكن من التخزين المحلي
+  Future<void> loadToken() async {
+    final prefs = await SharedPreferences.getInstance();
+    token.value = prefs.getString('token') ?? '';
+  }
+
+  @override
+  RouteSettings? redirect(String? route) {
+    if (token.value.isEmpty) {
+      return const RouteSettings(name: "/loginScreen"); // توجيه المستخدم إلى صفحة تسجيل الدخول
+    }
+    return null; // السماح بالانتقال
+  }
+
+  @override
+  GetPage? onPageCalled(GetPage? page) {
+    loadToken(); // تحميل التوكن عند استدعاء الصفحة
+    return super.onPageCalled(page);
+  }
 }
