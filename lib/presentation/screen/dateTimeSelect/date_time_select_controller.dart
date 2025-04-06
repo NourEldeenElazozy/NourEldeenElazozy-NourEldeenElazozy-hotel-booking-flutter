@@ -4,7 +4,7 @@ class DateTimeSelectController extends GetxController {
   ThemeController themeController = Get.put(ThemeController());
   var isLoading = false.obs; // حالة التحميل
   final GlobalKey<FormState> dateTimeKey = GlobalKey<FormState>();
-
+  var reservedDates = <DateTime>[].obs;
   Rx<TextEditingController> checkInDateController = TextEditingController().obs;
   Rx<TextEditingController> checkOutDateController = TextEditingController().obs;
 
@@ -14,7 +14,25 @@ class DateTimeSelectController extends GetxController {
 
   Rx<DateTime> fromDate = DateTime.now().obs;
   Rx<DateTime> toDate = DateTime.now().obs;
+  Future<void> fetchReservedDates(int restAreaId) async {
+    try {
+      final response = await Dio.Dio().get('http://10.0.2.2:8000/api/reservations/$restAreaId/reserved-dates');
 
+      if (response.statusCode == 200 && response.data != null) {
+        // تحويل التواريخ المستلمة من JSON إلى قائمة من DateTime
+        reservedDates.value = List<DateTime>.from(
+            response.data.map((date) => DateTime.parse(date)));
+        print("dates${reservedDates.value}");
+      } else {
+        // التعامل مع حالة عدم النجاح
+        Get.snackbar('Error', 'No reserved dates found');
+      }
+    } catch (e) {
+      // التعامل مع الأخطاء
+      print("Errors${e.toString()}");
+      Get.snackbar('Error', e.toString());
+    }
+  }
   void setFromDate(DateTime date) {
     fromDate.value = date;
     checkInDateController.value.text=  intl.DateFormat('dd MMM yyyy').format(fromDate.value);

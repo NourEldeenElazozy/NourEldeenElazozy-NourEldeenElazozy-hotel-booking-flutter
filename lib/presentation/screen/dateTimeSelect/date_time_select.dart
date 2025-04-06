@@ -22,24 +22,26 @@ class _DateTimeSelectState extends State<DateTimeSelect> {
   @override
   void initState() {
     controller = Get.put(DateTimeSelectController());
+
     super.initState();
   }
   Future<String?> _loadToken() async {
     final prefs = await SharedPreferences.getInstance();
     return prefs.getString('token');
   }
-  Future<void> _selectDate(BuildContext context, bool isFromDate) async {
+
+  Future<void> _selectDate(BuildContext context, bool isFromDate, int restAreaId) async {
+    // جلب الأيام المحجوزة من API
+    await controller.fetchReservedDates(restAreaId);
+
     final DateTime? picked = await showDatePicker(
       context: context,
       initialDate: isFromDate ? controller.fromDate.value : controller.toDate.value,
       firstDate: DateTime.now(),
       lastDate: DateTime.now().add(const Duration(days: 365)),
       selectableDayPredicate: (DateTime day) {
-        if (isFromDate) {
-          return true;
-        } else {
-          return controller.isToDateSelectable(day);
-        }
+        // تحقق مما إذا كان اليوم محجوزًا
+        return !controller.reservedDates.contains(day);
       },
     );
 
@@ -54,8 +56,8 @@ class _DateTimeSelectState extends State<DateTimeSelect> {
           controller.setToDate(picked);
         } else {
           Get.defaultDialog(
-            title: "Error",
-            middleText: "Check-out date must be after check-in date",
+            title: "خطاء",
+            middleText: "يجب أن يكون تاريخ المغادرة بعد تاريخ تسجيل الوصول",
             actions: [
               TextButton(
                 onPressed: () {
@@ -73,7 +75,7 @@ class _DateTimeSelectState extends State<DateTimeSelect> {
   @override
   Widget build(BuildContext context) {
 
-  
+    controller.fetchReservedDates(1);
     return FutureBuilder(
       future: _loadToken(),
       builder: (context, snapshot) {
@@ -209,7 +211,7 @@ class _DateTimeSelectState extends State<DateTimeSelect> {
                                     const SizedBox(height: 7),
                                     Obx(() => InkWell(
                                       onTap: () {
-                                        _selectDate(context, true);
+                                        _selectDate(context, true,1);
                                       },
                                       child: AbsorbPointer(
                                         child: SizedBox(
@@ -253,7 +255,7 @@ class _DateTimeSelectState extends State<DateTimeSelect> {
                                     const SizedBox(height: 7),
                                     InkWell(
                                       onTap: () {
-                                        _selectDate(context, false);
+                                        _selectDate(context, false,1);
                                       },
                                       child: AbsorbPointer(
                                         child: SizedBox(
