@@ -180,9 +180,46 @@ print(controller.detail.detailsImages.length);
                                     fontWeight: FontWeight.w400,
                                     fontSize: 12),
                               ),
+
                             ],
                           ),
                           const SizedBox(height: 10),
+                          Row(
+                            children: [
+                              SvgPicture.asset(
+                                MyImages.timePicker,
+                                colorFilter: ColorFilter.mode(
+                                  controller.themeController.isDarkMode.value
+                                      ? MyColors.white
+                                      : MyColors.black,
+                                  BlendMode.srcIn,
+                                ),
+                                width: 15,
+                              ),
+                              const SizedBox(width: 5),
+                              Text(
+                                "وقت الحضور: ${controller.detail.checkin}",
+                                style: TextStyle(
+                                  color: controller.themeController.isDarkMode.value
+                                      ? MyColors.searchTextFieldColor
+                                      : MyColors.profileListTileColor,
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 14,
+                                ),
+                              ),
+                              const SizedBox(width: 10), // فارغ أكبر بين النصين
+                              Text(
+                                "وقت الانصراف: ${controller.detail.checkout}",
+                                style: TextStyle(
+                                  color: controller.themeController.isDarkMode.value
+                                      ? MyColors.searchTextFieldColor
+                                      : MyColors.profileListTileColor,
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 14,
+                                ),
+                              ),
+                            ],
+                          ),
                           const Divider(),
                           const SizedBox(height: 10),
                           titleText(

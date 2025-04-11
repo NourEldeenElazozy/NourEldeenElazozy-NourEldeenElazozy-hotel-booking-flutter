@@ -13,6 +13,8 @@ class Detail {
   String? mainImage;
   double rating = 0.0;
   String? geoArea;
+  String? checkin;
+  String? checkout;
 
   // تفاصيل المساحة
   String? areaType; // نوع المنطقة
@@ -65,7 +67,8 @@ class Detail {
     mainImage = json['main_image'];
     rating = json['rating']?.toDouble() ?? 0.0;
     geoArea = json['geo_area'];
-
+    checkin = json['check_in_time'];
+    checkout = json['check_out_time'];
     areaType = json['area_type'];
     totalSpace = json['total_space']?.toDouble();
     internalSpace = json['internal_space']?.toDouble();
