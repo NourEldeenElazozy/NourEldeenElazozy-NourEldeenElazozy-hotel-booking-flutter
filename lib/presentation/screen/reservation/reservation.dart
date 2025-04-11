@@ -73,7 +73,7 @@ class _ReservationState extends State<Reservation> {
                 CustomTextFormField(
                   controller: controller.emailController,
                   obscureText: false,
-                  validator: Validations().emailValidation,
+                  validator: Validations().phoneValidation,
                   keyboardType: TextInputType.emailAddress,
                   hintText: MyString.email,
                   fillColor: MyColors.disabledTextFieldColor,

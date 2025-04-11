@@ -28,7 +28,7 @@ class MyString {
 
 //-----------------------------------Login_Screen------------------------------
   static const String loginTitle = "تسجيل الدخول إلى حسابك";
-  static const String emailHintText = "البريد الإلكتروني";
+  static const String emailHintText = "رقم الهاتف";
   static const String passwordHintText = "كلمة المرور";
   static const String signIn = "تسجيل الدخول";
   static const String forgotPassword = "نسيت كلمة المرور؟";

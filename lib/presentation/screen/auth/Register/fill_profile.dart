@@ -192,9 +192,9 @@ class _FillProfileScreenState extends State<FillProfileScreen> {
                     ),),
                     const SizedBox(height: 20),
                     CustomTextFormField(
-                      controller: controller.emailController,
+                      controller: controller.phoneController,
                       obscureText: false,
-                      validator: Validations().emailValidation,
+                      validator: Validations().phoneValidation,
                       keyboardType: TextInputType.emailAddress,
                       textInputAction: TextInputAction.next,
                       hintText: MyString.email,

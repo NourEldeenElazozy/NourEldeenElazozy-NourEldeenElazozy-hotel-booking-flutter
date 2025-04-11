@@ -46,15 +46,15 @@ class Validations {
     return null;
   }
 
-  String? emailValidation(value) {
-    if(value.isEmpty)
-    {
-      return "Email is required.";
-    }
-    else if(!emailRegex.hasMatch(value)) {
-      return "Enter a valid Email!.";
-    }
-    else {
+  String? phoneValidation(String? value) {
+    // التعبير النمطي للتحقق من رقم الهاتف
+    final RegExp phoneRegex = RegExp(r'^09\d{8}$');
+
+    if (value == null || value.isEmpty) {
+      return "رقم الهاتف مطلوب."; // النص بالعربية
+    } else if (!phoneRegex.hasMatch(value)) {
+      return "رقم الهاتف يجب أن يبدأ بـ 09 ويتبعه 8 أرقام."; // النص بالعربية
+    } else {
       return null;
     }
   }

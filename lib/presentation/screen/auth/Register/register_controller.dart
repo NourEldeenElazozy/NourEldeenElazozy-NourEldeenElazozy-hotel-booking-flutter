@@ -11,9 +11,9 @@ class RegisterController extends GetxController {
   Rx<FocusNode> passwordFocusNode = FocusNode().obs;
 
   TextEditingController nameController =TextEditingController();
-  TextEditingController emailController =TextEditingController();
+  TextEditingController phoneController =TextEditingController();
   TextEditingController passwordController =TextEditingController();
-
+  TextEditingController testController =TextEditingController();
   void submit() {
     final isValid = formKey.currentState!.validate();
     Get.focusScope!.unfocus();

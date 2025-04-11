@@ -33,7 +33,7 @@ class _EditProfileState extends State<EditProfile> {
     controller.nameController.text='Daniel Austin';
     controller.nickNameController.text='Daniel';
     controller.dateController.text='1995-05-08';
-    controller.emailController.text='daniel_austin@yourdomain.com';
+    controller.phoneController.text='daniel_austin@yourdomain.com';
     controller.mobileNumberController.text='9898989898';
     controller.selectedGender = "Male";
   }
@@ -98,13 +98,13 @@ class _EditProfileState extends State<EditProfile> {
                   ),),
                   const SizedBox(height: 20),
                   CustomTextFormField(
-                    controller: controller.emailController,
+                    controller: controller.phoneController,
                     obscureText: false,
                     hintText: MyString.email,
                     fillColor: MyColors.disabledTextFieldColor,
                     keyboardType: TextInputType.emailAddress,
                     textInputAction: TextInputAction.next,
-                    validator: Validations().emailValidation,
+                    validator: Validations().phoneValidation,
                     suffixIcon: Padding(
                       padding: const EdgeInsets.all(15),
                       child: SvgPicture.asset(MyImages.fillEmailBoxDark),
