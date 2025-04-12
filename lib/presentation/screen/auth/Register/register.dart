@@ -85,6 +85,80 @@ class RegisterScreenState extends State<RegisterScreen> with SingleTickerProvide
                   fillColor: controller.themeController.isDarkMode.value ? MyColors.darkTextFieldColor : MyColors.disabledTextFieldColor,
                 ),
                 const SizedBox(height: 20),
+              DropdownButtonFormField<String>(
+                value: controller.gender.value.isEmpty ? null : controller.gender.value, // استخدام قيمة افتراضية
+                decoration: InputDecoration(
+                  filled: true,
+                  fillColor: controller.themeController.isDarkMode.value ? MyColors.darkTextFieldColor : MyColors.disabledTextFieldColor,
+                  hintText: "اختر الجنس",
+                  prefixIcon: Padding(
+                    padding: const EdgeInsets.all(15),
+                    child: SvgPicture.asset(MyImages.user), // استخدم أيقونة مناسبة للجنس
+                  ),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(10),
+                    borderSide: BorderSide.none,
+                  ),
+                ),
+                items: [
+                  DropdownMenuItem(
+                    value: 'male',
+                    child: Text('ذكر'),
+                  ),
+                  DropdownMenuItem(
+                    value: 'female',
+                    child: Text('أنثى'),
+                  ),
+                ],
+                onChanged: (value) {
+                  controller.gender.value = value ?? ''; // تحديث القيمة في الـ controller
+                },
+                validator: (value) {
+                  if (value == null) {
+                    return 'يرجى اختيار الجنس';
+                  }
+                  return null;
+                },
+              ),
+                const SizedBox(height: 20),
+              TextFormField(
+                readOnly: true, // لجعل الحقل للعرض فقط
+                controller: TextEditingController(text: controller.birthDate.value), // تعيين القيمة
+                decoration: InputDecoration(
+                  hintText: "تاريخ الميلاد",
+                  filled: true,
+                  fillColor: controller.themeController.isDarkMode.value ? MyColors.darkTextFieldColor : MyColors.disabledTextFieldColor,
+                  prefixIcon: Padding(
+                    padding: const EdgeInsets.all(15),
+                    child: SvgPicture.asset(MyImages.datePicker), // استخدم أيقونة التقويم
+                  ),
+                  suffixIcon: IconButton(
+                    icon: Icon(Icons.calendar_today),
+                    onPressed: () async {
+                      DateTime? pickedDate = await showDatePicker(
+                        context: context,
+                        initialDate: DateTime.now(),
+                        firstDate: DateTime(1900),
+                        lastDate: DateTime.now(),
+                      );
+                      if (pickedDate != null) {
+                        controller.birthDate.value = "${pickedDate.toLocal()}".split(' ')[0]; // تعيين تاريخ الميلاد
+                      }
+                    },
+                  ),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(10),
+                    borderSide: BorderSide.none,
+                  ),
+                ),
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'يرجى إدخال تاريخ الميلاد';
+                  }
+                  return null;
+                },
+              ),
+                const SizedBox(height: 20),
                 CustomTextFormField(
                   controller: controller.phoneController,
                   obscureText: false,
