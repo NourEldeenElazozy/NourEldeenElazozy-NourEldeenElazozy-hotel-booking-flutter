@@ -8,6 +8,8 @@ class MyColors {
   static const Color scaffoldLightColor = Color(0xfffdfdfd);
   static const Color scaffoldDarkColor = Color(0xff181a20);
   static const Color primaryColor = Color(0xFFFFC107);
+  static const Color TealColor = Color(0xFF102E50);
+
   static const Color secondaryColor = Color(0xffFFD300);
   static const Color successColor = Color(0xff0A4739);
   static const Color infoColor = Color(0xff246BFD);

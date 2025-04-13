@@ -14,15 +14,52 @@ class AddRestAreaScreen extends StatefulWidget {
 class _AddRestAreaScreenState extends State<AddRestAreaScreen> {
   final _formKey = GlobalKey<FormState>();
   final _restArea = RestAreas(
-    hostId: 1,
-    name: '',
-    location: '',
-    areaType: [],
-    price: 0,
-    maxGuests: 0,
-    cityId: 0,
-    checkInTime: '08:00',
-    checkOutTime: '16:00',
+    name: "Rest Area Name",
+    location: "123 Main St, City, Country",
+    areaType: "Park",
+    price: 150.0,
+    totalSpace: 200.0,
+    internalSpace: 150.0,
+    maxGuests: 10,
+    numDoubleBeds: 2,
+    numSingleBeds: 2,
+    numHalls: 1,
+    numBedrooms: 3,
+    numFloors: 2,
+    numBathroomsIndoor: 2,
+    numBathroomsOutdoor: 1,
+    kitchenAvailable: true,
+    kitchenContents: ["Utensils", "Fridge", "Microwave"],
+    hasAcHeating: true,
+    tvScreens: true,
+    freeWifi: true,
+    entertainmentGames: ["Board Games", "Video Games"],
+    outdoorSpace: 50.0,
+    grassSpace: 30.0,
+    poolType: "Infinity",
+    poolSpace: 100.0,
+    poolDepth: 5.0,
+    poolHeating: true,
+    poolFilter: true,
+    garage: true,
+    outdoorSeating:true,
+    childrenGames: true,
+    outdoorKitchen: true,
+    slaughterPlace: false,
+    well: true,
+    powerGenerator: true,
+    outdoorBathroom: false,
+    otherSpecs: "Near the lake",
+    hostId: "host123",
+    mainImage: "url_to_main_image.jpg",
+    detailsImages: ["url_to_image1.jpg", "url_to_image2.jpg"],
+    rating: 4.5,
+    description: "A beautiful rest area with all amenities.",
+    geoArea: "Geo Area Description",
+    contactNumber: "123-456-7890",
+    cityId: "city123",
+    checkInTime: "14:00",
+    checkOutTime: "12:00",
   );
 
   XFile? _mainImage;
@@ -121,7 +158,7 @@ class _AddRestAreaScreenState extends State<AddRestAreaScreen> {
 
   Step _buildBasicInfoStep() {
     return Step(
-      title: Text('المعلومات الأساسية', style: TextStyle(color: MyColors.primaryColor)),
+      title: Text('المعلومات الأساسية', style: TextStyle(color: MyColors.TealColor)),
       content: Form(
         key: _formKey,
         child: Column(
@@ -155,7 +192,7 @@ class _AddRestAreaScreenState extends State<AddRestAreaScreen> {
               Icons.map,
               ['مطلة على البحر', 'قريبة من البحر', 'وسط البلاد', 'في منطقة سياحية'],
               _restArea.geoArea,
-                  (value) => _restArea.geoArea = value,
+                  (value) => _restArea.geoArea = value ?? '', // استخدم قيمة افتراضية
             ),
             _buildTimeRow(),
           ],
@@ -166,10 +203,10 @@ class _AddRestAreaScreenState extends State<AddRestAreaScreen> {
 
   Step _buildRoomsAndFacilitiesStep() {
     return Step(
-      title: Text('الغرف والمرافق', style: TextStyle(color: Colors.teal)),
+      title: Text('الغرف والمرافق', style: TextStyle(color: MyColors.TealColor)),
       content: Column(
         children: [
-          _buildSectionTitle('الغرف والأسرة'),
+          _buildSectionTitle('الغرف والأسرة',),
           Wrap(
             spacing: 10,
             runSpacing: 10,
@@ -199,7 +236,7 @@ class _AddRestAreaScreenState extends State<AddRestAreaScreen> {
 
   Step _buildOutdoorFeaturesStep() {
     return Step(
-      title: Text('المرافق الخارجية', style: TextStyle(color: Colors.teal)),
+      title: Text('المرافق الخارجية', style: TextStyle(color: MyColors.TealColor)),
       content: Column(
         children: [
           _buildSectionTitle('المسبح'),
@@ -209,10 +246,15 @@ class _AddRestAreaScreenState extends State<AddRestAreaScreen> {
             children: [
               _buildFeatureChip('مسبح', Icons.pool, _restArea.poolType != null, (value) {
                 if (value) _restArea.poolType = 'عادي';
-                else _restArea.poolType = null;
+                else _restArea.poolType = "";
               }),
               if (_restArea.poolType != null) ...[
-                _buildNumberInputChip('مساحة المسبح', Icons.square_foot, _restArea.poolSpace ?? 0, (value) => _restArea.poolSpace = value),
+    _buildNumberInputChip(
+    'مساحة المسبح',
+    Icons.square_foot,
+    (_restArea.poolSpace ?? 0).toInt(), // تحويل إلى int
+    (value) => _restArea.poolSpace = value.toDouble(), // تحويل القيمة المدخلة إلى double
+    ),
                 _buildFeatureChip('تدفئة', Icons.thermostat, _restArea.poolHeating ?? false, (value) => _restArea.poolHeating = value),
                 _buildFeatureChip('فلتر', Icons.filter_alt, _restArea.poolFilter ?? false, (value) => _restArea.poolFilter = value),
               ],
@@ -236,14 +278,16 @@ class _AddRestAreaScreenState extends State<AddRestAreaScreen> {
 
   Step _buildImagesStep() {
     return Step(
-      title: Text('الصور', style: TextStyle(color: Colors.teal)),
+      title: Text('الصور', style: TextStyle(color: MyColors.TealColor)),
       content: Column(
         children: [
-          _buildImageCard(
-            'الصورة الرئيسية',
-            _mainImage,
-                (image) => setState(() => _mainImage = image),
-            required: true,
+          Center(
+            child: _buildImageCard(
+              'الصورة الرئيسية',
+              _mainImage,
+                  (image) => setState(() => _mainImage = image),
+              required: true,
+            ),
           ),
           SizedBox(height: 20),
           _buildImageCard(
@@ -338,14 +382,18 @@ class _AddRestAreaScreenState extends State<AddRestAreaScreen> {
     );
   }
 
-  Widget _buildDropdown(String label, IconData icon, List<String> items, String? value, Function(String?) onChanged) {
-
+  Widget _buildDropdown(
+      String label,
+      IconData icon,
+      List<String> items,
+      String? value,
+      Function(String?) onChanged,
+      ) {
     return Padding(
-
       padding: EdgeInsets.only(bottom: 16),
       child: DropdownButtonFormField<String>(
         onSaved: (value) => onChanged(value),
-        value: value,
+        value: items.contains(value) ? value : null, // تعيين القيمة إلى null إذا لم تكن موجودة
         items: items.map((item) {
           return DropdownMenuItem(
             value: item,
@@ -368,7 +416,6 @@ class _AddRestAreaScreenState extends State<AddRestAreaScreen> {
       ),
     );
   }
-
   Widget _buildTimeRow() {
     return Column(
       children: [
@@ -397,7 +444,7 @@ class _AddRestAreaScreenState extends State<AddRestAreaScreen> {
         style: TextStyle(
           fontSize: 16,
           fontWeight: FontWeight.bold,
-          color: Colors.teal[700],
+          color: MyColors.TealColor,
         ),
       ),
     );
@@ -408,7 +455,7 @@ class _AddRestAreaScreenState extends State<AddRestAreaScreen> {
       label: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(icon, size: 18, color: Colors.teal),
+          Icon(icon, size: 18, color:MyColors.TealColor),
           SizedBox(width: 5),
           Text('$value'),
         ],
@@ -453,21 +500,27 @@ class _AddRestAreaScreenState extends State<AddRestAreaScreen> {
       label: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(icon, size: 18, color: value ? Colors.white : Colors.teal),
+          Icon(icon, size: 18, color: value ? Colors.white : MyColors.TealColor),
           SizedBox(width: 5),
-          Text(label),
+          Text(label,style: TextStyle(color: value ? Colors.white : Colors.black),),
         ],
       ),
       selected: value,
       onSelected: onChanged,
-      selectedColor: Colors.teal,
+      selectedColor: MyColors.TealColor,
       checkmarkColor: Colors.white,
       backgroundColor: Colors.teal[50],
       shape: StadiumBorder(side: BorderSide(color: Colors.teal)),
     );
   }
 
-  Widget _buildImageCard(String title, XFile? image, Function(XFile?) onImageSelected, {bool required = false, bool multiSelect = false}) {
+  Widget _buildImageCard(
+      String title,
+      XFile? image,
+      Function(XFile?) onImageSelected, {
+        bool required = false,
+        bool multiSelect = false,
+      }) {
     return Card(
       elevation: 3,
       shape: RoundedRectangleBorder(
@@ -476,14 +529,16 @@ class _AddRestAreaScreenState extends State<AddRestAreaScreen> {
       child: Padding(
         padding: EdgeInsets.all(16),
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            Text(
-              title + (required ? ' *' : ''),
-              style: TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.bold,
-                color: Colors.teal[700],
+            Center(
+              child: Text(
+                title + (required ? ' *' : ''),
+                style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                  color: MyColors.TealColor,
+                ),
               ),
             ),
             SizedBox(height: 10),
@@ -507,6 +562,7 @@ class _AddRestAreaScreenState extends State<AddRestAreaScreen> {
               ),
             SizedBox(height: 10),
             Row(
+              mainAxisAlignment: MainAxisAlignment.center, // محاذاة الزر إلى المنتصف
               children: [
                 ElevatedButton.icon(
                   onPressed: () async {
@@ -523,11 +579,15 @@ class _AddRestAreaScreenState extends State<AddRestAreaScreen> {
                       }
                     }
                   },
-                  icon: Icon(Icons.photo_library, size: 20),
+                  icon: Icon(Icons.photo_library, size: 25),
                   label: Text(multiSelect ? 'اختر صور متعددة' : 'اختر صورة'),
                   style: ElevatedButton.styleFrom(
-                    textStyle: TextStyle( fontSize: 16, color: Colors.white, fontFamily: 'Tajawal',),
-
+                    backgroundColor: MyColors.TealColor,
+                    textStyle: TextStyle(
+                      fontSize: 16,
+                      color: Colors.white,
+                      fontFamily: 'Tajawal',
+                    ),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(8),
                     ),
