@@ -2,6 +2,8 @@ part of 'register_import.dart';
 
 class RegisterController extends GetxController {
   final ThemeController themeController = Get.put(ThemeController());
+  RxString gender ="".obs ;
+  RxString birthDate="".obs ;
 
   final GlobalKey<FormState> formKey = GlobalKey<FormState>();
 
