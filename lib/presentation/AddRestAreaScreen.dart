@@ -132,10 +132,16 @@ class _AddRestAreaScreenState extends State<AddRestAreaScreen> {
                       ),
 
                     ElevatedButton(
-                      onPressed: details.onStepContinue,
-
+                      onPressed: () {
+                        if (_currentStep == 3) {
+                          // استدعاء الوظيفة أو تنفيذ الكود المطلوب هنا
+                          print(_restArea.name); // استبدل this بإسم دالتك
+                          print(_restArea.location); // استبدل this بإسم دالتك
+                        } else {
+                          details.onStepContinue!(); // تابع للخطوة التالية
+                        }
+                      },
                       style: ElevatedButton.styleFrom(
-
                         padding: EdgeInsets.symmetric(horizontal: 30, vertical: 12),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(8),
@@ -143,7 +149,7 @@ class _AddRestAreaScreenState extends State<AddRestAreaScreen> {
                       ),
                       child: Text(
                         _currentStep == 3 ? 'حفظ البيانات' : 'التالي',
-                        style: TextStyle(fontSize: 16, color: Colors.white, fontFamily: 'Tajawal',),
+                        style: TextStyle(fontSize: 16, color: Colors.white, fontFamily: 'Tajawal'),
                       ),
                     ),
                   ],
@@ -166,7 +172,10 @@ class _AddRestAreaScreenState extends State<AddRestAreaScreen> {
             _buildTextFormField(
               'اسم الاستراحة',
               Icons.home_work,
-                  (value) => _restArea.name = value!,
+                  (value) {
+                print(value);
+                _restArea.name = value!; // تحديث الكائن هنا
+              },
               validator: _requiredValidator,
             ),
             _buildTextFormField(
@@ -338,6 +347,8 @@ class _AddRestAreaScreenState extends State<AddRestAreaScreen> {
     return Padding(
       padding: EdgeInsets.only(bottom: 16),
       child: TextFormField(
+
+        onChanged: (value) => onSaved(value ?? ''),
         onSaved: (value) => onSaved(value ?? ''),
         decoration: InputDecoration(
           labelText: label,
@@ -482,6 +493,7 @@ class _AddRestAreaScreenState extends State<AddRestAreaScreen> {
                 ),
                 TextButton(
                   onPressed: () {
+
                     setState(() => onChanged(tempValue));
                     Navigator.pop(context);
                   },
