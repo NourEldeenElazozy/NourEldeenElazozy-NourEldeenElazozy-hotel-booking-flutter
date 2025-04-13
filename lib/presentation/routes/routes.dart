@@ -20,6 +20,13 @@ class Routes {
       transition: Transition.leftToRight,
       transitionDuration: const Duration(milliseconds: 600),
     ),
+
+    GetPage(
+      name: "/AddRestAreaScreen",
+      page: () => AddRestAreaScreen(),
+      transition: Transition.leftToRight,
+      transitionDuration: const Duration(milliseconds: 600),
+    ),
     GetPage(
       name: "/loginScreen",
       page: () => const LoginScreen(),
