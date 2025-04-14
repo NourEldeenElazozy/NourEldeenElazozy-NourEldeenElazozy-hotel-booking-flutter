@@ -17,7 +17,7 @@ class _AddRestAreaScreenState extends State<AddRestAreaScreen> {
     areaType:[''] ,
     name: "Rest Area Name",
     location: "123 Main St, City, Country",
-childrenGamesDetails: "",
+    gamesdetails: "",
     price: 150.0,
     totalSpace: 200.0,
     internalSpace: 150.0,
@@ -456,7 +456,7 @@ childrenGamesDetails: "",
               'ادخل نوع الالعاب',
               Icons.gamepad, // أي رمز مناسب هنا
                   (value) {
-                    _restArea.childrenGamesDetails = value; // تخزين تفاصيل الألعاب
+                    _restArea.gamesdetails = value; // تخزين تفاصيل الألعاب
               },
               validator: _requiredValidator,
             ),

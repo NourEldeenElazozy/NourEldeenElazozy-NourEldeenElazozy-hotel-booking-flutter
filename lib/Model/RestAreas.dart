@@ -32,7 +32,7 @@ class RestAreas {
    bool childrenGames;
     bool outdoorKitchen;
     bool slaughterPlace;
-   String childrenGamesDetails;
+   String gamesdetails;
     bool well;
     bool powerGenerator;
     bool outdoorBathroom;
@@ -81,7 +81,7 @@ class RestAreas {
     required this.childrenGames,
     required this.outdoorKitchen,
     required this.slaughterPlace,
-    required this.childrenGamesDetails,
+    required this.gamesdetails,
     required this.well,
     required this.powerGenerator,
     required this.outdoorBathroom,
