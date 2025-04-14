@@ -14,9 +14,10 @@ class AddRestAreaScreen extends StatefulWidget {
 class _AddRestAreaScreenState extends State<AddRestAreaScreen> {
   final _formKey = GlobalKey<FormState>();
   final _restArea = RestAreas(
+    areaType:[''] ,
     name: "Rest Area Name",
     location: "123 Main St, City, Country",
-    areaType: "Park",
+childrenGamesDetails: "",
     price: 150.0,
     totalSpace: 200.0,
     internalSpace: 150.0,
@@ -85,6 +86,8 @@ class _AddRestAreaScreenState extends State<AddRestAreaScreen> {
           child: Stepper(
             currentStep: _currentStep,
             onStepContinue: () {
+
+
               final isLastStep = _currentStep == 3;
               if (_formKey.currentState!.validate()) {
                 _formKey.currentState!.save();
@@ -95,11 +98,13 @@ class _AddRestAreaScreenState extends State<AddRestAreaScreen> {
                   setState(() => _currentStep += 1);
                 }
               }
+            /*
               if (_currentStep < 3) {
                 setState(() => _currentStep += 1);
               } else {
                 _submitForm();
               }
+             */
             },
             onStepCancel: () {
               if (_currentStep > 0) {
@@ -134,11 +139,20 @@ class _AddRestAreaScreenState extends State<AddRestAreaScreen> {
                     ElevatedButton(
                       onPressed: () {
                         if (_currentStep == 3) {
-                          // استدعاء الوظيفة أو تنفيذ الكود المطلوب هنا
-                          print(_restArea.name); // استبدل this بإسم دالتك
-                          print(_restArea.location); // استبدل this بإسم دالتك
+                          if (_formKey.currentState!.validate()) {
+                            // إذا كانت جميع الحقول صالحة
+                            _formKey.currentState!.save();
+                            print(_restArea.name);
+                            print(_restArea.location);
+                            // هنا يمكنك استدعاء دالة الإرسال
+                            _submitForm();
+                          }
                         } else {
-                          details.onStepContinue!(); // تابع للخطوة التالية
+                          // التحقق من صحة الحقول قبل الانتقال للخطوة التالية
+                          if (_formKey.currentState!.validate()) {
+                            _formKey.currentState!.save();
+                            details.onStepContinue!();
+                          }
                         }
                       },
                       style: ElevatedButton.styleFrom(
@@ -149,7 +163,11 @@ class _AddRestAreaScreenState extends State<AddRestAreaScreen> {
                       ),
                       child: Text(
                         _currentStep == 3 ? 'حفظ البيانات' : 'التالي',
-                        style: TextStyle(fontSize: 16, color: Colors.white, fontFamily: 'Tajawal'),
+                        style: TextStyle(
+                          fontSize: 16,
+                          color: Colors.white,
+                          fontFamily: 'Tajawal',
+                        ),
                       ),
                     ),
                   ],
@@ -179,6 +197,30 @@ class _AddRestAreaScreenState extends State<AddRestAreaScreen> {
               validator: _requiredValidator,
             ),
             _buildTextFormField(
+              'المساحة الداخلية',
+              Icons.area_chart, // أي رمز مناسب هنا
+                  (value) {
+                _restArea.internalSpace = double.tryParse(value!) ?? 0.0; // تحديث الكائن هنا
+              },
+              validator: _requiredValidator,
+            ),
+            _buildTextFormField(
+              'المساحة الإجمالية',
+              Icons.grid_view, // أي رمز مناسب هنا
+                  (value) {
+                _restArea.totalSpace = double.tryParse(value!) ?? 0.0; // تحديث الكائن هنا
+              },
+              validator: _requiredValidator,
+            ),
+            _buildTextFormField(
+              'عدد الطوابق',
+              Icons.apps, // أي رمز مناسب هنا
+                  (value) {
+                _restArea.numFloors = int.tryParse(value!) ?? 0; // تحديث الكائن هنا
+              },
+              validator: _requiredValidator,
+            ),
+            _buildTextFormField(
               'الموقع',
               Icons.location_on,
                   (value) => _restArea.location = value!,
@@ -203,13 +245,73 @@ class _AddRestAreaScreenState extends State<AddRestAreaScreen> {
               _restArea.geoArea,
                   (value) => _restArea.geoArea = value ?? '', // استخدم قيمة افتراضية
             ),
+            _buildAreaTypeCheckboxes(),
             _buildTimeRow(),
           ],
         ),
       ),
     );
   }
-
+  Widget _buildAreaTypeCheckboxes() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(' فئة الزوار', style: TextStyle(fontSize: 16)),
+        CheckboxListTile(
+          title: Text('للعائلات'),
+          value: _restArea.areaType.contains('للعائلات'),
+          onChanged: (bool? isChecked) {
+            setState(() {
+              if (isChecked == true) {
+                _restArea.areaType.add('للعائلات');
+              } else {
+                _restArea.areaType.remove('للعائلات');
+              }
+            });
+          },
+        ),
+        CheckboxListTile(
+          title: Text('للعائلات أو الشباب'),
+          value: _restArea.areaType.contains('للعائلات أو الشباب'),
+          onChanged: (bool? isChecked) {
+            setState(() {
+              if (isChecked == true) {
+                _restArea.areaType.add('للعائلات أو الشباب');
+              } else {
+                _restArea.areaType.remove('للعائلات أو الشباب');
+              }
+            });
+          },
+        ),
+        CheckboxListTile(
+          title: Text('للمناسبات'),
+          value: _restArea.areaType.contains('للمناسبات'),
+          onChanged: (bool? isChecked) {
+            setState(() {
+              if (isChecked == true) {
+                _restArea.areaType.add('للمناسبات');
+              } else {
+                _restArea.areaType.remove('للمناسبات');
+              }
+            });
+          },
+        ),
+        CheckboxListTile(
+          title: Text('لكل الاستخدامات'),
+          value: _restArea.areaType.contains('لكل الاستخدامات'),
+          onChanged: (bool? isChecked) {
+            setState(() {
+              if (isChecked == true) {
+                _restArea.areaType.add('لكل الاستخدامات');
+              } else {
+                _restArea.areaType.remove('لكل الاستخدامات');
+              }
+            });
+          },
+        ),
+      ],
+    );
+  }
   Step _buildRoomsAndFacilitiesStep() {
     return Step(
       title: Text('الغرف والمرافق', style: TextStyle(color: MyColors.TealColor)),
@@ -238,48 +340,128 @@ class _AddRestAreaScreenState extends State<AddRestAreaScreen> {
               _buildFeatureChip('واي فاي', Icons.wifi, _restArea.freeWifi ?? false, (value) => _restArea.freeWifi = value),
             ],
           ),
+          if (_restArea.kitchenAvailable ?? false) ...[
+            _buildTextFormField(
+              'ادخل محتويات المطبخ',
+              Icons.kitchen, // أي رمز مناسب هنا
+                  (value) {
+                _restArea.kitchenContents = value as List<String>; // تخزين تفاصيل الألعاب
+              },
+              validator: _requiredValidator,
+            ),
+
+          ],
         ],
       ),
     );
   }
-
+  bool _hasPool = false;
   Step _buildOutdoorFeaturesStep() {
     return Step(
       title: Text('المرافق الخارجية', style: TextStyle(color: MyColors.TealColor)),
       content: Column(
         children: [
           _buildSectionTitle('المسبح'),
+
           Wrap(
             spacing: 10,
             runSpacing: 10,
             children: [
-              _buildFeatureChip('مسبح', Icons.pool, _restArea.poolType != null, (value) {
-                if (value) _restArea.poolType = 'عادي';
-                else _restArea.poolType = "";
+              // خيار يوجد مسبح
+              _buildFeatureChip('يوجد مسبح', Icons.pool, _hasPool, (value) {
+                setState(() {
+                  _hasPool = value; // تحديث المتغير عند التحديد
+                  if (!value) {
+                    _restArea.poolType = ""; // إعادة تعيين نوع المسبح
+                    _restArea.poolSpace = 0; // إعادة تعيين مساحة المسبح
+                    _restArea.poolHeating = false; // إعادة تعيين حالة التدفئة
+                    _restArea.poolFilter = false; // إعادة تعيين حالة الفلتر
+                  } else {
+                    _restArea.poolType = 'عادي'; // تعيين نوع المسبح عند التحديد
+                  }
+                });
               }),
-              if (_restArea.poolType != null) ...[
-    _buildNumberInputChip(
-    'مساحة المسبح',
-    Icons.square_foot,
-    (_restArea.poolSpace ?? 0).toInt(), // تحويل إلى int
-    (value) => _restArea.poolSpace = value.toDouble(), // تحويل القيمة المدخلة إلى double
-    ),
-                _buildFeatureChip('تدفئة', Icons.thermostat, _restArea.poolHeating ?? false, (value) => _restArea.poolHeating = value),
-                _buildFeatureChip('فلتر', Icons.filter_alt, _restArea.poolFilter ?? false, (value) => _restArea.poolFilter = value),
+
+              // إذا كان هناك مسبح، عرض الخيارات الإضافية
+              if (_hasPool) ...[
+                _buildNumberInputChip(
+                  'مساحة المسبح',
+                  Icons.square_foot,
+                  (_restArea.poolSpace ?? 0).toInt(), // تحويل إلى int
+                      (value) => _restArea.poolSpace = value.toDouble(), // تحويل القيمة المدخلة إلى double
+                ),
+                _buildFeatureChip('تدفئة', Icons.thermostat, _restArea.poolHeating ?? false, (value) {
+                  _restArea.poolHeating = value; // تحديث حالة التدفئة
+                }),
+                _buildFeatureChip('فلتر', Icons.filter_alt, _restArea.poolFilter ?? false, (value) {
+                  _restArea.poolFilter = value; // تحديث حالة الفلتر
+                }),
               ],
             ],
           ),
+
           _buildSectionTitle('مرافق أخرى'),
           Wrap(
             spacing: 10,
             runSpacing: 10,
             children: [
-              _buildFeatureChip('جلوس خارجي', Icons.chair, _restArea.outdoorSeating ?? false, (value) => _restArea.outdoorSeating = value),
-              _buildFeatureChip('ألعاب أطفال', Icons.child_friendly, _restArea.childrenGames ?? false, (value) => _restArea.childrenGames = value),
-              _buildFeatureChip('مطبخ خارجي', Icons.outdoor_grill, _restArea.outdoorKitchen ?? false, (value) => _restArea.outdoorKitchen = value),
-              _buildFeatureChip('كراج', Icons.garage, _restArea.garage ?? false, (value) => _restArea.garage = value),
+              _buildFeatureChip(
+                'جلسات خارجية',
+                Icons.chair,
+                _restArea.outdoorSeating ?? false,
+                    (value) => _restArea.outdoorSeating = value,
+              ),
+              _buildFeatureChip(
+                'بئر',
+                Icons.water,
+                _restArea.well ?? false,
+                    (value) => _restArea.well = value,
+              ),
+              _buildFeatureChip(
+                'مولد كهربائي',
+                Icons.power,
+                _restArea.powerGenerator ?? false,
+                    (value) => _restArea.powerGenerator = value,
+              ),
+              _buildFeatureChip(
+                'مكان للذبح',
+                Icons.local_hospital,
+                _restArea.slaughterPlace ?? false,
+                    (value) => _restArea.slaughterPlace = value,
+              ),
+              _buildFeatureChip(
+                'ألعاب أطفال',
+                Icons.child_friendly,
+                _restArea.childrenGames ?? false,
+                    (value) => _restArea.childrenGames = value,
+              ),
+              _buildFeatureChip(
+                'مطبخ خارجي',
+                Icons.outdoor_grill,
+                _restArea.outdoorKitchen ?? false,
+                    (value) => _restArea.outdoorKitchen = value,
+              ),
+              _buildFeatureChip(
+                'كراج',
+                Icons.garage,
+                _restArea.garage ?? false,
+                    (value) => _restArea.garage = value,
+              ),
             ],
           ),
+
+// حقل إدخال الألعاب إذا كان هناك ألعاب أطفال
+          if (_restArea.childrenGames ?? false) ...[
+            _buildTextFormField(
+              'ادخل نوع الالعاب',
+              Icons.gamepad, // أي رمز مناسب هنا
+                  (value) {
+                    _restArea.childrenGamesDetails = value; // تخزين تفاصيل الألعاب
+              },
+              validator: _requiredValidator,
+            ),
+
+          ],
         ],
       ),
     );
@@ -514,11 +696,14 @@ class _AddRestAreaScreenState extends State<AddRestAreaScreen> {
         children: [
           Icon(icon, size: 18, color: value ? Colors.white : MyColors.TealColor),
           SizedBox(width: 5),
-          Text(label,style: TextStyle(color: value ? Colors.white : Colors.black),),
+          Text(label, style: TextStyle(color: value ? Colors.white : Colors.black)),
         ],
       ),
       selected: value,
-      onSelected: onChanged,
+      onSelected: (selected) {
+        onChanged(selected); // استدعاء onChanged
+        setState(() {}); // تحديث الحالة
+      },
       selectedColor: MyColors.TealColor,
       checkmarkColor: Colors.white,
       backgroundColor: Colors.teal[50],

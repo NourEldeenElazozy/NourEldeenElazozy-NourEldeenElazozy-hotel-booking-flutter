@@ -1,7 +1,8 @@
 class RestAreas {
    String name;
    String location;
-   String areaType;
+   List<String> areaType;
+
     double price;
     double totalSpace;
     double internalSpace;
@@ -31,6 +32,7 @@ class RestAreas {
    bool childrenGames;
     bool outdoorKitchen;
     bool slaughterPlace;
+   String childrenGamesDetails;
     bool well;
     bool powerGenerator;
     bool outdoorBathroom;
@@ -79,6 +81,7 @@ class RestAreas {
     required this.childrenGames,
     required this.outdoorKitchen,
     required this.slaughterPlace,
+    required this.childrenGamesDetails,
     required this.well,
     required this.powerGenerator,
     required this.outdoorBathroom,
