@@ -271,14 +271,14 @@ class _AddRestAreaScreenState extends State<AddRestAreaScreen> {
           },
         ),
         CheckboxListTile(
-          title: Text('للعائلات أو الشباب'),
-          value: _restArea.areaType.contains('للعائلات أو الشباب'),
+          title: Text('للشباب'),
+          value: _restArea.areaType.contains('للشباب'),
           onChanged: (bool? isChecked) {
             setState(() {
               if (isChecked == true) {
-                _restArea.areaType.add('للعائلات أو الشباب');
+                _restArea.areaType.add('للشباب');
               } else {
-                _restArea.areaType.remove('للعائلات أو الشباب');
+                _restArea.areaType.remove('للشباب');
               }
             });
           },
