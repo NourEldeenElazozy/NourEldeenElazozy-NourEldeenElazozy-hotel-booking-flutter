@@ -453,10 +453,10 @@ class _AddRestAreaScreenState extends State<AddRestAreaScreen> {
 // حقل إدخال الألعاب إذا كان هناك ألعاب أطفال
           if (_restArea.childrenGames ?? false) ...[
             _buildTextFormField(
-              'ادخل نوع الالعاب',
+              'ادخل نوع  الالعاب',
               Icons.gamepad, // أي رمز مناسب هنا
                   (value) {
-                    _restArea.gamesdetails = value; // تخزين تفاصيل الألعاب
+                     _restArea.gamesdetails = value; // تخزين تفاصيل الألعاب
               },
               validator: _requiredValidator,
             ),
