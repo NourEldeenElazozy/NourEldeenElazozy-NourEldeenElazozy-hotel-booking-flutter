@@ -2,10 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:hotel_booking/Model/RestAreas.dart';
 import 'package:hotel_booking/core/constants/my_colors.dart';
 import 'package:hotel_booking/presentation/common_widgets/custom_button.dart';
+import 'package:hotel_booking/presentation/screen/RestAreaController.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:http/http.dart' as http;
 import 'dart:io';
-
+import 'package:get/get.dart';
 class AddRestAreaScreen extends StatefulWidget {
   @override
   _AddRestAreaScreenState createState() => _AddRestAreaScreenState();
@@ -14,36 +15,37 @@ class AddRestAreaScreen extends StatefulWidget {
 class _AddRestAreaScreenState extends State<AddRestAreaScreen> {
   final _formKey = GlobalKey<FormState>();
   final _restArea = RestAreas(
-    areaType:[''] ,
+
+    areaType: [''],
     name: "Rest Area Name",
     location: "123 Main St, City, Country",
     gamesdetails: "",
-    price: 150.0,
-    totalSpace: 200.0,
-    internalSpace: 150.0,
-    maxGuests: 10,
-    numDoubleBeds: 2,
-    numSingleBeds: 2,
-    numHalls: 1,
-    numBedrooms: 3,
-    numFloors: 2,
-    numBathroomsIndoor: 2,
-    numBathroomsOutdoor: 1,
-    kitchenAvailable: true,
+    price: 0,
+    totalSpace: 0,
+    internalSpace: 0,
+    maxGuests: 0,
+    numDoubleBeds: 0,
+    numSingleBeds: 0,
+    numHalls: 0,
+    numBedrooms: 0,
+    numFloors: 0,
+    numBathroomsIndoor: 0,
+    numBathroomsOutdoor: 0,
+    kitchenAvailable: false,
     kitchenContents: ["Utensils", "Fridge", "Microwave"],
     hasAcHeating: true,
     tvScreens: true,
     freeWifi: true,
     entertainmentGames: ["Board Games", "Video Games"],
-    outdoorSpace: 50.0,
-    grassSpace: 30.0,
+    outdoorSpace: false,
+    grassSpace: false,
     poolType: "Infinity",
-    poolSpace: 100.0,
-    poolDepth: 5.0,
+    poolSpace: 0,
+    poolDepth: 0,
     poolHeating: true,
     poolFilter: true,
     garage: true,
-    outdoorSeating:true,
+    outdoorSeating: true,
     childrenGames: true,
     outdoorKitchen: true,
     slaughterPlace: false,
@@ -51,29 +53,47 @@ class _AddRestAreaScreenState extends State<AddRestAreaScreen> {
     powerGenerator: true,
     outdoorBathroom: false,
     otherSpecs: "Near the lake",
-    hostId: "host123",
-    mainImage: "url_to_main_image.jpg",
-    detailsImages: ["url_to_image1.jpg", "url_to_image2.jpg"],
-    rating: 4.5,
+    hostId: 1,
+    mainImage: "",
+    detailsImages: [],
+    rating: 0,
     description: "A beautiful rest area with all amenities.",
     geoArea: "Geo Area Description",
-    contactNumber: "123-456-7890",
-    cityId: "city123",
+
+    cityId: 9,
     checkInTime: "14:00",
     checkOutTime: "12:00",
+    jumpAvailable: false,
+    boardPitAvailable: false,
+    fishingAvailable: false,
+    depositValue: 0,
+    googleMapsLocation: "",
+    holidayPrice: 0,
+    idProofType: "لا يشترط",
+    eidDaysPrice: 0,
   );
 
   XFile? _mainImage;
   List<XFile> _detailsImages = [];
   int _currentStep = 0;
-
+  late RestAreaController controller;
+@override
+void initState() {
+super.initState();
+controller = Get.put(RestAreaController());
+}
   @override
   Widget build(BuildContext context) {
     return Directionality(
       textDirection: TextDirection.rtl,
       child: Scaffold(
         appBar: AppBar(
-          title: Text('إضافة استراحة جديدة', style: TextStyle( fontSize: 16, color: Colors.white, fontFamily: 'Tajawal',)),
+          title: Text('إضافة استراحة جديدة',
+              style: TextStyle(
+                fontSize: 16,
+                color: Colors.white,
+                fontFamily: 'Tajawal',
+              )),
           centerTitle: true,
           backgroundColor: MyColors.primaryColor,
           elevation: 0,
@@ -81,13 +101,13 @@ class _AddRestAreaScreenState extends State<AddRestAreaScreen> {
         ),
         body: Theme(
           data: Theme.of(context).copyWith(
-            colorScheme: ColorScheme.light(primary:  MyColors.primaryColor,),
+            colorScheme: ColorScheme.light(
+              primary: MyColors.primaryColor,
+            ),
           ),
           child: Stepper(
             currentStep: _currentStep,
             onStepContinue: () {
-
-
               final isLastStep = _currentStep == 3;
               if (_formKey.currentState!.validate()) {
                 _formKey.currentState!.save();
@@ -98,7 +118,7 @@ class _AddRestAreaScreenState extends State<AddRestAreaScreen> {
                   setState(() => _currentStep += 1);
                 }
               }
-            /*
+              /*
               if (_currentStep < 3) {
                 setState(() => _currentStep += 1);
               } else {
@@ -127,19 +147,26 @@ class _AddRestAreaScreenState extends State<AddRestAreaScreen> {
                       ElevatedButton(
                         onPressed: details.onStepCancel,
                         style: ElevatedButton.styleFrom(
-
-                          padding: EdgeInsets.symmetric(horizontal: 30, vertical: 12),
+                          padding: EdgeInsets.symmetric(
+                              horizontal: 30, vertical: 12),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(8),
                           ),
                         ),
-                        child: Text('السابق', style: TextStyle( fontSize: 16, color: Colors.white, fontFamily: 'Tajawal',)),
+                        child: Text('السابق',
+                            style: TextStyle(
+                              fontSize: 16,
+                              color: Colors.white,
+                              fontFamily: 'Tajawal',
+                            )),
                       ),
-
                     ElevatedButton(
                       onPressed: () {
                         if (_currentStep == 3) {
+                          print(_restArea.kitchenAvailable);
+
                           if (_formKey.currentState!.validate()) {
+                            controller?.saveRestArea(_restArea,_mainImage,_detailsImages);
                             // إذا كانت جميع الحقول صالحة
                             _formKey.currentState!.save();
                             print(_restArea.name);
@@ -156,7 +183,8 @@ class _AddRestAreaScreenState extends State<AddRestAreaScreen> {
                         }
                       },
                       style: ElevatedButton.styleFrom(
-                        padding: EdgeInsets.symmetric(horizontal: 30, vertical: 12),
+                        padding:
+                            EdgeInsets.symmetric(horizontal: 30, vertical: 12),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(8),
                         ),
@@ -182,7 +210,8 @@ class _AddRestAreaScreenState extends State<AddRestAreaScreen> {
 
   Step _buildBasicInfoStep() {
     return Step(
-      title: Text('المعلومات الأساسية', style: TextStyle(color: MyColors.TealColor)),
+      title: Text('المعلومات الأساسية',
+          style: TextStyle(color: MyColors.TealColor)),
       content: Form(
         key: _formKey,
         child: Column(
@@ -190,7 +219,7 @@ class _AddRestAreaScreenState extends State<AddRestAreaScreen> {
             _buildTextFormField(
               'اسم الاستراحة',
               Icons.home_work,
-                  (value) {
+              (value) {
                 print(value);
                 _restArea.name = value!; // تحديث الكائن هنا
               },
@@ -199,51 +228,97 @@ class _AddRestAreaScreenState extends State<AddRestAreaScreen> {
             _buildTextFormField(
               'المساحة الداخلية',
               Icons.area_chart, // أي رمز مناسب هنا
-                  (value) {
-                _restArea.internalSpace = double.tryParse(value!) ?? 0.0; // تحديث الكائن هنا
+              (value) {
+                _restArea.internalSpace =
+                    int.tryParse(value!) ?? 0; // تحديث الكائن هنا
               },
               validator: _requiredValidator,
             ),
             _buildTextFormField(
               'المساحة الإجمالية',
               Icons.grid_view, // أي رمز مناسب هنا
-                  (value) {
-                _restArea.totalSpace = double.tryParse(value!) ?? 0.0; // تحديث الكائن هنا
+              (value) {
+                _restArea.totalSpace =
+                    int.tryParse(value!) ?? 0; // تحديث الكائن هنا
               },
               validator: _requiredValidator,
             ),
             _buildTextFormField(
               'عدد الطوابق',
               Icons.apps, // أي رمز مناسب هنا
-                  (value) {
-                _restArea.numFloors = int.tryParse(value!) ?? 0; // تحديث الكائن هنا
+              (value) {
+                _restArea.numFloors =
+                    int.tryParse(value!) ?? 0; // تحديث الكائن هنا
               },
               validator: _requiredValidator,
             ),
             _buildTextFormField(
               'الموقع',
               Icons.location_on,
-                  (value) => _restArea.location = value!,
+              (value) => _restArea.location = value!,
               validator: _requiredValidator,
             ),
             _buildNumberField(
               'السعر',
               Icons.attach_money,
-                  (value) => _restArea.price = value,
+              (value) => _restArea.price = value,
               validator: _requiredValidator,
             ),
             _buildNumberField(
               'العدد الأقصى للضيوف',
               Icons.people,
-                  (value) => _restArea.maxGuests = value.toInt(),
+              (value) => _restArea.maxGuests = value.toInt(),
               validator: _requiredValidator,
+            ),
+            _buildNumberField(
+              'قيمة العربون',
+              Icons.monetization_on_outlined,
+              (value) => _restArea.depositValue = value,
+              validator: _requiredValidator,
+            ),
+            _buildTextFormField(
+              'الموقع على خرائط جوجل (رابط)',
+              Icons.map,
+              (value) => _restArea.googleMapsLocation = value ?? "",
+              validator: _requiredValidator,
+            ),
+            _buildNumberField(
+              'سعر العطل الرسمية',
+              Icons.event,
+              (value) => _restArea.holidayPrice = value,
+              validator: _requiredValidator,
+            ),
+            _buildNumberField(
+              'سعر أيام العيد',
+              Icons.celebration,
+              (value) => _restArea.eidDaysPrice = value,
+              validator: _requiredValidator,
+            ),
+            _buildDropdown(
+              'نوع اثبات الهوية المطلوب',
+              Icons.credit_card,
+              [
+                'جواز سفر ساري المفعول',
+                'كتيب عائلة',
+                'وثيقة زواج',
+                'لا يشترط'
+              ],
+              _restArea.idProofType,
+                  (value) => _restArea.idProofType = value ?? 'لا يشترط', // Default value
+
             ),
             _buildDropdown(
               'المنطقة الجغرافية',
               Icons.map,
-              ['مطلة على البحر', 'قريبة من البحر', 'وسط البلاد', 'في منطقة سياحية'],
+              [
+                'مطلة على البحر',
+                'قريبة من البحر',
+                'وسط البلاد',
+                'في منطقة سياحية'
+              ],
               _restArea.geoArea,
-                  (value) => _restArea.geoArea = value ?? '', // استخدم قيمة افتراضية
+              (value) =>
+                  _restArea.geoArea = value ?? '', // استخدم قيمة افتراضية
             ),
             _buildAreaTypeCheckboxes(),
             _buildTimeRow(),
@@ -252,6 +327,7 @@ class _AddRestAreaScreenState extends State<AddRestAreaScreen> {
       ),
     );
   }
+
   Widget _buildAreaTypeCheckboxes() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -312,21 +388,45 @@ class _AddRestAreaScreenState extends State<AddRestAreaScreen> {
       ],
     );
   }
+
   Step _buildRoomsAndFacilitiesStep() {
     return Step(
-      title: Text('الغرف والمرافق', style: TextStyle(color: MyColors.TealColor)),
+      title:
+          Text('الغرف والمرافق', style: TextStyle(color: MyColors.TealColor)),
       content: Column(
         children: [
-          _buildSectionTitle('الغرف والأسرة',),
+          _buildSectionTitle(
+            'الغرف والأسرة',
+          ),
           Wrap(
             spacing: 10,
             runSpacing: 10,
             children: [
-              _buildNumberInputChip('غرف نوم', Icons.bed, _restArea.numBedrooms ?? 0, (value) => _restArea.numBedrooms = value),
-              _buildNumberInputChip('أسرة مزدوجة', Icons.bed, _restArea.numDoubleBeds ?? 0, (value) => _restArea.numDoubleBeds = value),
-              _buildNumberInputChip('أسرة مفردة', Icons.single_bed, _restArea.numSingleBeds ?? 0, (value) => _restArea.numSingleBeds = value),
-              _buildNumberInputChip('دورات مياه داخلية', Icons.bathtub, _restArea.numBathroomsIndoor ?? 0, (value) => _restArea.numBathroomsIndoor = value),
-              _buildNumberInputChip('دورات مياه خارجية', Icons.water, _restArea.numBathroomsOutdoor ?? 0, (value) => _restArea.numBathroomsOutdoor = value),
+              _buildNumberInputChip(
+                  'غرف نوم',
+                  Icons.bed,
+                  _restArea.numBedrooms ?? 0,
+                  (value) => _restArea.numBedrooms = value),
+              _buildNumberInputChip(
+                  'أسرة مزدوجة',
+                  Icons.bed,
+                  _restArea.numDoubleBeds ?? 0,
+                  (value) => _restArea.numDoubleBeds = value),
+              _buildNumberInputChip(
+                  'أسرة مفردة',
+                  Icons.single_bed,
+                  _restArea.numSingleBeds ?? 0,
+                  (value) => _restArea.numSingleBeds = value),
+              _buildNumberInputChip(
+                  'دورات مياه داخلية',
+                  Icons.bathtub,
+                  _restArea.numBathroomsIndoor ?? 0,
+                  (value) => _restArea.numBathroomsIndoor = value),
+              _buildNumberInputChip(
+                  'دورات مياه خارجية',
+                  Icons.water,
+                  _restArea.numBathroomsOutdoor ?? 0,
+                  (value) => _restArea.numBathroomsOutdoor = value),
             ],
           ),
           _buildSectionTitle('المرافق الداخلية'),
@@ -334,31 +434,53 @@ class _AddRestAreaScreenState extends State<AddRestAreaScreen> {
             spacing: 10,
             runSpacing: 10,
             children: [
-              _buildFeatureChip('مطبخ', Icons.kitchen, _restArea.kitchenAvailable ?? false, (value) => _restArea.kitchenAvailable = value),
-              _buildFeatureChip('تكييف/تدفئة', Icons.ac_unit, _restArea.hasAcHeating ?? false, (value) => _restArea.hasAcHeating = value),
-              _buildFeatureChip('تلفزيون', Icons.tv, _restArea.tvScreens ?? false, (value) => _restArea.tvScreens = value),
-              _buildFeatureChip('واي فاي', Icons.wifi, _restArea.freeWifi ?? false, (value) => _restArea.freeWifi = value),
+            _buildFeatureChip(
+            'مطبخ',
+            Icons.kitchen,
+            (_restArea.kitchenAvailable == 'true'), // تحويل النص إلى bool
+                (value) {
+              // تعيين القيمة كـ bool
+              _restArea.kitchenAvailable = value ? true : false; // تعيينها كنص
+            },
+          ),
+              _buildFeatureChip(
+                  'تكييف/تدفئة',
+                  Icons.ac_unit,
+                  _restArea.hasAcHeating ?? false,
+                  (value) => _restArea.hasAcHeating = value),
+              _buildFeatureChip(
+                  'تلفزيون',
+                  Icons.tv,
+                  _restArea.tvScreens ?? false,
+                  (value) => _restArea.tvScreens = value),
+              _buildFeatureChip(
+                  'واي فاي',
+                  Icons.wifi,
+                  _restArea.freeWifi ?? false,
+                  (value) => _restArea.freeWifi = value),
             ],
           ),
           if (_restArea.kitchenAvailable ?? false) ...[
             _buildTextFormField(
               'ادخل محتويات المطبخ',
               Icons.kitchen, // أي رمز مناسب هنا
-                  (value) {
-                _restArea.kitchenContents = value as List<String>; // تخزين تفاصيل الألعاب
+              (value) {
+                _restArea.kitchenContents =
+                    value as List<String>; // تخزين تفاصيل الألعاب
               },
               validator: _requiredValidator,
             ),
-
           ],
         ],
       ),
     );
   }
+
   bool _hasPool = false;
   Step _buildOutdoorFeaturesStep() {
     return Step(
-      title: Text('المرافق الخارجية', style: TextStyle(color: MyColors.TealColor)),
+      title:
+          Text('المرافق الخارجية', style: TextStyle(color: MyColors.TealColor)),
       content: Column(
         children: [
           _buildSectionTitle('المسبح'),
@@ -388,12 +510,17 @@ class _AddRestAreaScreenState extends State<AddRestAreaScreen> {
                   'مساحة المسبح',
                   Icons.square_foot,
                   (_restArea.poolSpace ?? 0).toInt(), // تحويل إلى int
-                      (value) => _restArea.poolSpace = value.toDouble(), // تحويل القيمة المدخلة إلى double
+                  (value) => _restArea.poolSpace =
+                      value.toInt(), // تحويل القيمة المدخلة إلى double
                 ),
-                _buildFeatureChip('تدفئة', Icons.thermostat, _restArea.poolHeating ?? false, (value) {
+                _buildFeatureChip(
+                    'تدفئة', Icons.thermostat, _restArea.poolHeating ?? false,
+                    (value) {
                   _restArea.poolHeating = value; // تحديث حالة التدفئة
                 }),
-                _buildFeatureChip('فلتر', Icons.filter_alt, _restArea.poolFilter ?? false, (value) {
+                _buildFeatureChip(
+                    'فلتر', Icons.filter_alt, _restArea.poolFilter ?? false,
+                    (value) {
                   _restArea.poolFilter = value; // تحديث حالة الفلتر
                 }),
               ],
@@ -409,43 +536,74 @@ class _AddRestAreaScreenState extends State<AddRestAreaScreen> {
                 'جلسات خارجية',
                 Icons.chair,
                 _restArea.outdoorSeating ?? false,
-                    (value) => _restArea.outdoorSeating = value,
+                (value) => _restArea.outdoorSeating = value,
               ),
+              _buildFeatureChip(
+                'مساحة خارجية',
+                Icons.nature    , // أيقونة شرفة/مساحة خارجية
+                _restArea.outdoorSpace ?? false,
+                    (value) => _restArea.outdoorSpace = value,
+              ),
+              _buildFeatureChip(
+                'مساحة عشب',
+                Icons.yard  ,
+                _restArea.grassSpace ?? false,
+                    (value) => _restArea.grassSpace = value,
+              ),
+
               _buildFeatureChip(
                 'بئر',
                 Icons.water,
                 _restArea.well ?? false,
-                    (value) => _restArea.well = value,
+                (value) => _restArea.well = value,
               ),
               _buildFeatureChip(
                 'مولد كهربائي',
                 Icons.power,
                 _restArea.powerGenerator ?? false,
-                    (value) => _restArea.powerGenerator = value,
+                (value) => _restArea.powerGenerator = value,
               ),
               _buildFeatureChip(
                 'مكان للذبح',
                 Icons.local_hospital,
                 _restArea.slaughterPlace ?? false,
-                    (value) => _restArea.slaughterPlace = value,
+                (value) => _restArea.slaughterPlace = value,
               ),
               _buildFeatureChip(
                 'ألعاب أطفال',
                 Icons.child_friendly,
                 _restArea.childrenGames ?? false,
-                    (value) => _restArea.childrenGames = value,
+                (value) => _restArea.childrenGames = value,
+              ),
+              _buildFeatureChip(
+                'لوح للقفز',
+                Icons.sports_kabaddi,
+                _restArea.jumpAvailable ?? false,
+                    (value) => _restArea.jumpAvailable = value,
               ),
               _buildFeatureChip(
                 'مطبخ خارجي',
                 Icons.outdoor_grill,
                 _restArea.outdoorKitchen ?? false,
-                    (value) => _restArea.outdoorKitchen = value,
+                (value) => _restArea.outdoorKitchen = value,
               ),
               _buildFeatureChip(
                 'كراج',
                 Icons.garage,
                 _restArea.garage ?? false,
-                    (value) => _restArea.garage = value,
+                (value) => _restArea.garage = value,
+              ),
+              _buildFeatureChip(
+                'حفرة بورديم',
+                Icons.panorama_photosphere_outlined,
+                _restArea.boardPitAvailable ?? false,
+                    (value) => _restArea.boardPitAvailable = value,
+              ),
+              _buildFeatureChip(
+                'فسكية',
+                Icons.anchor ,
+                _restArea.fishingAvailable ?? false,
+                    (value) => _restArea.fishingAvailable = value,
               ),
             ],
           ),
@@ -455,12 +613,11 @@ class _AddRestAreaScreenState extends State<AddRestAreaScreen> {
             _buildTextFormField(
               'ادخل نوع  الالعاب',
               Icons.gamepad, // أي رمز مناسب هنا
-                  (value) {
-                     _restArea.gamesdetails = value; // تخزين تفاصيل الألعاب
+              (value) {
+                _restArea.gamesdetails = value; // تخزين تفاصيل الألعاب
               },
               validator: _requiredValidator,
             ),
-
           ],
         ],
       ),
@@ -476,7 +633,7 @@ class _AddRestAreaScreenState extends State<AddRestAreaScreen> {
             child: _buildImageCard(
               'الصورة الرئيسية',
               _mainImage,
-                  (image) => setState(() => _mainImage = image),
+              (image) => setState(() => _mainImage = image),
               required: true,
             ),
           ),
@@ -484,7 +641,7 @@ class _AddRestAreaScreenState extends State<AddRestAreaScreen> {
           _buildImageCard(
             'صور التفاصيل',
             null,
-                (image) => setState(() => _detailsImages.add(image!)),
+            (image) => setState(() => _detailsImages.add(image!)),
             multiSelect: true,
           ),
           if (_detailsImages.isNotEmpty) ...[
@@ -511,7 +668,8 @@ class _AddRestAreaScreenState extends State<AddRestAreaScreen> {
                       right: 0,
                       child: IconButton(
                         icon: Icon(Icons.close, size: 18, color: Colors.red),
-                        onPressed: () => setState(() => _detailsImages.remove(image)),
+                        onPressed: () =>
+                            setState(() => _detailsImages.remove(image)),
                       ),
                     ),
                   ],
@@ -524,12 +682,12 @@ class _AddRestAreaScreenState extends State<AddRestAreaScreen> {
     );
   }
 
-  Widget _buildTextFormField(String label, IconData icon, Function(String) onSaved, {String? Function(String?)? validator}) {
-
+  Widget _buildTextFormField(
+      String label, IconData icon, Function(String) onSaved,
+      {String? Function(String?)? validator}) {
     return Padding(
       padding: EdgeInsets.only(bottom: 16),
       child: TextFormField(
-
         onChanged: (value) => onSaved(value ?? ''),
         onSaved: (value) => onSaved(value ?? ''),
         decoration: InputDecoration(
@@ -545,13 +703,13 @@ class _AddRestAreaScreenState extends State<AddRestAreaScreen> {
           ),
         ),
         validator: validator,
-
       ),
     );
-
   }
 
-  Widget _buildNumberField(String label, IconData icon, Function(double) onChanged, {String? Function(String?)? validator}) {
+  Widget _buildNumberField(
+      String label, IconData icon, Function(double) onChanged,
+      {String? Function(String?)? validator}) {
     return Padding(
       padding: EdgeInsets.only(bottom: 16),
       child: TextFormField(
@@ -570,23 +728,24 @@ class _AddRestAreaScreenState extends State<AddRestAreaScreen> {
           ),
         ),
         validator: validator,
-
       ),
     );
   }
 
   Widget _buildDropdown(
-      String label,
-      IconData icon,
-      List<String> items,
-      String? value,
-      Function(String?) onChanged,
-      ) {
+    String label,
+    IconData icon,
+    List<String> items,
+    String? value,
+    Function(String?) onChanged,
+  ) {
     return Padding(
       padding: EdgeInsets.only(bottom: 16),
       child: DropdownButtonFormField<String>(
         onSaved: (value) => onChanged(value),
-        value: items.contains(value) ? value : null, // تعيين القيمة إلى null إذا لم تكن موجودة
+        value: items.contains(value)
+            ? value
+            : null, // تعيين القيمة إلى null إذا لم تكن موجودة
         items: items.map((item) {
           return DropdownMenuItem(
             value: item,
@@ -609,6 +768,7 @@ class _AddRestAreaScreenState extends State<AddRestAreaScreen> {
       ),
     );
   }
+
   Widget _buildTimeRow() {
     return Column(
       children: [
@@ -628,7 +788,6 @@ class _AddRestAreaScreenState extends State<AddRestAreaScreen> {
     );
   }
 
-
   Widget _buildSectionTitle(String title) {
     return Padding(
       padding: EdgeInsets.symmetric(vertical: 12),
@@ -643,12 +802,13 @@ class _AddRestAreaScreenState extends State<AddRestAreaScreen> {
     );
   }
 
-  Widget _buildNumberInputChip(String label, IconData icon, int value, Function(int) onChanged) {
+  Widget _buildNumberInputChip(
+      String label, IconData icon, int value, Function(int) onChanged) {
     return InputChip(
       label: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(icon, size: 18, color:MyColors.TealColor),
+          Icon(icon, size: 18, color: MyColors.TealColor),
           SizedBox(width: 5),
           Text('$value'),
         ],
@@ -675,7 +835,6 @@ class _AddRestAreaScreenState extends State<AddRestAreaScreen> {
                 ),
                 TextButton(
                   onPressed: () {
-
                     setState(() => onChanged(tempValue));
                     Navigator.pop(context);
                   },
@@ -689,14 +848,17 @@ class _AddRestAreaScreenState extends State<AddRestAreaScreen> {
     );
   }
 
-  Widget _buildFeatureChip(String label, IconData icon, bool value, Function(bool) onChanged) {
+  Widget _buildFeatureChip(
+      String label, IconData icon, bool value, Function(bool) onChanged) {
     return FilterChip(
       label: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(icon, size: 18, color: value ? Colors.white : MyColors.TealColor),
+          Icon(icon,
+              size: 18, color: value ? Colors.white : MyColors.TealColor),
           SizedBox(width: 5),
-          Text(label, style: TextStyle(color: value ? Colors.white : Colors.black)),
+          Text(label,
+              style: TextStyle(color: value ? Colors.white : Colors.black)),
         ],
       ),
       selected: value,
@@ -712,12 +874,12 @@ class _AddRestAreaScreenState extends State<AddRestAreaScreen> {
   }
 
   Widget _buildImageCard(
-      String title,
-      XFile? image,
-      Function(XFile?) onImageSelected, {
-        bool required = false,
-        bool multiSelect = false,
-      }) {
+    String title,
+    XFile? image,
+    Function(XFile?) onImageSelected, {
+    bool required = false,
+    bool multiSelect = false,
+  }) {
     return Card(
       elevation: 3,
       shape: RoundedRectangleBorder(
@@ -745,21 +907,23 @@ class _AddRestAreaScreenState extends State<AddRestAreaScreen> {
                 child: (image != null)
                     ? _buildImagePreview(image, onImageSelected)
                     : ListView.builder(
-                  scrollDirection: Axis.horizontal,
-                  itemCount: _detailsImages.length,
-                  itemBuilder: (context, index) {
-                    return Padding(
-                      padding: EdgeInsets.only(right: 8),
-                      child: _buildImagePreview(_detailsImages[index], (img) {
-                        setState(() => _detailsImages.removeAt(index));
-                      }),
-                    );
-                  },
-                ),
+                        scrollDirection: Axis.horizontal,
+                        itemCount: _detailsImages.length,
+                        itemBuilder: (context, index) {
+                          return Padding(
+                            padding: EdgeInsets.only(right: 8),
+                            child: _buildImagePreview(_detailsImages[index],
+                                (img) {
+                              setState(() => _detailsImages.removeAt(index));
+                            }),
+                          );
+                        },
+                      ),
               ),
             SizedBox(height: 10),
             Row(
-              mainAxisAlignment: MainAxisAlignment.center, // محاذاة الزر إلى المنتصف
+              mainAxisAlignment:
+                  MainAxisAlignment.center, // محاذاة الزر إلى المنتصف
               children: [
                 ElevatedButton.icon(
                   onPressed: () async {
@@ -770,7 +934,8 @@ class _AddRestAreaScreenState extends State<AddRestAreaScreen> {
                         setState(() => _detailsImages.addAll(images));
                       }
                     } else {
-                      final img = await picker.pickImage(source: ImageSource.gallery);
+                      final img =
+                          await picker.pickImage(source: ImageSource.gallery);
                       if (img != null) {
                         onImageSelected(img);
                       }
@@ -831,9 +996,11 @@ class _AddRestAreaScreenState extends State<AddRestAreaScreen> {
   }
 
   Future<void> _selectTime(bool isCheckIn) async {
-    final currentTime = isCheckIn ? _restArea.checkInTime : _restArea.checkOutTime;
+    final currentTime =
+        isCheckIn ? _restArea.checkInTime : _restArea.checkOutTime;
     final parts = currentTime.split(':');
-    final initialTime = TimeOfDay(hour: int.parse(parts[0]), minute: int.parse(parts[1]));
+    final initialTime =
+        TimeOfDay(hour: int.parse(parts[0]), minute: int.parse(parts[1]));
 
     final pickedTime = await showTimePicker(
       context: context,
@@ -855,7 +1022,8 @@ class _AddRestAreaScreenState extends State<AddRestAreaScreen> {
 
     if (pickedTime != null) {
       setState(() {
-        final timeStr = '${pickedTime.hour.toString().padLeft(2, '0')}:${pickedTime.minute.toString().padLeft(2, '0')}';
+        final timeStr =
+            '${pickedTime.hour.toString().padLeft(2, '0')}:${pickedTime.minute.toString().padLeft(2, '0')}';
         if (isCheckIn) {
           _restArea.checkInTime = timeStr;
         } else {
@@ -882,7 +1050,7 @@ class _AddRestAreaScreenState extends State<AddRestAreaScreen> {
         );
         return;
       }
-
+/*
       try {
         await _sendDataToServer();
         ScaffoldMessenger.of(context).showSnackBar(
@@ -908,7 +1076,7 @@ class _AddRestAreaScreenState extends State<AddRestAreaScreen> {
     var request = http.MultipartRequest('POST', uri);
 
     // إضافة الحقول النصية
-   // request.fields.addAll(_restArea.toJson());
+    // request.fields.addAll(_restArea.toJson());
 
     // إضافة الصورة الرئيسية
     if (_mainImage != null) {
@@ -931,5 +1099,7 @@ class _AddRestAreaScreenState extends State<AddRestAreaScreen> {
       throw Exception('فشل في إرسال البيانات: ${response.statusCode}');
     }
   }
+  */
+    }
 }
-
+}
