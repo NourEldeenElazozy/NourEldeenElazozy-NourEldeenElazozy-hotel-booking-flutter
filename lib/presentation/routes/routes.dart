@@ -28,6 +28,13 @@ class Routes {
       transitionDuration: const Duration(milliseconds: 600),
     ),
     GetPage(
+      name: "/PackageCard",
+      page: () => PackagesScreen(),
+      transition: Transition.leftToRight,
+      transitionDuration: const Duration(milliseconds: 600),
+    ),
+
+    GetPage(
       name: "/loginScreen",
       page: () => const LoginScreen(),
       transition: Transition.leftToRight,

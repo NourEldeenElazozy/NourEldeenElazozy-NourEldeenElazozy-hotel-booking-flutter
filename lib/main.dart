@@ -37,7 +37,7 @@ class _MyAppState extends State<MyApp> {
                 // darkTheme: Themes().darkTheme,
                 // themeMode: ThemeMode.system,
                // initialRoute: "/welcome",
-               initialRoute: "/bottomBar",
+               initialRoute: "/PackageCard",
                 getPages: Routes.navigator,
                 // home: Practice(),
               ));

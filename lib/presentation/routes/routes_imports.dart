@@ -20,6 +20,7 @@ import 'package:hotel_booking/presentation/screen/selectRoom/select_room_import.
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../core/constants/my_images.dart';
 import '../../core/constants/my_strings.dart';
+import '../Package/PackageCard.dart';
 import '../screen/auth/login/login_import.dart';
 import '../screen/galleryPhoto/gallery_photo_import.dart';
 import '../screen/helpCenter/help_center_import.dart';
