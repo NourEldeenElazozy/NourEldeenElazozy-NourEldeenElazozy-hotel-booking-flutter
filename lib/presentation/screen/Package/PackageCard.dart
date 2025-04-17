@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:hotel_booking/core/constants/my_colors.dart';
 
 class Package {
   final String name;
@@ -26,7 +27,7 @@ class PackagesScreen extends StatefulWidget {
 class _PackagesScreenState extends State<PackagesScreen> {
   final PageController _pageController = PageController(viewportFraction: 0.7);
   int _currentPage = 0;
-
+  int? selectedIndex;
   final List<Package> packages = [
     Package(name: 'الباقة المجانية', duration: 'free', price: 0, restAreasCount: 1, percentage: '0%'),
     Package(name: 'باقة شهرية', duration: '1_month', price: 49.99, restAreasCount: 5, percentage: '10%'),
@@ -54,50 +55,119 @@ class _PackagesScreenState extends State<PackagesScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.orange.shade50,
       appBar: AppBar(
-        title:  Text('اختر الباقة المناسبة',style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.white, fontFamily: 'Tajawal',),),
+        title: const Text(
+          'اختر الباقة المناسبة',
+          style: TextStyle(
+            fontSize: 20,
+            fontWeight: FontWeight.bold,
+            fontFamily: 'Tajawal',
+
+          ),
+        ),
         centerTitle: true,
-        backgroundColor: Colors.orange.shade400,
+        backgroundColor: MyColors.primaryColor,
         elevation: 0,
       ),
-      body: PageView.builder(
-        scrollDirection: Axis.vertical,
-        controller: _pageController,
-        itemCount: packages.length,
-        itemBuilder: (context, index) {
-          return AnimatedBuilder(
-            animation: _pageController,
-            builder: (context, child) {
-              double scale = 1.0;
-              if (_pageController.position.haveDimensions) {
-                double page = _pageController.page ?? _pageController.initialPage.toDouble();
-                scale = (1 - (page - index).abs() * 0.2).clamp(0.85, 1.0);
-              }
-              return Center(
-                child: Transform.scale(
-                  scale: scale,
-                  child: _buildPackageCard(packages[index], scale == 1.0),
-                ),
-              );
-            },
-          );
-        },
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          children: [
+            const Text(
+              'الباقات',
+              style: TextStyle(
+                fontSize: 24,
+                fontWeight: FontWeight.bold,
+                fontFamily: 'Tajawal',
+                color: Colors.black,
+              ),
+            ),
+            const SizedBox(height: 16),
+            Expanded(
+              child: ListView.builder(
+                itemCount: packages.length,
+                itemBuilder: (context, index) {
+                  final pkg = packages[index];
+                  final isSelected = selectedIndex == index;
+
+                  return GestureDetector(
+                    onTap: () {
+                      setState(() {
+                        selectedIndex = index;
+                      });
+                    },
+                    child: AnimatedContainer(
+                      duration: const Duration(milliseconds: 300),
+                      margin: const EdgeInsets.symmetric(vertical: 8),
+                      padding: const EdgeInsets.all(12),
+                      decoration: BoxDecoration(
+                        gradient: LinearGradient(
+                          colors: isSelected
+                              ? [Color(0xFFCBD5E1), Color(0xFFE2E8F0)]
+                              : [Color(0xFFF1F5F9), Color(0xFFFAFAFA)],
+                          begin: Alignment.topRight,
+                          end: Alignment.bottomLeft,
+                        ),
+                        borderRadius: BorderRadius.circular(16),
+                        border: isSelected
+                            ? Border.all(color: Colors.blueGrey, width: 2)
+                            : null,
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black12,
+                            blurRadius: 0.50,
+                            offset: const Offset(0, 2),
+                          ),
+                        ],
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          Text(
+                            pkg.name,
+                            style: TextStyle(
+                              fontSize: 20,
+                              fontWeight: FontWeight.bold,
+                              fontFamily: 'Tajawal',
+                              color: isSelected ? Colors.blueGrey : Colors.black54,
+                            ),
+                            textAlign: TextAlign.right,
+                          ),
+                          const SizedBox(height: 6),
+                          Text('السعر: \$${pkg.price.toStringAsFixed(2)}'),
+                          Text('المدة: ${_getDurationText(pkg.duration)}'),
+                          Text('الاستراحات: ${pkg.restAreasCount}'),
+                          Text('النسبة: ${pkg.percentage}'),
+                        ],
+                      ),
+                    ),
+                  );
+                },
+              ),
+            ),
+          ],
+        ),
       ),
-      floatingActionButton: FloatingActionButton.extended(
+      floatingActionButton: selectedIndex != null
+          ? FloatingActionButton.extended(
         onPressed: () {
-          final selected = packages[_currentPage];
-          print('تم اختيار ${selected.name}');
-          // هنا يمكن ربط الزر بخطوة الدفع أو التنقل لصفحة أخرى
+          final selectedPkg = packages[selectedIndex!];
+          // تنفيذ الدفع أو الانتقال للخطوة التالية
+          print('تم اختيار الباقة: ${selectedPkg.name}');
         },
-        icon: const Icon(Icons.shopping_cart_checkout,color: Colors.white,),
-        label: const Text('اشترك الآن',style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.white, fontFamily: 'Tajawal',),),
-        backgroundColor: Colors.deepOrange.shade400,
-        elevation: 8,
-      ),
+        label: const Text(
+          'متابعة الدفع',
+          style: TextStyle(fontFamily: 'Tajawal', fontWeight: FontWeight.bold),
+        ),
+        icon: const Icon(Icons.payment),
+        backgroundColor: MyColors.primaryColor,
+      )
+          : null,
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
     );
   }
+}
+
 
   Widget _buildPackageCard(Package pkg, bool isHighlighted) {
     return Card(
@@ -177,4 +247,4 @@ class _PackagesScreenState extends State<PackagesScreen> {
     };
     return map[key] ?? key;
   }
-}
+

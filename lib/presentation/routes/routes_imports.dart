@@ -4,6 +4,7 @@ import 'package:get/get_navigation/src/routes/get_route.dart';
 import 'package:get/get_navigation/src/routes/transitions_type.dart';
 import 'package:hotel_booking/presentation/AddRestAreaScreen.dart';
 import 'package:hotel_booking/presentation/common_widgets/bottom_navigation_bar.dart';
+import 'package:hotel_booking/presentation/screen/Package/PackageCard.dart';
 import 'package:hotel_booking/presentation/screen/auth/Register/register_import.dart';
 import 'package:hotel_booking/presentation/screen/auth/forgetpassword/password_import.dart';
 import 'package:hotel_booking/presentation/screen/booking/booking_import.dart';
@@ -20,7 +21,6 @@ import 'package:hotel_booking/presentation/screen/selectRoom/select_room_import.
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../core/constants/my_images.dart';
 import '../../core/constants/my_strings.dart';
-import '../Package/PackageCard.dart';
 import '../screen/auth/login/login_import.dart';
 import '../screen/galleryPhoto/gallery_photo_import.dart';
 import '../screen/helpCenter/help_center_import.dart';
