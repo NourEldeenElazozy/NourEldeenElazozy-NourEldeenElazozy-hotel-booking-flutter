@@ -211,7 +211,7 @@ controller = Get.put(RestAreaController());
   Step _buildBasicInfoStep() {
     return Step(
       title: Text('المعلومات الأساسية',
-          style: TextStyle(color: MyColors.TealColor)),
+          style: TextStyle(color: MyColors.tealColor)),
       content: Form(
         key: _formKey,
         child: Column(
@@ -392,7 +392,7 @@ controller = Get.put(RestAreaController());
   Step _buildRoomsAndFacilitiesStep() {
     return Step(
       title:
-          Text('الغرف والمرافق', style: TextStyle(color: MyColors.TealColor)),
+          Text('الغرف والمرافق', style: TextStyle(color: MyColors.tealColor)),
       content: Column(
         children: [
           _buildSectionTitle(
@@ -480,7 +480,7 @@ controller = Get.put(RestAreaController());
   Step _buildOutdoorFeaturesStep() {
     return Step(
       title:
-          Text('المرافق الخارجية', style: TextStyle(color: MyColors.TealColor)),
+          Text('المرافق الخارجية', style: TextStyle(color: MyColors.tealColor)),
       content: Column(
         children: [
           _buildSectionTitle('المسبح'),
@@ -626,7 +626,7 @@ controller = Get.put(RestAreaController());
 
   Step _buildImagesStep() {
     return Step(
-      title: Text('الصور', style: TextStyle(color: MyColors.TealColor)),
+      title: Text('الصور', style: TextStyle(color: MyColors.tealColor)),
       content: Column(
         children: [
           Center(
@@ -796,7 +796,7 @@ controller = Get.put(RestAreaController());
         style: TextStyle(
           fontSize: 16,
           fontWeight: FontWeight.bold,
-          color: MyColors.TealColor,
+          color: MyColors.tealColor,
         ),
       ),
     );
@@ -808,7 +808,7 @@ controller = Get.put(RestAreaController());
       label: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(icon, size: 18, color: MyColors.TealColor),
+          Icon(icon, size: 18, color: MyColors.tealColor),
           SizedBox(width: 5),
           Text('$value'),
         ],
@@ -855,7 +855,7 @@ controller = Get.put(RestAreaController());
         mainAxisSize: MainAxisSize.min,
         children: [
           Icon(icon,
-              size: 18, color: value ? Colors.white : MyColors.TealColor),
+              size: 18, color: value ? Colors.white : MyColors.tealColor),
           SizedBox(width: 5),
           Text(label,
               style: TextStyle(color: value ? Colors.white : Colors.black)),
@@ -866,7 +866,7 @@ controller = Get.put(RestAreaController());
         onChanged(selected); // استدعاء onChanged
         setState(() {}); // تحديث الحالة
       },
-      selectedColor: MyColors.TealColor,
+      selectedColor: MyColors.tealColor,
       checkmarkColor: Colors.white,
       backgroundColor: Colors.teal[50],
       shape: StadiumBorder(side: BorderSide(color: Colors.teal)),
@@ -896,7 +896,7 @@ controller = Get.put(RestAreaController());
                 style: TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.bold,
-                  color: MyColors.TealColor,
+                  color: MyColors.tealColor,
                 ),
               ),
             ),
@@ -944,7 +944,7 @@ controller = Get.put(RestAreaController());
                   icon: Icon(Icons.photo_library, size: 25),
                   label: Text(multiSelect ? 'اختر صور متعددة' : 'اختر صورة'),
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: MyColors.TealColor,
+                    backgroundColor: MyColors.tealColor,
                     textStyle: TextStyle(
                       fontSize: 16,
                       color: Colors.white,

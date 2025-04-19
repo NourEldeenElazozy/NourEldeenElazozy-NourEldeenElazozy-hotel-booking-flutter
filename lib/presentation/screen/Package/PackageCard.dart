@@ -1,43 +1,50 @@
 import 'package:flutter/material.dart';
 import 'package:hotel_booking/core/constants/my_colors.dart';
-
+import 'package:hotel_booking/presentation/screen/Package/PackageCardController.dart';
+import 'package:get/get.dart';
 class Package {
+  final int id;
   final String name;
   final String duration;
-  final double price;
-  final int restAreasCount;
+
+  final int startRange;
+  final int endRange;
   final String percentage;
 
   Package({
+    required this.id,
     required this.name,
     required this.duration,
-    required this.price,
-    required this.restAreasCount,
+
+    required this.startRange,
+    required this.endRange,
     required this.percentage,
   });
 }
 
 class PackagesScreen extends StatefulWidget {
-  const PackagesScreen({Key? key}) : super(key: key);
+
+   PackagesScreen({Key? key}) : super(key: key);
 
   @override
   State<PackagesScreen> createState() => _PackagesScreenState();
 }
 
 class _PackagesScreenState extends State<PackagesScreen> {
+
+
   final PageController _pageController = PageController(viewportFraction: 0.7);
   int _currentPage = 0;
-  int? selectedIndex;
-  final List<Package> packages = [
-    Package(name: 'الباقة المجانية', duration: 'free', price: 0, restAreasCount: 1, percentage: '0%'),
-    Package(name: 'باقة شهرية', duration: '1_month', price: 49.99, restAreasCount: 5, percentage: '10%'),
-    Package(name: 'باقة نصف سنوية', duration: '6_months', price: 199.99, restAreasCount: 15, percentage: '15%'),
-    Package(name: 'باقة سنوية', duration: '12_months', price: 349.99, restAreasCount: 30, percentage: '20%'),
-  ];
+  final RxInt selectedIndex = 0.obs; //
 
+  final List<Package> packages = [
+
+  ];
+  PackageCardController controller = Get.put(PackageCardController());
   @override
   void initState() {
     super.initState();
+
     _pageController.addListener(() {
       final currentPage = _pageController.page?.round() ?? 0;
       if (currentPage != _currentPage) {
@@ -54,6 +61,7 @@ class _PackagesScreenState extends State<PackagesScreen> {
 
   @override
   Widget build(BuildContext context) {
+    controller.fetchPackages();
     return Scaffold(
       appBar: AppBar(
         title: const Text(
@@ -69,95 +77,159 @@ class _PackagesScreenState extends State<PackagesScreen> {
         backgroundColor: MyColors.primaryColor,
         elevation: 0,
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          children: [
-            const Text(
-              'الباقات',
-              style: TextStyle(
-                fontSize: 24,
-                fontWeight: FontWeight.bold,
-                fontFamily: 'Tajawal',
-                color: Colors.black,
-              ),
-            ),
-            const SizedBox(height: 16),
-            Expanded(
-              child: ListView.builder(
-                itemCount: packages.length,
-                itemBuilder: (context, index) {
-                  final pkg = packages[index];
-                  final isSelected = selectedIndex == index;
+      body: Obx(() {
+        if (controller.isLoading.value) {
+          return Center(child: CircularProgressIndicator());
+        }
 
-                  return GestureDetector(
-                    onTap: () {
-                      setState(() {
-                        selectedIndex = index;
-                      });
-                    },
-                    child: AnimatedContainer(
-                      duration: const Duration(milliseconds: 300),
-                      margin: const EdgeInsets.symmetric(vertical: 8),
-                      padding: const EdgeInsets.all(12),
-                      decoration: BoxDecoration(
-                        gradient: LinearGradient(
-                          colors: isSelected
-                              ? [Color(0xFFCBD5E1), Color(0xFFE2E8F0)]
-                              : [Color(0xFFF1F5F9), Color(0xFFFAFAFA)],
-                          begin: Alignment.topRight,
-                          end: Alignment.bottomLeft,
-                        ),
-                        borderRadius: BorderRadius.circular(16),
-                        border: isSelected
-                            ? Border.all(color: Colors.blueGrey, width: 2)
-                            : null,
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.black12,
-                            blurRadius: 0.50,
-                            offset: const Offset(0, 2),
-                          ),
-                        ],
-                      ),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          Text(
-                            pkg.name,
-                            style: TextStyle(
-                              fontSize: 20,
-                              fontWeight: FontWeight.bold,
-                              fontFamily: 'Tajawal',
-                              color: isSelected ? Colors.blueGrey : Colors.black54,
-                            ),
-                            textAlign: TextAlign.right,
-                          ),
-                          const SizedBox(height: 6),
-                          Text('السعر: \$${pkg.price.toStringAsFixed(2)}'),
-                          Text('المدة: ${_getDurationText(pkg.duration)}'),
-                          Text('الاستراحات: ${pkg.restAreasCount}'),
-                          Text('النسبة: ${pkg.percentage}'),
-                        ],
-                      ),
-                    ),
-                  );
-                },
+        return Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            children: [
+              const Text(
+                'الباقات',
+                style: TextStyle(
+                  fontSize: 24,
+                  fontWeight: FontWeight.bold,
+                  fontFamily: 'Tajawal',
+                  color: Colors.black,
+                ),
               ),
-            ),
-          ],
-        ),
-      ),
-      floatingActionButton: selectedIndex != null
+              const SizedBox(height: 16),
+              Expanded(
+                child: ListView.builder(
+                  itemCount: controller.packages.length,
+                  itemBuilder: (context, index) {
+                    final pkg = controller.packages[index];
+                    final isSelected = selectedIndex == index;
+
+                    return GestureDetector(
+                      onTap: () {
+                        selectedIndex.value = index; // تحديث
+                        // يمكنك إضافة منطق إضافي هنا عند اختيار باقة
+                      },
+                      child: AnimatedContainer(
+                        duration: const Duration(milliseconds: 300),
+                        margin: const EdgeInsets.symmetric(vertical: 8),
+                        padding: const EdgeInsets.all(12),
+                        decoration: BoxDecoration(
+                          gradient: LinearGradient(
+                            colors: isSelected
+                                ? [MyColors.primaryColor, MyColors.primaryColor]
+                                : [MyColors.tealColor, MyColors.tealColor],
+                            begin: Alignment.topRight,
+                            end: Alignment.bottomLeft,
+                          ),
+                          borderRadius: BorderRadius.circular(16),
+                          border: isSelected
+                              ? Border.all(color: MyColors.primaryColor, width: 2)
+                              : null,
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black12,
+                              blurRadius: 0.50,
+                              offset: const Offset(0, 2),
+                            ),
+                          ],
+                        ),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            Text(
+                              pkg.name,
+                              style: TextStyle(
+                                fontSize: 20,
+                                fontWeight: FontWeight.bold,
+                                fontFamily: 'Tajawal',
+                                color: isSelected ? Colors.blueGrey : Colors.white,
+                              ),
+                              textAlign: TextAlign.right,
+                            ),
+                            const SizedBox(height: 6),
+                           // Text('السعر: \$${pkg.price.toStringAsFixed(2)}', style: TextStyle(color: Colors.white)),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+
+                              Text('المدة: ${_getDurationText(pkg.duration)}', style: TextStyle(color: Colors.white)),
+                                const SizedBox(width: 5),
+                                Icon(Icons.access_time, color: Colors.white),
+                            ],),
+
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Center(child: Text('عدد الإستراحات', style: TextStyle(color: Colors.white,fontSize: 16),)),
+                                const SizedBox(width: 5),
+                                const Icon(Icons.house, color: Colors.white),
+                              ],
+                            ),
+                           Row(
+                             crossAxisAlignment: CrossAxisAlignment.center,
+                             mainAxisAlignment: MainAxisAlignment.center,
+                             children: [
+                               Text(' الي ${pkg.endRange}', style: TextStyle(color: Colors.white)),
+                               Text('  -  ', style: TextStyle(color: Colors.white)),
+                               Text('من ${pkg.startRange}', style: TextStyle(color: Colors.white)),
+
+
+
+                             ],
+                           ),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+
+
+                                Text('النسبة: ${pkg.percentage}', style: TextStyle(color: Colors.white)),
+                                const SizedBox(width: 5),
+                                Icon(Icons.percent, color: Colors.white),
+                              ],
+                            ),
+                          ],
+                        ),
+                      ),
+                    );
+                  },
+                ),
+              ),
+              const SizedBox(height: 16),
+
+              ElevatedButton(
+                onPressed: selectedIndex.value != null
+                    ? () {
+                  final selectedPkg = controller.packages[selectedIndex.value!];
+                  // تنفيذ الدفع أو الانتقال للخطوة التالية
+                  print('تم اختيار الباقة: ${selectedPkg.id}');
+                }
+                    : null,
+                style: ElevatedButton.styleFrom(
+
+                ),
+                child: const Text(
+                  'متابعة الدفع',
+                  style: TextStyle(fontFamily: 'Tajawal', fontWeight: FontWeight.bold, color: Colors.white),
+                ),
+              ),
+            ],
+          ),
+        );
+      }),
+
+
+
+
+
+  floatingActionButton: selectedIndex != null
           ? FloatingActionButton.extended(
         onPressed: () {
-          final selectedPkg = packages[selectedIndex!];
+          final selectedPkg = controller.packages[selectedIndex.value!];
           // تنفيذ الدفع أو الانتقال للخطوة التالية
-          print('تم اختيار الباقة: ${selectedPkg.name}');
+          print('تم اختيار الباقة: ${selectedPkg.id}');
         },
         label: const Text(
           'متابعة الدفع',
-          style: TextStyle(fontFamily: 'Tajawal', fontWeight: FontWeight.bold),
+          style: TextStyle(fontFamily: 'Tajawal', fontWeight: FontWeight.bold,color: MyColors.tealColor),
         ),
         icon: const Icon(Icons.payment),
         backgroundColor: MyColors.primaryColor,
@@ -195,10 +267,8 @@ class _PackagesScreenState extends State<PackagesScreen> {
               style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Colors.white),
             ),
             const SizedBox(height: 12),
-            _buildInfoRow(Icons.attach_money, 'السعر: \$${pkg.price.toStringAsFixed(2)}'),
-            _buildInfoRow(Icons.calendar_today, 'المدة: ${_getDurationText(pkg.duration)}'),
-            _buildInfoRow(Icons.house, 'عدد الاستراحات: ${pkg.restAreasCount}'),
-            _buildInfoRow(Icons.percent, 'النسبة: ${pkg.percentage}'),
+
+
           ],
         ),
       ),
