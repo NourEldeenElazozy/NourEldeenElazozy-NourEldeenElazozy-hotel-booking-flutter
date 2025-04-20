@@ -13,26 +13,64 @@ class PackageCardController extends GetxController {
   }
 
   void fetchPackages() async {
-    try {
-      final response = await Dio().get('http://10.0.2.2:8000/api/packages');
-      if (response.statusCode == 200) {
+    isLoading.value = true; // تغيير الحالة إلى التحميل
 
+    try {
+      final response = await Dio().get(
+        'http://10.0.2.2:8000/api/packages',
+        options: Options(
+          sendTimeout: const Duration(seconds: 30), // مهلة الإرسال 1 ثانية
+          receiveTimeout: const Duration(seconds: 30), // مهلة الاستلام 1 ثانية
+
+        ),
+      );
+
+      if (response.statusCode == 200) {
         List<dynamic> data = response.data;
         packages.value = data.map((pkg) => Package(
           id: pkg['id'],
           name: pkg['name'],
           duration: pkg['duration'],
-
           startRange: pkg['start_range'],
           endRange: pkg['end_range'],
           percentage: pkg['percentage'],
         )).toList();
         print(packages.value);
       }
-    } catch (e) {
-      print(e);
-    } finally {
+
+    } on DioException  catch (e) {
+      if (e.type == DioExceptionType.unknown) {
+        print('تم انتهاء المهلة، لم يتمكن من الحصول على البيانات.');
+        // تأكد من تغيير الحالة عند الانتهاء من الطلب
+        isLoading.value = false; // تغيير الحالة عند الانتهاء
+      }
+      if (e.type == DioExceptionType.sendTimeout) {
+        print('تم انتهاء المهلة، لم يتمكن من الحصول على البيانات.');
+        // تأكد من تغيير الحالة عند الانتهاء من الطلب
+        isLoading.value = false; // تغيير الحالة عند الانتهاء
+      }
+      if (e.type == DioExceptionType.badResponse) {
+        print('تم انتهاء المهلة، لم يتمكن من الحصول على البيانات.');
+        // تأكد من تغيير الحالة عند الانتهاء من الطلب
+        isLoading.value = false; // تغيير الحالة عند الانتهاء
+      }
+      if (e.type == DioExceptionType.connectionTimeout) {
+        print('تم انتهاء المهلة، لم يتمكن من الحصول على البيانات.');
+        // تأكد من تغيير الحالة عند الانتهاء من الطلب
+        isLoading.value = false; // تغيير الحالة عند الانتهاء
+      }
+      if (e.type == DioExceptionType.receiveTimeout) {
+        print('تم انتهاء المهلة، لم يتمكن من الحصول على البيانات.');
+        // تأكد من تغيير الحالة عند الانتهاء من الطلب
+        isLoading.value = false; // تغيير الحالة عند الانتهاء
+      }
+      print('Error: $e'); // طباعة الخطأ
       isLoading.value = false; // تغيير الحالة عند الانتهاء
+    } finally {
+      print('تم انتهاء المهلة، لم يتمكن من الحصول على البيانات.');
+      // تأكد من تغيير الحالة عند الانتهاء من الطلب
+      isLoading.value = false; // تغيير الحالة عند الانتهاء
+
     }
   }
 }
