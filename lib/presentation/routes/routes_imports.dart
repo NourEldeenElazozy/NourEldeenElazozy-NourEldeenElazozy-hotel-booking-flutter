@@ -10,6 +10,7 @@ import 'package:hotel_booking/presentation/screen/auth/forgetpassword/password_i
 import 'package:hotel_booking/presentation/screen/booking/booking_import.dart';
 import 'package:hotel_booking/presentation/screen/bookmark/bookmark_import.dart';
 import 'package:hotel_booking/presentation/screen/dateTimeSelect/date_time_select_import.dart';
+import 'package:hotel_booking/presentation/screen/home/MyHostScreen.dart';
 import 'package:hotel_booking/presentation/screen/home/home_import.dart';
 import 'package:hotel_booking/presentation/screen/notification/notification_import.dart';
 import 'package:hotel_booking/presentation/screen/paymentInfo/payment_info_import.dart';

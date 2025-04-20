@@ -11,7 +11,7 @@ class LoginController extends GetxController {
   TextEditingController passwordController =TextEditingController();
   var isLoading = false.obs;
   var token = ''.obs;
-  var user = User(id: 0, name: '', phone: '').obs;
+  var user = User(id: 0, name: '', phone: '',userType: "").obs;
 
   Future<void> login(String phone, String password) async {
     isLoading.value = true;
@@ -30,6 +30,7 @@ class LoginController extends GetxController {
         token.value = loginResponse.token;
         user.value = loginResponse.user;
         await _storeData(loginResponse.token, loginResponse.user);
+
         // يمكنك تخزين التوكن أو أي معلومات أخرى هنا
       } else {
         // التعامل مع الأخطاء
@@ -72,5 +73,6 @@ class LoginController extends GetxController {
     await prefs.setInt('userId', user.id);
     await prefs.setString('userName', user.name);
     await prefs.setString('userPhone', user.phone);
+    await prefs.setString('user_type', user.userType);
   }
 }

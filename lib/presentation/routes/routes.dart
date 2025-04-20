@@ -191,6 +191,13 @@ class Routes {
       transitionDuration: const Duration(milliseconds: 600),
     ),
     GetPage(
+      name: "/myHosting",
+      page: () =>  MySotingScreen(),
+      transition: Transition.leftToRight,
+      transitionDuration: const Duration(milliseconds: 600),
+    ),
+
+    GetPage(
       name: "/editProfile",
       page: () => const EditProfile(),
       transition: Transition.leftToRight,
@@ -225,13 +232,17 @@ class AuthMiddleware extends GetMiddleware {
   Future<void> loadToken() async {
     final prefs = await SharedPreferences.getInstance();
     token.value = prefs.getString('token') ?? '';
+    print("token.value ${token.value}");
   }
 
   @override
   RouteSettings? redirect(String? route) {
-    if (token.value.isEmpty) {
-      return const RouteSettings(name: "/loginScreen"); // توجيه المستخدم إلى صفحة تسجيل الدخول
-    }
+    // استخدام Future للتأكد من تحميل التوكن قبل التحقق
+    loadToken().then((_) {
+      if (token.value.isEmpty) {
+        return const RouteSettings(name: "/loginScreen"); // توجيه المستخدم إلى صفحة تسجيل الدخول
+      }
+    });
     return null; // السماح بالانتقال
   }
 

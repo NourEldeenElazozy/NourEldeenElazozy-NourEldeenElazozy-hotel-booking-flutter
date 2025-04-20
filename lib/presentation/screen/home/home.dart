@@ -14,6 +14,7 @@ class _HomeState extends State<Home> {
   late bool isDarkMode;
   var userName = ''.obs; // استخدام Rx لتحديث الواجهة عند تغيير القيمة
   var Token = ''.obs; // استخدام Rx لتحديث الواجهة عند تغيير القيمة
+  var userType = ''.obs; // استخدام Rx لتحديث الواجهة عند تغيير القيمة
   @override
   void initState() {
     super.initState();
@@ -24,6 +25,7 @@ class _HomeState extends State<Home> {
     controller.filterList("Recommended");
     _loadUserName(); // استدعاء دالة تحميل الاسم
     _loadToken();
+    _loaduserType();
   }
 
   Future<void> _loadUserName() async {
@@ -40,16 +42,25 @@ class _HomeState extends State<Home> {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     Token.value = prefs.getString('token') ?? '';
 
+
+  }
+  Future<void> _loaduserType() async {
+
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    userType.value = prefs.getString('user_type') ?? '';
+
+
   }
   @override
   Widget build(BuildContext context) {
     //controller.getRestAreas(cityId: 1);
     //controller.getRestAreas();
+    _loaduserType();
    controller.getReservations();
    controller.fetchRecentlyBooked();
-   //removeToken();
+  //removeToken();
    print(" token ${Token.value}");
-
+   print(" usertypes ${userType.value}");
    return Directionality(
       textDirection: TextDirection.rtl,
       child: Scaffold(

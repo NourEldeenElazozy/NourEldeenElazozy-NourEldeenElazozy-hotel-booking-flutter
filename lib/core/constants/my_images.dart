@@ -139,6 +139,7 @@ class MyImages {
 
 //----------------------------------- Profile_Screen ------------------------------
   static const String editProfileScreen = "${profilePath}editProfile.svg";
+  static const String myHost = "${hotelDetailPath}badRoom.svg";
   static const String notificationScreen = "${profilePath}notifications.svg";
   static const String darkThemeScreen = "${profilePath}darkTheme.svg";
   static const String languageScreen = "${profilePath}language.svg";

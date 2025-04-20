@@ -10,7 +10,15 @@ class Profile extends StatefulWidget {
 class _ProfileState extends State<Profile> {
   late ProfileController controller;
   late bool isDarkMode;
+  var userType = ''.obs; // استخدام Rx لتحديث الواجهة عند تغيير القيمة
 
+  Future<void> _loaduserType() async {
+
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    userType.value = prefs.getString('user_type') ?? '';
+
+
+  }
   @override
   void initState() {
     controller = Get.put(ProfileController());
@@ -133,6 +141,8 @@ class _ProfileState extends State<Profile> {
 
   @override
   Widget build(BuildContext context) {
+    _loaduserType();
+
     return Scaffold(
       appBar: homeAppBar(
           MyString.profile, false, controller.themeController.isDarkMode.value),
@@ -197,6 +207,15 @@ class _ProfileState extends State<Profile> {
                 },
                 child: commonListTile(MyImages.editProfileScreen,
                     MyString.editProfile, controller.isDarkMode.value),
+              ),
+              if(userType.value=="user")
+              InkWell(
+                onTap: () {
+                  Get.toNamed("/myHosting");
+                },
+
+                child: commonListTile(MyImages.myHost,
+                    MyString.myHost, controller.isDarkMode.value),
               ),
               InkWell(
                 onTap: () {
