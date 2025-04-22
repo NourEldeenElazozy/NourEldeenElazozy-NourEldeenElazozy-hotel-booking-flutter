@@ -109,8 +109,8 @@ class RegisterScreenState extends State<RegisterScreen> with SingleTickerProvide
                     child: Text('ذكر'),
                   ),
                   DropdownMenuItem(
-                    value: 'أنثى',
-                    child: Text('أنثى'),
+                    value: 'انثي',
+                    child: Text('انثي'),
                   ),
                 ],
                 onChanged: (value) {
@@ -246,9 +246,7 @@ class RegisterScreenState extends State<RegisterScreen> with SingleTickerProvide
                     onpressed: () {
                       if (customerFormKey.currentState!.validate()) {
                         // إذا كان النموذج صحيحًا، قم بتنفيذ التسجيل
-                        controller.submit("user").then((value) {
-
-                        },);
+                        controller.submit("user");
                       } else {
                         // عرض رسالة خطأ إذا كان هناك مشاكل في التحقق
                         Get.snackbar(
@@ -361,8 +359,8 @@ class RegisterScreenState extends State<RegisterScreen> with SingleTickerProvide
                       child: Text('ذكر'),
                     ),
                     DropdownMenuItem(
-                      value: 'أنثى',
-                      child: Text('أنثى'),
+                      value: 'انثي',
+                      child: Text('انثي'),
                     ),
                   ],
                   onChanged: (value) {
@@ -371,6 +369,44 @@ class RegisterScreenState extends State<RegisterScreen> with SingleTickerProvide
                   validator: (value) {
                     if (value == null) {
                       return 'يرجى اختيار الجنس';
+                    }
+                    return null;
+                  },
+                ),
+                const SizedBox(height: 20),
+                DropdownButtonFormField<int>(
+                  value: Get.find<BottomSheetController>().selectedCityId.value == -1
+                      ? null
+                      : Get.find<BottomSheetController>().selectedCityId.value,
+                  decoration: InputDecoration(
+                    filled: true,
+                    fillColor: controller.themeController.isDarkMode.value
+                        ? MyColors.darkTextFieldColor
+                        : MyColors.disabledTextFieldColor,
+                    hintText: "اختر المدينة",
+                    prefixIcon: Padding(
+                      padding: const EdgeInsets.all(15),
+                      child: SvgPicture.asset(MyImages.location),
+                    ),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(10),
+                      borderSide: BorderSide.none,
+                    ),
+                  ),
+                  items: Get.find<BottomSheetController>().cities.map((city) {
+                    return DropdownMenuItem<int>(
+                      value: city.id, // استخدم city.id بدلاً من city['id']
+                      child: Text(city.name), // استخدم city.name بدلاً من city['name']
+                    );
+                  }).toList(),
+                  onChanged: (value) {
+                    Get.find<BottomSheetController>().selectedCityId.value = value ?? -1;
+                    controller.cityController.text=Citycontroller.selectedCityId.value.toString();
+                    print( controller.cityController.text);
+                  },
+                  validator: (value) {
+                    if (value == null) {
+                      return 'يرجى اختيار المدينة';
                     }
                     return null;
                   },
@@ -460,8 +496,7 @@ class RegisterScreenState extends State<RegisterScreen> with SingleTickerProvide
                     onpressed: () {
                       if (hostFormKey.currentState!.validate()) {
 
-                        // إذا كان النموذج صحيحًا، قم بتنفيذ التسجيل
-                        //controller.submit();
+                        controller.submit("host");
                       } else {
                         // عرض رسالة خطأ إذا كان هناك مشاكل في التحقق
                         Get.snackbar(

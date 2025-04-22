@@ -58,6 +58,8 @@ dependencies:
   flutter_mobx: ^2.2.0+2
   url_launcher: ^6.2.5
   webview_flutter: ^4.7.0
+  win32: ^5.4.0
+
   # location
   location: ^5.0.3
   google_maps_flutter: ^2.5.3

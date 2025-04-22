@@ -48,6 +48,8 @@ class RegisterController extends GetxController {
     _loadCountryCodes();
     super.onInit();
   }
+
+
   Future<void> submit(String useType) async {
     try {
       final response = await Dio().post(
@@ -63,19 +65,14 @@ class RegisterController extends GetxController {
         },
       );
 
-
-
-
-
+      // إذا كانت الاستجابة ناجحة
       if (response.statusCode == 200) {
         LoginResponse loginResponse = LoginResponse.fromJson(response.data);
         token.value = loginResponse.token;
         user.value = loginResponse.user;
         await _storeData(loginResponse.token, loginResponse.user);
-        // التعامل مع الاستجابة الناجحة
-        Get.snackbar('نجاح', 'تم تسجيل المستخدم بنجاح!',backgroundColor: Colors.green);
+        Get.snackbar('نجاح', 'تم تسجيل المستخدم بنجاح!', backgroundColor: Colors.green);
         if (token.isNotEmpty) {
-          // إذا كانت البيانات صحيحة، انتقل إلى الصفحة التالية
           Get.offNamedUntil("/bottomBar", (route) => false);
         }
       } else {
@@ -83,26 +80,20 @@ class RegisterController extends GetxController {
         Get.snackbar('خطأ', 'فشل في التسجيل: ${response.statusCode}');
       }
     } catch (e) {
-      // تحويل الخريطة إلى JSON
-      Map<String, dynamic> userData = {
-        'name': nameController.text,
-        'phone': phoneController.text,
-        'date_of_birth': birthDate.value,
-        'city': int.parse(cityController.text),
-        'gender': gender.value,
-        'user_type': useType, // أو 'host' حسب الحاجة
-        'password': passwordController.text, // تأكد من استخدام القيمة المناسبة
-      };
-      String jsonData = jsonEncode(userData);
-
-      // طباعة البيانات بصيغة JSON
-      print(jsonData);
       // التعامل مع الأخطاء
-      if (e is DioError) {
-        // إذا كان الخطأ مرتبطًا بـ Dio
-       print( 'حدث خطأ أثناء التسجيل: ${e.message}');
-        print('DioError: ${e.response?.data}');
-        Get.snackbar('خطأ', 'حدث خطأ أثناء التسجيل: ${e.message}');
+      if (e is DioException) {
+        final errorResponse = e.response?.data;
+
+        // التأكد من أن الخطأ يحتوي على الرسالة والأخطاء
+        if (errorResponse != null && errorResponse is List) {
+          // عرض الأخطاء مباشرة من القائمة
+          for (var error in errorResponse) {
+            Get.snackbar('خطأ', error); // عرض كل خطأ في Snackbar
+          }
+        } else {
+          // إذا كان هناك خطأ آخر
+          Get.snackbar('خطأ', 'حدث خطأ غير متوقع.');
+        }
       } else {
         // أخطاء أخرى
         print('Error: $e');

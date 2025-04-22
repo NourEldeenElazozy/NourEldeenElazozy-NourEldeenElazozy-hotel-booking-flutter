@@ -208,7 +208,7 @@ class _ProfileState extends State<Profile> {
                 child: commonListTile(MyImages.editProfileScreen,
                     MyString.editProfile, controller.isDarkMode.value),
               ),
-              if(userType.value=="user")
+              if(userType.value=="host")
               InkWell(
                 onTap: () {
                   Get.toNamed("/myHosting");
