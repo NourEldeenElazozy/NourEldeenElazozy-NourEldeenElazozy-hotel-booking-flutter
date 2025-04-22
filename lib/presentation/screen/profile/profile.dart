@@ -293,7 +293,9 @@ class _ProfileState extends State<Profile> {
                         textColor1: controller.isDarkMode.value
                             ? MyColors.white
                             : MyColors.primaryColor,
-                        onpressed2: () {
+                        onpressed2: () async {
+                          SharedPreferences prefs = await SharedPreferences.getInstance();
+                          await prefs.clear(); // حذف جميع الحقول
                           Get.back();
                           Get.offNamedUntil(
                               "/loginOptionScreen", (route) => false);
