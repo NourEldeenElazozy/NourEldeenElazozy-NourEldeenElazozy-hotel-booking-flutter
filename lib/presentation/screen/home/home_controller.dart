@@ -115,6 +115,7 @@ class HomeController extends GetxController {
      int? priceMin,
      int? priceMax,
      int? cityId,
+     int? hostId,
      int? rating,
      String? sortBy,
      String? geoArea ,
@@ -147,7 +148,10 @@ class HomeController extends GetxController {
        if (cityId != null && cityId >= 0) {
          queryParameters['city_id'] = cityId;
        }
-
+       // إضافة host_id إذا كان موجودًا
+       if (hostId != null && hostId >= 0) {
+         queryParameters['host_id'] = hostId;
+       }
        // إضافة rating إذا كان موجودًا
        if ( rating != -1 && rating!=null && rating != 0) {
          queryParameters['rating'] = rating;

@@ -3,16 +3,24 @@ import 'package:get/get.dart';
 import 'package:hotel_booking/Model/RestAreas.dart';
 import 'package:hotel_booking/core/constants/my_colors.dart';
 import 'package:hotel_booking/presentation/screen/home/home_import.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../../../Model/RestArea.dart';
 
 
 class MySotingScreen extends StatelessWidget {
   final HomeController controller = Get.put(HomeController());
+  RxInt userId = 0.obs; // استخدام Rx لتحديث الواجهة عند تغيير القيمة
 
+  Future<int> _loadUserType() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    return prefs.getInt('userId') ?? 0;
+  }
   @override
   Widget build(BuildContext context) {
+    _loadUserType();
+    print(" userId.value ${ userId.value }");
     // استدعاء الدالة لجلب البيانات عند بناء الشاشة
-    controller.getRestAreas();
+    controller.getRestAreas(hostId:userId.value );
 
     return Directionality(
       textDirection: TextDirection.rtl, // لجعل التخطيط من اليمين لليسار
