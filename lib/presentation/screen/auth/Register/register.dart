@@ -9,6 +9,7 @@ class RegisterScreen extends StatefulWidget {
 
 class RegisterScreenState extends State<RegisterScreen> with SingleTickerProviderStateMixin {
   late RegisterController controller;
+  late BottomSheetController  Citycontroller;
   late TabController _tabController;
   final GlobalKey<FormState> customerFormKey = GlobalKey<FormState>();
   final GlobalKey<FormState> hostFormKey = GlobalKey<FormState>();
@@ -16,6 +17,7 @@ class RegisterScreenState extends State<RegisterScreen> with SingleTickerProvide
   void initState() {
     super.initState();
     controller = Get.put(RegisterController());
+    Citycontroller = Get.put(BottomSheetController());
     _tabController = TabController(length: 2, vsync: this);
   }
 
@@ -38,8 +40,8 @@ class RegisterScreenState extends State<RegisterScreen> with SingleTickerProvide
               bottom: TabBar(
                 controller: _tabController,
                 tabs: const [
-                  Tab(text: "التسجيل كزبون"),
                   Tab(text: "التسجيل كمقيم"),
+                  Tab(text: "التسجيل كمستضيف"),
                 ],
               ),
             ),
@@ -75,7 +77,8 @@ class RegisterScreenState extends State<RegisterScreen> with SingleTickerProvide
                   controller: controller.nameController,
                   obscureText: false,
                   maxLength: 30,
-                  validator: Validations().nameValidation,
+
+                  validator: Validationss().nameValidation,
                   textInputAction: TextInputAction.next,
                   prefixIcon: Padding(
                     padding: const EdgeInsets.all(15),
@@ -102,11 +105,11 @@ class RegisterScreenState extends State<RegisterScreen> with SingleTickerProvide
                 ),
                 items: [
                   DropdownMenuItem(
-                    value: 'male',
+                    value: 'ذكر',
                     child: Text('ذكر'),
                   ),
                   DropdownMenuItem(
-                    value: 'female',
+                    value: 'أنثى',
                     child: Text('أنثى'),
                   ),
                 ],
@@ -120,6 +123,44 @@ class RegisterScreenState extends State<RegisterScreen> with SingleTickerProvide
                   return null;
                 },
               ),
+                const SizedBox(height: 20),
+                DropdownButtonFormField<int>(
+                  value: Get.find<BottomSheetController>().selectedCityId.value == -1
+                      ? null
+                      : Get.find<BottomSheetController>().selectedCityId.value,
+                  decoration: InputDecoration(
+                    filled: true,
+                    fillColor: controller.themeController.isDarkMode.value
+                        ? MyColors.darkTextFieldColor
+                        : MyColors.disabledTextFieldColor,
+                    hintText: "اختر المدينة",
+                    prefixIcon: Padding(
+                      padding: const EdgeInsets.all(15),
+                      child: SvgPicture.asset(MyImages.location),
+                    ),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(10),
+                      borderSide: BorderSide.none,
+                    ),
+                  ),
+                  items: Get.find<BottomSheetController>().cities.map((city) {
+                    return DropdownMenuItem<int>(
+                      value: city.id, // استخدم city.id بدلاً من city['id']
+                      child: Text(city.name), // استخدم city.name بدلاً من city['name']
+                    );
+                  }).toList(),
+                  onChanged: (value) {
+                    Get.find<BottomSheetController>().selectedCityId.value = value ?? -1;
+                    controller.cityController.text=Citycontroller.selectedCityId.value.toString();
+                    print( controller.cityController.text);
+                  },
+                  validator: (value) {
+                    if (value == null) {
+                      return 'يرجى اختيار المدينة';
+                    }
+                    return null;
+                  },
+                ),
                 const SizedBox(height: 20),
               TextFormField(
                 readOnly: true, // لجعل الحقل للعرض فقط
@@ -203,7 +244,21 @@ class RegisterScreenState extends State<RegisterScreen> with SingleTickerProvide
                   width: MediaQuery.of(context).size.width,
                   child: Button(
                     onpressed: () {
-                      return controller.submit();
+                      if (customerFormKey.currentState!.validate()) {
+                        // إذا كان النموذج صحيحًا، قم بتنفيذ التسجيل
+                        controller.submit("user").then((value) {
+
+                        },);
+                      } else {
+                        // عرض رسالة خطأ إذا كان هناك مشاكل في التحقق
+                        Get.snackbar(
+                          'خطأ في التحقق',
+                          'يرجى التأكد من إدخال جميع البيانات بشكل صحيح.',
+                          snackPosition: SnackPosition.BOTTOM,
+                          backgroundColor: Colors.red,
+                          colorText: Colors.white,
+                        );
+                      }
                     },
                     text: MyString.signUp,
                     shadowColor: controller.themeController.isDarkMode.value ? Colors.transparent : MyColors.buttonShadowColor,
@@ -215,11 +270,11 @@ class RegisterScreenState extends State<RegisterScreen> with SingleTickerProvide
                   text: TextSpan(
                     children: [
                       TextSpan(
-                        text: 'By signing up you agree to BookNest’s ',
+                        text: 'من خلال التسجيل، أنت توافق على ',
                         style: TextStyle(color: controller.themeController.isDarkMode.value ? MyColors.white : MyColors.textBlackColor, fontWeight: FontWeight.w400, fontSize: 14),
                       ),
                       const TextSpan(
-                        text: 'Terms of Services and Privacy Policy.',
+                        text: 'شروط الخدمة وسياسة الخصوصية.',
                         style: TextStyle(color: MyColors.successColor, fontWeight: FontWeight.w600, fontSize: 14, height: 1.5),
                       ),
                     ],
@@ -265,6 +320,7 @@ class RegisterScreenState extends State<RegisterScreen> with SingleTickerProvide
             key: hostFormKey, // استخدم المفتاح الفريد هنا
             child: Column(
               children: [
+
                 Container(
                   alignment: Alignment.center,
                   height: MediaQuery.of(context).size.height * 0.25,
@@ -284,10 +340,84 @@ class RegisterScreenState extends State<RegisterScreen> with SingleTickerProvide
                   fillColor: controller.themeController.isDarkMode.value ? MyColors.darkTextFieldColor : MyColors.disabledTextFieldColor,
                 ),
                 const SizedBox(height: 20),
+                DropdownButtonFormField<String>(
+                  value: controller.gender.value.isEmpty ? null : controller.gender.value, // استخدام قيمة افتراضية
+                  decoration: InputDecoration(
+                    filled: true,
+                    fillColor: controller.themeController.isDarkMode.value ? MyColors.darkTextFieldColor : MyColors.disabledTextFieldColor,
+                    hintText: "اختر الجنس",
+                    prefixIcon: Padding(
+                      padding: const EdgeInsets.all(15),
+                      child: SvgPicture.asset(MyImages.user), // استخدم أيقونة مناسبة للجنس
+                    ),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(10),
+                      borderSide: BorderSide.none,
+                    ),
+                  ),
+                  items: [
+                    DropdownMenuItem(
+                      value: 'ذكر',
+                      child: Text('ذكر'),
+                    ),
+                    DropdownMenuItem(
+                      value: 'أنثى',
+                      child: Text('أنثى'),
+                    ),
+                  ],
+                  onChanged: (value) {
+                    controller.gender.value = value ?? ''; // تحديث القيمة في الـ controller
+                  },
+                  validator: (value) {
+                    if (value == null) {
+                      return 'يرجى اختيار الجنس';
+                    }
+                    return null;
+                  },
+                ),
+                const SizedBox(height: 20),
+                TextFormField(
+                  readOnly: true, // لجعل الحقل للعرض فقط
+                  controller: TextEditingController(text: controller.birthDate.value), // تعيين القيمة
+                  decoration: InputDecoration(
+                    hintText: "تاريخ الميلاد",
+                    filled: true,
+                    fillColor: controller.themeController.isDarkMode.value ? MyColors.darkTextFieldColor : MyColors.disabledTextFieldColor,
+                    prefixIcon: Padding(
+                      padding: const EdgeInsets.all(15),
+                      child: SvgPicture.asset(MyImages.datePicker), // استخدم أيقونة التقويم
+                    ),
+                    suffixIcon: IconButton(
+                      icon: Icon(Icons.calendar_today),
+                      onPressed: () async {
+                        DateTime? pickedDate = await showDatePicker(
+                          context: context,
+                          initialDate: DateTime.now(),
+                          firstDate: DateTime(1900),
+                          lastDate: DateTime.now(),
+                        );
+                        if (pickedDate != null) {
+                          controller.birthDate.value = "${pickedDate.toLocal()}".split(' ')[0]; // تعيين تاريخ الميلاد
+                        }
+                      },
+                    ),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(10),
+                      borderSide: BorderSide.none,
+                    ),
+                  ),
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'يرجى إدخال تاريخ الميلاد';
+                    }
+                    return null;
+                  },
+                ),
+                const SizedBox(height: 20),
                 CustomTextFormField(
                   controller: controller.phoneController,
                   obscureText: false,
-                  keyboardType: TextInputType.emailAddress,
+                  keyboardType: TextInputType.number,
                   validator: Validations().phoneValidation,
                   textInputAction: TextInputAction.next,
                   prefixIcon: Padding(
@@ -323,12 +453,68 @@ class RegisterScreenState extends State<RegisterScreen> with SingleTickerProvide
                   ),
                 )),
                 const SizedBox(height: 40),
-                // أضف المزيد من الحقول المطلوبة هنا
-                ElevatedButton(
-                  onPressed: () {
-                    controller.submit();
-                  },
-                  child: const Text('تسجيل كمقيم'),
+                SizedBox(
+                  height: 55,
+                  width: MediaQuery.of(context).size.width,
+                  child: Button(
+                    onpressed: () {
+                      if (hostFormKey.currentState!.validate()) {
+
+                        // إذا كان النموذج صحيحًا، قم بتنفيذ التسجيل
+                        //controller.submit();
+                      } else {
+                        // عرض رسالة خطأ إذا كان هناك مشاكل في التحقق
+                        Get.snackbar(
+                          'خطأ في التحقق',
+                          'يرجى التأكد من إدخال جميع البيانات بشكل صحيح.',
+                          snackPosition: SnackPosition.BOTTOM,
+                          backgroundColor: Colors.red,
+                          colorText: Colors.white,
+                        );
+                      }
+                    },
+                    text: MyString.signUp,
+                    shadowColor: controller.themeController.isDarkMode.value ? Colors.transparent : MyColors.buttonShadowColor,
+                  ),
+                ),
+                const SizedBox(height: 30),
+                RichText(
+                  textAlign: TextAlign.center,
+                  text: TextSpan(
+                    children: [
+                      TextSpan(
+                        text: 'من خلال التسجيل، أنت توافق على ',
+                        style: TextStyle(color: controller.themeController.isDarkMode.value ? MyColors.white : MyColors.textBlackColor, fontWeight: FontWeight.w400, fontSize: 14),
+                      ),
+                      const TextSpan(
+                        text: 'شروط الخدمة وسياسة الخصوصية.',
+                        style: TextStyle(color: MyColors.successColor, fontWeight: FontWeight.w600, fontSize: 14, height: 1.5),
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(height: 30),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(MyString.alreadyAccount, style: TextStyle(color: controller.themeController.isDarkMode.value ? MyColors.white : Colors.grey.shade400, fontWeight: FontWeight.w400, fontSize: 14)),
+                    InkWell(
+                      onTap: () {
+                        Get.off(const LoginScreen());
+                      },
+                      child: Container(
+                        padding: const EdgeInsets.all(8),
+                        child: Text(
+                          MyString.signIn,
+                          style: TextStyle(
+                            color: controller.themeController.isDarkMode.value ? MyColors.textYellowColor : MyColors.primaryColor,
+                            fontWeight: FontWeight.w600,
+                            fontSize: 14,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
               ],
             ),
@@ -336,5 +522,38 @@ class RegisterScreenState extends State<RegisterScreen> with SingleTickerProvide
         ),
       ),
     );
+  }
+}
+
+class Validationss {
+  String? nameValidation(String? value) {
+    if (value == null || value.isEmpty) {
+      return 'يرجى إدخال اسم المستخدم';
+    }
+    return null;
+  }
+
+  String? phoneValidation(String? value) {
+    if (value == null || value.isEmpty) {
+      return 'يرجى إدخال رقم الهاتف';
+    }
+    // يمكنك إضافة تحقق من تنسيق رقم الهاتف هنا
+    return null;
+  }
+
+  String? passwordValidation(String? value) {
+    if (value == null || value.isEmpty) {
+      return 'يرجى إدخال كلمة المرور';
+    } else if (value.length < 6) {
+      return 'يجب أن تكون كلمة المرور 6 أحرف على الأقل';
+    }
+    return null;
+  }
+
+  String? dateValidation(String? value) {
+    if (value == null || value.isEmpty) {
+      return 'يرجى إدخال تاريخ الميلاد';
+    }
+    return null;
   }
 }
