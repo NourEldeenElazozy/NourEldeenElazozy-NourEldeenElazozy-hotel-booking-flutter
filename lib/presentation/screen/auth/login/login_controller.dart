@@ -74,5 +74,6 @@ class LoginController extends GetxController {
     await prefs.setString('userName', user.name);
     await prefs.setString('userPhone', user.phone);
     await prefs.setString('user_type', user.userType);
+    await prefs.setInt('user_id', user.id);
   }
 }

@@ -45,7 +45,7 @@ class BottomSheetController extends GetxController {
                 .map((cityJson) => City.fromJson(cityJson))
                 .toList();
             print("cities");
-            print(cities.value);  // ستظهر قائمة من كائنات City
+            print(cities.value.length);  // ستظهر قائمة من كائنات City
 
          } else {
             Get.snackbar('خطأ', 'فشل في جلب البيانات');

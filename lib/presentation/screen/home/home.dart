@@ -13,6 +13,7 @@ class _HomeState extends State<Home> {
   late HomeController controller = Get.put(HomeController());
   late bool isDarkMode;
   var userName = ''.obs; // استخدام Rx لتحديث الواجهة عند تغيير القيمة
+  var userId = 0.obs; // استخدام Rx لتحديث الواجهة عند تغيير القيمة
   var Token = ''.obs; // استخدام Rx لتحديث الواجهة عند تغيير القيمة
   var userType = ''.obs; // استخدام Rx لتحديث الواجهة عند تغيير القيمة
   @override
@@ -26,6 +27,7 @@ class _HomeState extends State<Home> {
     _loadUserName(); // استدعاء دالة تحميل الاسم
     _loadToken();
     _loaduserType();
+    _loadUserId();
   }
 
   Future<void> _loadUserName() async {
@@ -51,6 +53,11 @@ class _HomeState extends State<Home> {
 
 
   }
+  Future<void> _loadUserId() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    userId.value = prefs.getInt('user_id') ??0;
+
+  }
   @override
   Widget build(BuildContext context) {
     //controller.getRestAreas(cityId: 1);
@@ -61,6 +68,7 @@ class _HomeState extends State<Home> {
   //removeToken();
    print(" token ${Token.value}");
    print(" usertypes ${userType.value}");
+    print("userId ${userId.value}");
    return Directionality(
       textDirection: TextDirection.rtl,
       child: Scaffold(

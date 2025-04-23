@@ -9,108 +9,127 @@ import '../../../Model/RestArea.dart';
 
 class MySotingScreen extends StatelessWidget {
   final HomeController controller = Get.put(HomeController());
-  RxInt userId = 0.obs; // استخدام Rx لتحديث الواجهة عند تغيير القيمة
 
-  Future<int> _loadUserType() async {
+  Future<int> _loadUserId() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
-    return prefs.getInt('userId') ?? 0;
+    return prefs.getInt('user_id') ?? 0;
   }
+
   @override
   Widget build(BuildContext context) {
-    _loadUserType();
-    print(" userId.value ${ userId.value }");
-    // استدعاء الدالة لجلب البيانات عند بناء الشاشة
-    controller.getRestAreas(hostId:userId.value );
+
 
     return Directionality(
-      textDirection: TextDirection.rtl, // لجعل التخطيط من اليمين لليسار
+      textDirection: TextDirection.rtl,
       child: Scaffold(
         backgroundColor: Colors.grey[100],
-          appBar: AppBar(
-            title: const Text(
-              'إسترحاتي',
-              style: TextStyle(
-                fontSize: 20,
-                fontWeight: FontWeight.bold,
-                fontFamily: 'Tajawal',
-
-              ),
+        appBar: AppBar(
+          title: const Text(
+            'إسترحاتي',
+            style: TextStyle(
+              fontSize: 20,
+              fontWeight: FontWeight.bold,
+              fontFamily: 'Tajawal',
             ),
-            centerTitle: true,
-            backgroundColor: MyColors.primaryColor,
-            elevation: 0,
           ),
-        body: Obx(() {
-          if (controller.isLoading.value) {
-            return const Center(child: CircularProgressIndicator());
-          }
+          centerTitle: true,
+          backgroundColor: MyColors.primaryColor,
+          elevation: 0,
+        ),
+        body: FutureBuilder<int>(
+          future: _loadUserId(),
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return const Center(child: CircularProgressIndicator());
+            }
 
-          return ListView.builder(
-            physics: const AlwaysScrollableScrollPhysics(),
-            itemCount: controller.restAreas.length,
-            itemBuilder: (context, index) {
-              final restArea = controller.restAreas[index];
-              return InkWell(
-                onTap: () {
-                  // يمكنك إضافة منطق التنقل لتفاصيل الاستراحة هنا
-                },
-                child: Card(
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(16),
-                  ),
-                  elevation: 4,
-                  margin: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 16.0),
-                  child: Container(
-                    padding: const EdgeInsets.all(12),
-                    child: Row(
-                      children: [
-                        ClipRRect(
-                          borderRadius: BorderRadius.circular(12),
-                          child: Image.network(
-                            "http://10.0.2.2:8000/storage/${restArea["main_image"]}",
-                            width: 100,
-                            height: 100,
-                            fit: BoxFit.cover,
-                          ),
-                        ),
-                        const SizedBox(width: 12),
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.end,
-                            children: [
-                              Text(
-                                restArea["name"].toString(),
-                                style: const TextStyle(
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.bold,
-                                  fontFamily: 'Tajawal',
-                                ),
+            if (snapshot.hasError) {
+              return Center(child: Text('Error: ${snapshot.error}'));
+            }
+
+            final userId = snapshot.data!;
+            print("user_id ${userId}");
+            controller.getRestAreas(hostId: userId);
+            print("controller.restAreas.length");
+            print( controller.restAreas.length);
+
+
+            return Obx(() {
+              if (controller.isLoading.value) {
+                return const Center(child: CircularProgressIndicator());
+              }
+
+              return ListView.builder(
+                physics: const AlwaysScrollableScrollPhysics(),
+                itemCount: controller.restAreas.length,
+                itemBuilder: (context, index) {
+                  final restArea = controller.restAreas[index];
+                  return InkWell(
+                    onTap: () {
+                      // يمكنك إضافة منطق التنقل لتفاصيل الاستراحة هنا
+                    },
+                    child: Card(
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(16),
+                      ),
+                      elevation: 4,
+                      margin: const EdgeInsets.symmetric(
+                          vertical: 10.0, horizontal: 16.0),
+                      child: Container(
+                        padding: const EdgeInsets.all(12),
+                        child: Row(
+                          children: [
+                            ClipRRect(
+                              borderRadius: BorderRadius.circular(12),
+                              child: Image.network(
+                                "http://10.0.2.2:8000/storage/${restArea["main_image"]}",
+                                width: 100,
+                                height: 100,
+                                fit: BoxFit.cover,
                               ),
-                              const SizedBox(height: 4),
-                              Text(
-                                restArea["description"].toString(),
-                                maxLines: 2,
-                                overflow: TextOverflow.ellipsis,
-                                style: const TextStyle(
-                                  fontSize: 14,
-                                  fontFamily: 'Tajawal',
-                                  color: Colors.black54,
-                                ),
+                            ),
+                            const SizedBox(width: 12),
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.end,
+                                children: [
+                                  Text(
+                                    restArea["name"].toString(),
+                                    style: const TextStyle(
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.bold,
+                                      fontFamily: 'Tajawal',
+                                    ),
+                                  ),
+                                  const SizedBox(height: 4),
+                                  Text(
+                                    restArea["description"].toString(),
+                                    maxLines: 2,
+                                    overflow: TextOverflow.ellipsis,
+                                    style: const TextStyle(
+                                      fontSize: 14,
+                                      fontFamily: 'Tajawal',
+                                      color: Colors.black54,
+                                    ),
+                                  ),
+                                ],
                               ),
-                            ],
-                          ),
+                            ),
+                          ],
                         ),
-                      ],
+                      ),
                     ),
-                  ),
-                ),
+                  );
+                },
               );
-            },
-          );
-        }),
+            });
+          },
+        ),
         floatingActionButton: FloatingActionButton(
           onPressed: () {
-            controller.getRestAreas();
+            _loadUserId().then((userId) {
+              controller.getRestAreas(hostId: userId);
+            });
           },
           backgroundColor: MyColors.primaryColor,
           child: const Icon(Icons.refresh, color: Colors.white),

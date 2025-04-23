@@ -52,6 +52,11 @@ class RegisterController extends GetxController {
 
   Future<void> submit(String useType) async {
     try {
+      print(nameController.text);
+      print(phoneController.text);
+      print(birthDate.value);
+      print(gender.value);
+      print(useType);
       final response = await Dio().post(
         'http://10.0.2.2:8000/api/register', // تعديل الرابط حسب الحاجة
         data: {
@@ -92,6 +97,7 @@ class RegisterController extends GetxController {
           }
         } else {
           // إذا كان هناك خطأ آخر
+          print('Error: ${e.response?.data}');
           Get.snackbar('خطأ', 'حدث خطأ غير متوقع.');
         }
       } else {
@@ -129,4 +135,5 @@ Future<void> _storeData(String token, User user) async {
   await prefs.setString('userName', user.name);
   await prefs.setString('userPhone', user.phone);
   await prefs.setString('user_type', user.userType);
+  await prefs.setInt('user_id', user.id);
 }

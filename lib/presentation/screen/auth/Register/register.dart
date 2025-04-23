@@ -9,7 +9,7 @@ class RegisterScreen extends StatefulWidget {
 
 class RegisterScreenState extends State<RegisterScreen> with SingleTickerProviderStateMixin {
   late RegisterController controller;
-  late BottomSheetController  Citycontroller;
+  late BottomSheetController  Bottomcontroller;
   late TabController _tabController;
   final GlobalKey<FormState> customerFormKey = GlobalKey<FormState>();
   final GlobalKey<FormState> hostFormKey = GlobalKey<FormState>();
@@ -17,7 +17,7 @@ class RegisterScreenState extends State<RegisterScreen> with SingleTickerProvide
   void initState() {
     super.initState();
     controller = Get.put(RegisterController());
-    Citycontroller = Get.put(BottomSheetController());
+    Bottomcontroller = Get.put(BottomSheetController());
     _tabController = TabController(length: 2, vsync: this);
   }
 
@@ -29,11 +29,12 @@ class RegisterScreenState extends State<RegisterScreen> with SingleTickerProvide
 
   @override
   Widget build(BuildContext context) {
+    Bottomcontroller.fetchCities();
     return Directionality(
       textDirection: TextDirection.rtl,
       child: GetBuilder<RegisterController>(
         init: controller,
-        builder: (controller) {
+        builder: (controller)  {
           return Scaffold(
             appBar: AppBar(
               title: const Text('تسجيل'),
@@ -124,81 +125,92 @@ class RegisterScreenState extends State<RegisterScreen> with SingleTickerProvide
                 },
               ),
                 const SizedBox(height: 20),
-                DropdownButtonFormField<int>(
-                  value: Get.find<BottomSheetController>().selectedCityId.value == -1
-                      ? null
-                      : Get.find<BottomSheetController>().selectedCityId.value,
+                Obx(() {
+                  var controller = Get.find<BottomSheetController>();
+                  var rigcontroller = Get.find<RegisterController>();
+                  if (controller.isLoading.value) {
+                    return Center(child: CircularProgressIndicator());
+                  }
+
+                  return DropdownButtonFormField<int>(
+                    value: controller.selectedCityId.value == -1
+                        ? null
+                        : controller.selectedCityId.value,
+                    decoration: InputDecoration(
+                      filled: true,
+                      fillColor: controller.themeController.isDarkMode.value
+                          ? MyColors.darkTextFieldColor
+                          : MyColors.disabledTextFieldColor,
+                      hintText: "اختر المدينة",
+                      prefixIcon: Padding(
+                        padding: const EdgeInsets.all(15),
+                        child: SvgPicture.asset(MyImages.location),
+                      ),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(10),
+                        borderSide: BorderSide.none,
+                      ),
+                    ),
+                    items: controller.cities.map((city) {
+                      return DropdownMenuItem<int>(
+                        value: city.id,
+                        child: Text(city.name),
+                      );
+                    }).toList(),
+                    onChanged: (value) {
+                      controller.selectedCityId.value = value ?? -1;
+                      rigcontroller.cityController.text = controller.selectedCityId.value.toString();
+                      print(rigcontroller.cityController.text);
+                    },
+                    validator: (value) {
+                      if (value == null) {
+                        return 'يرجى اختيار المدينة';
+                      }
+                      return null;
+                    },
+                  );
+                }),
+                const SizedBox(height: 20),
+                Obx(() => TextFormField(
+                  readOnly: true,
                   decoration: InputDecoration(
+                    hintText: "تاريخ الميلاد",
                     filled: true,
                     fillColor: controller.themeController.isDarkMode.value
                         ? MyColors.darkTextFieldColor
                         : MyColors.disabledTextFieldColor,
-                    hintText: "اختر المدينة",
                     prefixIcon: Padding(
                       padding: const EdgeInsets.all(15),
-                      child: SvgPicture.asset(MyImages.location),
+                      child: SvgPicture.asset(MyImages.datePicker),
+                    ),
+                    suffixIcon: IconButton(
+                      icon: Icon(Icons.calendar_today),
+                      onPressed: () async {
+                        DateTime? pickedDate = await showDatePicker(
+                          context: context,
+                          initialDate: DateTime.now(),
+                          firstDate: DateTime(1900),
+                          lastDate: DateTime.now(),
+                        );
+                        if (pickedDate != null) {
+                          controller.birthDate.value =
+                          "${pickedDate.toLocal()}".split(' ')[0];
+                        }
+                      },
                     ),
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(10),
                       borderSide: BorderSide.none,
                     ),
                   ),
-                  items: Get.find<BottomSheetController>().cities.map((city) {
-                    return DropdownMenuItem<int>(
-                      value: city.id, // استخدم city.id بدلاً من city['id']
-                      child: Text(city.name), // استخدم city.name بدلاً من city['name']
-                    );
-                  }).toList(),
-                  onChanged: (value) {
-                    Get.find<BottomSheetController>().selectedCityId.value = value ?? -1;
-                    controller.cityController.text=Citycontroller.selectedCityId.value.toString();
-                    print( controller.cityController.text);
-                  },
+                  controller: TextEditingController(text: controller.birthDate.value),
                   validator: (value) {
-                    if (value == null) {
-                      return 'يرجى اختيار المدينة';
+                    if (value == null || value.isEmpty) {
+                      return 'يرجى إدخال تاريخ الميلاد';
                     }
                     return null;
                   },
-                ),
-                const SizedBox(height: 20),
-              TextFormField(
-                readOnly: true, // لجعل الحقل للعرض فقط
-                controller: TextEditingController(text: controller.birthDate.value), // تعيين القيمة
-                decoration: InputDecoration(
-                  hintText: "تاريخ الميلاد",
-                  filled: true,
-                  fillColor: controller.themeController.isDarkMode.value ? MyColors.darkTextFieldColor : MyColors.disabledTextFieldColor,
-                  prefixIcon: Padding(
-                    padding: const EdgeInsets.all(15),
-                    child: SvgPicture.asset(MyImages.datePicker), // استخدم أيقونة التقويم
-                  ),
-                  suffixIcon: IconButton(
-                    icon: Icon(Icons.calendar_today),
-                    onPressed: () async {
-                      DateTime? pickedDate = await showDatePicker(
-                        context: context,
-                        initialDate: DateTime.now(),
-                        firstDate: DateTime(1900),
-                        lastDate: DateTime.now(),
-                      );
-                      if (pickedDate != null) {
-                        controller.birthDate.value = "${pickedDate.toLocal()}".split(' ')[0]; // تعيين تاريخ الميلاد
-                      }
-                    },
-                  ),
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(10),
-                    borderSide: BorderSide.none,
-                  ),
-                ),
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'يرجى إدخال تاريخ الميلاد';
-                  }
-                  return null;
-                },
-              ),
+                )),
                 const SizedBox(height: 20),
                 CustomTextFormField(
                   controller: controller.phoneController,
@@ -374,54 +386,63 @@ class RegisterScreenState extends State<RegisterScreen> with SingleTickerProvide
                   },
                 ),
                 const SizedBox(height: 20),
-                DropdownButtonFormField<int>(
-                  value: Get.find<BottomSheetController>().selectedCityId.value == -1
-                      ? null
-                      : Get.find<BottomSheetController>().selectedCityId.value,
+                Obx(() {
+                  var controller = Get.find<BottomSheetController>();
+                  var rigcontroller = Get.find<RegisterController>();
+                  if (controller.isLoading.value) {
+                    return Center(child: CircularProgressIndicator());
+                  }
+
+                  return DropdownButtonFormField<int>(
+                    value: controller.selectedCityId.value == -1
+                        ? null
+                        : controller.selectedCityId.value,
+                    decoration: InputDecoration(
+                      filled: true,
+                      fillColor: controller.themeController.isDarkMode.value
+                          ? MyColors.darkTextFieldColor
+                          : MyColors.disabledTextFieldColor,
+                      hintText: "اختر المدينة",
+                      prefixIcon: Padding(
+                        padding: const EdgeInsets.all(15),
+                        child: SvgPicture.asset(MyImages.location),
+                      ),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(10),
+                        borderSide: BorderSide.none,
+                      ),
+                    ),
+                    items: controller.cities.map((city) {
+                      return DropdownMenuItem<int>(
+                        value: city.id,
+                        child: Text(city.name),
+                      );
+                    }).toList(),
+                    onChanged: (value) {
+                      controller.selectedCityId.value = value ?? -1;
+                      rigcontroller.cityController.text = controller.selectedCityId.value.toString();
+                      print(rigcontroller.cityController.text);
+                    },
+                    validator: (value) {
+                      if (value == null) {
+                        return 'يرجى اختيار المدينة';
+                      }
+                      return null;
+                    },
+                  );
+                }),
+                const SizedBox(height: 20),
+                Obx(() => TextFormField(
+                  readOnly: true,
                   decoration: InputDecoration(
+                    hintText: "تاريخ الميلاد",
                     filled: true,
                     fillColor: controller.themeController.isDarkMode.value
                         ? MyColors.darkTextFieldColor
                         : MyColors.disabledTextFieldColor,
-                    hintText: "اختر المدينة",
                     prefixIcon: Padding(
                       padding: const EdgeInsets.all(15),
-                      child: SvgPicture.asset(MyImages.location),
-                    ),
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(10),
-                      borderSide: BorderSide.none,
-                    ),
-                  ),
-                  items: Get.find<BottomSheetController>().cities.map((city) {
-                    return DropdownMenuItem<int>(
-                      value: city.id, // استخدم city.id بدلاً من city['id']
-                      child: Text(city.name), // استخدم city.name بدلاً من city['name']
-                    );
-                  }).toList(),
-                  onChanged: (value) {
-                    Get.find<BottomSheetController>().selectedCityId.value = value ?? -1;
-                    controller.cityController.text=Citycontroller.selectedCityId.value.toString();
-                    print( controller.cityController.text);
-                  },
-                  validator: (value) {
-                    if (value == null) {
-                      return 'يرجى اختيار المدينة';
-                    }
-                    return null;
-                  },
-                ),
-                const SizedBox(height: 20),
-                TextFormField(
-                  readOnly: true, // لجعل الحقل للعرض فقط
-                  controller: TextEditingController(text: controller.birthDate.value), // تعيين القيمة
-                  decoration: InputDecoration(
-                    hintText: "تاريخ الميلاد",
-                    filled: true,
-                    fillColor: controller.themeController.isDarkMode.value ? MyColors.darkTextFieldColor : MyColors.disabledTextFieldColor,
-                    prefixIcon: Padding(
-                      padding: const EdgeInsets.all(15),
-                      child: SvgPicture.asset(MyImages.datePicker), // استخدم أيقونة التقويم
+                      child: SvgPicture.asset(MyImages.datePicker),
                     ),
                     suffixIcon: IconButton(
                       icon: Icon(Icons.calendar_today),
@@ -433,7 +454,8 @@ class RegisterScreenState extends State<RegisterScreen> with SingleTickerProvide
                           lastDate: DateTime.now(),
                         );
                         if (pickedDate != null) {
-                          controller.birthDate.value = "${pickedDate.toLocal()}".split(' ')[0]; // تعيين تاريخ الميلاد
+                          controller.birthDate.value =
+                          "${pickedDate.toLocal()}".split(' ')[0];
                         }
                       },
                     ),
@@ -442,13 +464,15 @@ class RegisterScreenState extends State<RegisterScreen> with SingleTickerProvide
                       borderSide: BorderSide.none,
                     ),
                   ),
+                  controller: TextEditingController(text: controller.birthDate.value),
                   validator: (value) {
                     if (value == null || value.isEmpty) {
                       return 'يرجى إدخال تاريخ الميلاد';
                     }
                     return null;
                   },
-                ),
+                )),
+
                 const SizedBox(height: 20),
                 CustomTextFormField(
                   controller: controller.phoneController,
