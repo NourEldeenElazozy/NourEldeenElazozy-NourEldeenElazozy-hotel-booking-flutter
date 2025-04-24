@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import 'package:hotel_booking/Model/RestAreas.dart';
 import 'package:hotel_booking/core/constants/my_colors.dart';
 import 'package:hotel_booking/presentation/screen/home/home_import.dart';
+import 'package:hotel_booking/presentation/screen/home/home_model.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../../Model/RestArea.dart';
 
@@ -66,7 +67,21 @@ class MySotingScreen extends StatelessWidget {
                   final restArea = controller.restAreas[index];
                   return InkWell(
                     onTap: () {
-                      // يمكنك إضافة منطق التنقل لتفاصيل الاستراحة هنا
+
+                        /*
+                          Get.toNamed("/hotelDetail", arguments: {'data' : controller.homeDetails[index]});
+                           */
+
+                        Detail detail = Detail.fromJson(restArea);
+
+                        // إضافة الكائن إلى homeDetails إذا كان ذلك مطلوبًا
+                        controller.homeDetails.add(detail);
+
+
+                        Get.toNamed("/hotelDetail", arguments: {'data': restArea});
+                        print("reservation");
+                        print(restArea);
+
                     },
                     child: Card(
                       shape: RoundedRectangleBorder(
@@ -81,12 +96,20 @@ class MySotingScreen extends StatelessWidget {
                           children: [
                             ClipRRect(
                               borderRadius: BorderRadius.circular(12),
-                              child: Image.network(
-                                "http://10.0.2.2:8000/storage/${restArea["main_image"]}",
-                                width: 100,
-                                height: 100,
-                                fit: BoxFit.cover,
-                              ),
+                                child: Image.network(
+                                  "http://10.0.2.2:8000/storage/${restArea["main_image"]}",
+                                  width: 100,
+                                  height: 100,
+                                  fit: BoxFit.cover,
+                                  errorBuilder: (BuildContext context, Object error, StackTrace? stackTrace) {
+                                    return Image.asset(
+                                      'assets/logo/logo.png', // مسار الصورة الافتراضية
+                                      width: 100,
+                                      height: 100,
+                                      fit: BoxFit.cover,
+                                    );
+                                  },
+                                ),
                             ),
                             const SizedBox(width: 12),
                             Expanded(
@@ -100,6 +123,30 @@ class MySotingScreen extends StatelessWidget {
                                       fontWeight: FontWeight.bold,
                                       fontFamily: 'Tajawal',
                                     ),
+                                  ),
+                                  IconButton(
+                                    icon: const Icon(Icons.edit, color: Colors.blue),
+                                    onPressed: () {
+                                      Get.toNamed("/AddRestAreaScreen", arguments: {
+                                        'isEdit': true,
+                                        'restAreaData': restArea,
+                                      });
+                                    },
+                                    tooltip: 'تعديل',
+                                  ),
+                                  IconButton(
+                                    icon: Icon(
+                                      restArea["is_active"] == true
+                                          ? Icons.toggle_on
+                                          : Icons.toggle_off,
+                                      color: restArea["is_active"] == true
+                                          ? MyColors.tealColor
+                                          : Colors.grey,
+                                      size: 32,
+                                    ),
+                                    onPressed: () {
+                                      controller.toggleRestAreaActiveStatus(restArea["id"]);
+                                    },
                                   ),
                                   const SizedBox(height: 4),
                                   Text(
@@ -125,14 +172,32 @@ class MySotingScreen extends StatelessWidget {
             });
           },
         ),
-        floatingActionButton: FloatingActionButton(
-          onPressed: () {
-            _loadUserId().then((userId) {
-              controller.getRestAreas(hostId: userId);
-            });
-          },
-          backgroundColor: MyColors.primaryColor,
-          child: const Icon(Icons.refresh, color: Colors.white),
+        floatingActionButton: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.end,
+          children: [
+            FloatingActionButton(
+              heroTag: 'add_rest_area',
+              onPressed: () {
+                Get.toNamed("/AddRestAreaScreen");
+              },
+              backgroundColor: MyColors.tealColor,
+              child: const Icon(Icons.add, color: Colors.white),
+              tooltip: "إضافة استراحة",
+            ),
+            const SizedBox(height: 12),
+            FloatingActionButton(
+              heroTag: 'refresh',
+              onPressed: () {
+                _loadUserId().then((userId) {
+                  controller.getRestAreas(hostId: userId);
+                });
+              },
+              backgroundColor: MyColors.primaryColor,
+              child: const Icon(Icons.refresh, color: Colors.white),
+              tooltip: "تحديث القائمة",
+            ),
+          ],
         ),
       ),
     );

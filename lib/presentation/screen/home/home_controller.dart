@@ -51,7 +51,17 @@ class HomeController extends GetxController {
      filterListView.clear();
      //filterListView.addAll(homeDetails.where((element) => element.status == status));
    }
-
+   void toggleRestAreaActiveStatus(int id) async {
+     // نفّذ هنا طلب HTTP أو تعديل الحالة في القائمة حسب مشروعك
+     // مثلاً:
+     final index = restAreas.indexWhere((r) => r["id"] == id);
+     if (index != -1) {
+       final current = restAreas[index]["is_active"] ?? false;
+       restAreas[index]["is_active"] = !current;
+       restAreas.refresh();
+       // ويمكنك استدعاء API لتحديث الحالة في السيرفر
+     }
+   }
    Future<List<Detail>> getHomeDetail() async {
 
      isLoading.value = true;
@@ -93,6 +103,7 @@ class HomeController extends GetxController {
 
        if (response.statusCode == 200) {
          reservations.value = response.data['reservations']; // تخزين البيانات في المتغير
+         print(" reservations.value");
          print( reservations.value);
 
        } else {

@@ -19,7 +19,7 @@ class _HomeState extends State<Home> {
   @override
   void initState() {
     super.initState();
-
+    controller.getRestAreas();
     controller.getHomeDetail();
     controller.selectedItem.value = 0;
     controller.passingStatus.value = "Recommended";
@@ -61,7 +61,7 @@ class _HomeState extends State<Home> {
   @override
   Widget build(BuildContext context) {
     //controller.getRestAreas(cityId: 1);
-    //controller.getRestAreas();
+
     _loaduserType();
    controller.getReservations();
    controller.fetchRecentlyBooked();

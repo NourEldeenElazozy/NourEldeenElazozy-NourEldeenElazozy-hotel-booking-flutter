@@ -14,6 +14,7 @@ class AddRestAreaScreen extends StatefulWidget {
 
 class _AddRestAreaScreenState extends State<AddRestAreaScreen> {
   final _formKey = GlobalKey<FormState>();
+
   final _restArea = RestAreas(
 
     areaType: [''],
@@ -77,9 +78,75 @@ class _AddRestAreaScreenState extends State<AddRestAreaScreen> {
   List<XFile> _detailsImages = [];
   int _currentStep = 0;
   late RestAreaController controller;
+  late TextEditingController nameController;
+  late TextEditingController locationController;
+  late TextEditingController descriptionController;
+  late TextEditingController priceController;
+  late TextEditingController totalSpaceController;
+  late TextEditingController internalSpaceController;
+  late TextEditingController maxGuestsController;
+  late TextEditingController checkInTimeController;
+  late TextEditingController checkOutTimeController;
+  late TextEditingController googleMapsLocationController;
+  late TextEditingController holidayPriceController;
+  late TextEditingController eidDaysPriceController;
+  late TextEditingController depositValueController;
 @override
 void initState() {
 super.initState();
+final args = Get.arguments;
+nameController = TextEditingController();
+locationController = TextEditingController();
+descriptionController = TextEditingController();
+priceController = TextEditingController();
+totalSpaceController = TextEditingController();
+internalSpaceController = TextEditingController();
+maxGuestsController = TextEditingController();
+checkInTimeController = TextEditingController();
+checkOutTimeController = TextEditingController();
+googleMapsLocationController = TextEditingController();
+holidayPriceController = TextEditingController();
+eidDaysPriceController = TextEditingController();
+depositValueController = TextEditingController();
+if (args != null && args['isEdit'] == true && args['restAreaData'] != null) {
+
+  final data = args['restAreaData'] as Map<String, dynamic>;
+
+
+  // مِلء كائن الاستراحة الحالي بالقيم القادمة
+  _restArea.name = data["name"];
+  _restArea.location = data["location"];
+  _restArea.description = data["description"];
+  _restArea.price = double.tryParse(data["price"].toString()) ?? 0.0;
+  _restArea.totalSpace = data["total_space"];
+  _restArea.internalSpace = data["internal_space"];
+  _restArea.maxGuests = data["max_guests"];
+  _restArea.hostId = data["host_id"];
+  _restArea.cityId = data["city_id"];
+  _restArea.checkInTime = data["check_in_time"];
+  _restArea.checkOutTime = data["check_out_time"];
+  _restArea.googleMapsLocation = data["google_maps_location"];
+  _restArea.idProofType = data["id_proof_type"];
+  _restArea.holidayPrice = double.tryParse(data["holiday_price"].toString()) ?? 0.0;
+  _restArea.eidDaysPrice = double.tryParse(data["eid_days_price"].toString()) ?? 0.0;
+  _restArea.depositValue = double.tryParse(data["deposit_value"].toString()) ?? 0.0;
+
+// تعبئة الكنترولات
+  nameController.text = _restArea.name;
+  locationController.text = _restArea.location;
+  descriptionController.text = _restArea.description;
+  priceController.text = _restArea.price.toString();
+  totalSpaceController.text = _restArea.totalSpace.toString();
+  internalSpaceController.text = _restArea.internalSpace.toString();
+  maxGuestsController.text = _restArea.maxGuests.toString();
+  checkInTimeController.text = _restArea.checkInTime;
+  checkOutTimeController.text = _restArea.checkOutTime;
+  googleMapsLocationController.text = _restArea.googleMapsLocation;
+  holidayPriceController.text = _restArea.holidayPrice.toString();
+  eidDaysPriceController.text = _restArea.eidDaysPrice.toString();
+  depositValueController.text = _restArea.depositValue.toString();
+  setState(() {}); // لتحديث واجهة المستخدم
+}
 controller = Get.put(RestAreaController());
 }
   @override
@@ -217,6 +284,7 @@ controller = Get.put(RestAreaController());
         child: Column(
           children: [
             _buildTextFormField(
+              controller: nameController,
               'اسم الاستراحة',
               Icons.home_work,
               (value) {
@@ -228,6 +296,7 @@ controller = Get.put(RestAreaController());
             _buildTextFormField(
               'المساحة الداخلية',
               Icons.area_chart, // أي رمز مناسب هنا
+              controller:internalSpaceController ,
               (value) {
                 _restArea.internalSpace =
                     int.tryParse(value!) ?? 0; // تحديث الكائن هنا
@@ -237,6 +306,7 @@ controller = Get.put(RestAreaController());
             _buildTextFormField(
               'المساحة الإجمالية',
               Icons.grid_view, // أي رمز مناسب هنا
+              controller:totalSpaceController ,
               (value) {
                 _restArea.totalSpace =
                     int.tryParse(value!) ?? 0; // تحديث الكائن هنا
@@ -683,12 +753,17 @@ controller = Get.put(RestAreaController());
   }
 
   Widget _buildTextFormField(
-      String label, IconData icon, Function(String) onSaved,
-      {String? Function(String?)? validator}) {
+      String label,
+      IconData icon,
+      Function(String) onSaved, {
+        String? Function(String?)? validator,
+        TextEditingController? controller,
+      }) {
     return Padding(
       padding: EdgeInsets.only(bottom: 16),
       child: TextFormField(
-        onChanged: (value) => onSaved(value ?? ''),
+        controller: controller,
+        onChanged: (value) => onSaved(value),
         onSaved: (value) => onSaved(value ?? ''),
         decoration: InputDecoration(
           labelText: label,
@@ -706,6 +781,7 @@ controller = Get.put(RestAreaController());
       ),
     );
   }
+
 
   Widget _buildNumberField(
       String label, IconData icon, Function(double) onChanged,
