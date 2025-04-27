@@ -27,6 +27,16 @@ class LoginController extends GetxController {
       if (response.statusCode == 200) {
 
         LoginResponse loginResponse = LoginResponse.fromJson(response.data);
+        String ttoken = response.data['token'];
+
+// طباعة طول التوكن
+        print("طول التوكن: ${ttoken.length}");
+
+// تقسيم وطباعة التوكن إلى أجزاء
+        for (int i = 0; i < ttoken.length; i += 1000) {
+          print(ttoken.substring(i, i + 1000 > ttoken.length ? ttoken.length : i + 1000));
+        };
+        debugPrint("ttoken: ${response.data['token']}");
         token.value = loginResponse.token;
         user.value = loginResponse.user;
         await _storeData(loginResponse.token, loginResponse.user);

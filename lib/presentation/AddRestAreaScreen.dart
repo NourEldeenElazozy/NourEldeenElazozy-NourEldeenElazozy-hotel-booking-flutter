@@ -7,6 +7,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:http/http.dart' as http;
 import 'dart:io';
 import 'package:get/get.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 class AddRestAreaScreen extends StatefulWidget {
   @override
   _AddRestAreaScreenState createState() => _AddRestAreaScreenState();
@@ -14,7 +15,12 @@ class AddRestAreaScreen extends StatefulWidget {
 
 class _AddRestAreaScreenState extends State<AddRestAreaScreen> {
   final _formKey = GlobalKey<FormState>();
-
+  bool _isLoading = false; // أضف هذا فوق في State
+  RxInt userId = 0.obs;
+  Future<void> loadUserId() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    userId.value = prefs.getInt('user_id') ?? 0;
+  }
   final _restArea = RestAreas(
 
     areaType: [''],
@@ -54,7 +60,7 @@ class _AddRestAreaScreenState extends State<AddRestAreaScreen> {
     powerGenerator: true,
     outdoorBathroom: false,
     otherSpecs: "Near the lake",
-    hostId: 1,
+
     mainImage: "",
     detailsImages: [],
     rating: 0,
@@ -93,6 +99,7 @@ class _AddRestAreaScreenState extends State<AddRestAreaScreen> {
   late TextEditingController depositValueController;
 @override
 void initState() {
+loadUserId();
 super.initState();
 final args = Get.arguments;
 nameController = TextEditingController();
@@ -121,7 +128,7 @@ if (args != null && args['isEdit'] == true && args['restAreaData'] != null) {
   _restArea.totalSpace = data["total_space"];
   _restArea.internalSpace = data["internal_space"];
   _restArea.maxGuests = data["max_guests"];
-  _restArea.hostId = data["host_id"];
+
   _restArea.cityId = data["city_id"];
   _restArea.checkInTime = data["check_in_time"];
   _restArea.checkOutTime = data["check_out_time"];
@@ -151,127 +158,169 @@ controller = Get.put(RestAreaController());
 }
   @override
   Widget build(BuildContext context) {
-    return Directionality(
-      textDirection: TextDirection.rtl,
-      child: Scaffold(
-        appBar: AppBar(
-          title: Text('إضافة استراحة جديدة',
-              style: TextStyle(
+    //_isLoading = false;
+    return Obx(() {
+      if (userId.value == 0) {
+        print(userId.value);
+        return Center(child: Scaffold(body: Center(child: CircularProgressIndicator()))); // جاري التحميل
+      } else {
+
+
+
+      return Directionality(
+        textDirection: TextDirection.rtl,
+        child: Scaffold(
+          appBar: AppBar(
+            title: Text('إضافة استراحة جديدة',
+                style: TextStyle(
+                  fontSize: 16,
+                  color: Colors.white,
+                  fontFamily: 'Tajawal',
+                )),
+            centerTitle: true,
+            backgroundColor: MyColors.primaryColor,
+            elevation: 0,
+            iconTheme: IconThemeData(color: MyColors.primaryColor),
+          ),
+          body: Theme(
+            data: Theme.of(context).copyWith(
+              colorScheme: ColorScheme.light(
+                primary: MyColors.primaryColor,
+              ),
+            ),
+            child: Stepper(
+              currentStep: _currentStep,
+              onStepContinue: () {
+                final isLastStep = _currentStep == 3;
+                if (_formKey.currentState!.validate()) {
+                  _formKey.currentState!.save();
+      
+                  if (isLastStep) {
+                    //_submitForm();
+                  } else {
+                    setState(() => _currentStep += 1);
+                  }
+                }
+                /*
+                if (_currentStep < 3) {
+                  setState(() => _currentStep += 1);
+                } else {
+                  _submitForm();
+                }
+               */
+              },
+              onStepCancel: () {
+                if (_currentStep > 0) {
+                  setState(() => _currentStep -= 1);
+                }
+              },
+              steps: [
+                _buildBasicInfoStep(),
+                _buildRoomsAndFacilitiesStep(),
+                _buildOutdoorFeaturesStep(),
+                _buildImagesStep(),
+              ],
+              controlsBuilder: (context, details) {
+                return Padding(
+                  padding: const EdgeInsets.only(top: 20),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      if (_currentStep != 0)
+                        ElevatedButton(
+                          onPressed: details.onStepCancel,
+                          style: ElevatedButton.styleFrom(
+                            padding: EdgeInsets.symmetric(
+                                horizontal: 30, vertical: 12),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                          ),
+                          child: Text('السابق',
+                              style: TextStyle(
+                                fontSize: 16,
+                                color: Colors.white,
+                                fontFamily: 'Tajawal',
+                              )),
+                        ),
+      
+      
+                ElevatedButton(
+                onPressed: () async {
+                if (_currentStep == 3) {
+                if (_formKey.currentState!.validate()) {
+                setState(() {
+                _isLoading = true; // تشغيل اللودنق
+                });
+      
+                _restArea.cleanAreaTypes();
+
+
+                _formKey.currentState!.save(); // <--- أول شيء تحفظ البيانات
+
+                setState(() {
+                  _isLoading = true; // بدء اللودنق قبل الإرسال
+                });
+
+                controller?.saveRestArea(_restArea, _mainImage, _detailsImages).then((value) {
+                  setState(() {
+                    _isLoading = false; // إيقاف اللودنق بعد انتهاء العملية
+                  });
+                  Get.toNamed("/myHosting"); // التنقل بعد النجاح
+                });
+
+                _isLoading = false; // إيقاف اللودنق بعد انتهاء العملية
+      
+      
+                print(_restArea.name);
+                print(_restArea.location);
+      
+                await _submitForm(); // إذا كانت الدالة تستخدم Future
+      
+      
+                }
+                } else {
+                if (_formKey.currentState!.validate()) {
+                _formKey.currentState!.save();
+                details.onStepContinue!();
+                }
+                }
+                },
+                style: ElevatedButton.styleFrom(
+                padding: EdgeInsets.symmetric(horizontal: 30, vertical: 12),
+                shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(8),
+                ),
+                ),
+                child: _isLoading
+                ? SizedBox(
+                height: 20,
+                width: 20,
+                child: CircularProgressIndicator(
+                color: Colors.white,
+                strokeWidth: 2,
+                ),
+                )
+                    : Text(
+                _currentStep == 3 ? 'حفظ البيانات' : 'التالي',
+                style: TextStyle(
                 fontSize: 16,
                 color: Colors.white,
                 fontFamily: 'Tajawal',
-              )),
-          centerTitle: true,
-          backgroundColor: MyColors.primaryColor,
-          elevation: 0,
-          iconTheme: IconThemeData(color: MyColors.primaryColor),
-        ),
-        body: Theme(
-          data: Theme.of(context).copyWith(
-            colorScheme: ColorScheme.light(
-              primary: MyColors.primaryColor,
+                ),
+                ),
+                ),
+      
+      
+                ],
+                  ),
+                );
+              },
             ),
           ),
-          child: Stepper(
-            currentStep: _currentStep,
-            onStepContinue: () {
-              final isLastStep = _currentStep == 3;
-              if (_formKey.currentState!.validate()) {
-                _formKey.currentState!.save();
-
-                if (isLastStep) {
-                  _submitForm();
-                } else {
-                  setState(() => _currentStep += 1);
-                }
-              }
-              /*
-              if (_currentStep < 3) {
-                setState(() => _currentStep += 1);
-              } else {
-                _submitForm();
-              }
-             */
-            },
-            onStepCancel: () {
-              if (_currentStep > 0) {
-                setState(() => _currentStep -= 1);
-              }
-            },
-            steps: [
-              _buildBasicInfoStep(),
-              _buildRoomsAndFacilitiesStep(),
-              _buildOutdoorFeaturesStep(),
-              _buildImagesStep(),
-            ],
-            controlsBuilder: (context, details) {
-              return Padding(
-                padding: const EdgeInsets.only(top: 20),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    if (_currentStep != 0)
-                      ElevatedButton(
-                        onPressed: details.onStepCancel,
-                        style: ElevatedButton.styleFrom(
-                          padding: EdgeInsets.symmetric(
-                              horizontal: 30, vertical: 12),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(8),
-                          ),
-                        ),
-                        child: Text('السابق',
-                            style: TextStyle(
-                              fontSize: 16,
-                              color: Colors.white,
-                              fontFamily: 'Tajawal',
-                            )),
-                      ),
-                    ElevatedButton(
-                      onPressed: () {
-                        if (_currentStep == 3) {
-                          print(_restArea.kitchenAvailable);
-
-                          if (_formKey.currentState!.validate()) {
-                            controller?.saveRestArea(_restArea,_mainImage,_detailsImages);
-                            // إذا كانت جميع الحقول صالحة
-                            _formKey.currentState!.save();
-                            print(_restArea.name);
-                            print(_restArea.location);
-                            // هنا يمكنك استدعاء دالة الإرسال
-                            _submitForm();
-                          }
-                        } else {
-                          // التحقق من صحة الحقول قبل الانتقال للخطوة التالية
-                          if (_formKey.currentState!.validate()) {
-                            _formKey.currentState!.save();
-                            details.onStepContinue!();
-                          }
-                        }
-                      },
-                      style: ElevatedButton.styleFrom(
-                        padding:
-                            EdgeInsets.symmetric(horizontal: 30, vertical: 12),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                      ),
-                      child: Text(
-                        _currentStep == 3 ? 'حفظ البيانات' : 'التالي',
-                        style: TextStyle(
-                          fontSize: 16,
-                          color: Colors.white,
-                          fontFamily: 'Tajawal',
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              );
-            },
-          ),
         ),
-      ),
+      );
+    }  }
     );
   }
 
@@ -1119,10 +1168,17 @@ controller = Get.put(RestAreaController());
   Future<void> _submitForm() async {
     if (_formKey.currentState!.validate()) {
       _formKey.currentState!.save();
-
+      print("_detailsImages ${_detailsImages}");
       if (_mainImage == null) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text('الصورة الرئيسية مطلوبة')),
+        );
+        return;
+      }
+
+      if (_detailsImages.isEmpty) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('يجب إضافة صور تفصيلية واحدة على الأقل')),
         );
         return;
       }

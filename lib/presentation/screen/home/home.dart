@@ -66,7 +66,9 @@ class _HomeState extends State<Home> {
    controller.getReservations();
    controller.fetchRecentlyBooked();
   //removeToken();
-   print(" token ${Token.value}");
+    print('════════ Token ════════');
+    print(Token.value);
+    print('═══════════════════════');
    print(" usertypes ${userType.value}");
     print("userId ${userId.value}");
    return Directionality(

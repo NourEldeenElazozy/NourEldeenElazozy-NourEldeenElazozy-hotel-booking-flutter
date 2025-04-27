@@ -36,7 +36,7 @@ class RestAreas {
   bool powerGenerator;
   bool outdoorBathroom;
   String otherSpecs;
-  int hostId;
+
   String mainImage;
   List<String> detailsImages;
   double rating;
@@ -93,7 +93,7 @@ class RestAreas {
     required this.powerGenerator,
     required this.outdoorBathroom,
     required this.otherSpecs,
-    required this.hostId,
+
     required this.mainImage,
     required this.detailsImages,
     required this.rating,
@@ -112,6 +112,20 @@ class RestAreas {
     required this.idProofType,
     required this.eidDaysPrice,
   });
+  void cleanAreaTypes() {
+    areaType.removeWhere((item) => item.isEmpty || item.trim().isEmpty);
+  }
+  // دالة لتحويل القائمة إلى سلسلة متوافقة مع ENUM
+  String? getAreaTypeForDb() {
+    cleanAreaTypes();
+    if (areaType.isEmpty) return null;
+
+    // إذا كنت تريد إرسال أول قيمة فقط (للتتوافق مع ENUM)
+    return areaType.first;
+
+    // أو إذا كان العمود في DB يدعم SET:
+    // return areaType.join(',');
+  }
 
   Map<String, dynamic> toJson() {
     return {
@@ -152,7 +166,7 @@ class RestAreas {
       'power_generator': powerGenerator== true ? 1 : 0, // تحويل إلى 1 أو 0,,
       'outdoor_bathroom': outdoorBathroom== true ? 1 : 0, // تحويل إلى 1 أو 0,,
       'other_specs': otherSpecs,
-      'host_id': 1,
+
       'main_image': mainImage,
       'details_images[]': detailsImages.join(','),
       'rating': rating,
