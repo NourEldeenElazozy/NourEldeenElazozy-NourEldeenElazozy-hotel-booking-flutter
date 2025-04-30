@@ -31,8 +31,8 @@ class PackageCardController extends GetxController {
           id: pkg['id'],
           name: pkg['name'],
           duration: pkg['duration'],
-          startRange: pkg['start_range'],
-          endRange: pkg['end_range'],
+          //startRange: pkg['start_range'],
+          //endRange: pkg['end_range'],
           percentage: pkg['percentage'],
         )).toList();
         print(packages.value);

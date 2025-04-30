@@ -5,7 +5,7 @@ class HomeController extends GetxController {
    var sliderValue = const RangeValues(0, 100).obs; // القيم الافتراضية لشريط التمرير
    var priceMin = 0.obs; // الحد الأدنى للسعر
    var priceMax = 0.obs; // الحد الأقصى للسعر
-
+   RxMap<int, bool> paymentStatusMap = <int, bool>{}.obs;
    RxInt selectedButton = 0.obs;
    RxBool bookMark = false.obs;
    RxInt selectedItem = 0.obs;
@@ -62,6 +62,43 @@ class HomeController extends GetxController {
        // ويمكنك استدعاء API لتحديث الحالة في السيرفر
      }
    }
+   bool hasUnpaidRestAreas() {
+     return paymentStatusMap.values.any((paid) => paid == false);
+   }
+   Future<Map<int, bool>> checkPaymentStatus(List<int> restAreaIds) async {
+     try {
+       final response = await Dio().post(
+         'http://10.0.2.2:8000/api/check-payment-status',
+         data: {
+           'rest_area_ids': restAreaIds,
+         },
+       );
+
+       if (response.statusCode == 200) {
+         final List data = response.data['data'];
+         print("استجابة فحص الدفع: $data");
+
+         // تأكد أن البيانات ليست فارغة
+         if (data.isEmpty) {
+           print("⚠️ لم يتم إرجاع بيانات لحالة الدفع.");
+           return {};
+         }
+
+         // تحويل البيانات إلى خريطة Map: rest_area_id => paid
+         return {
+           for (var item in data) item['rest_area_id'] as int: item['paid'] == true
+         };
+       } else {
+         print("⚠️ فشل في جلب حالة الدفع. كود الاستجابة: ${response.statusCode}");
+         return {};
+       }
+     } catch (e) {
+       print("❌ خطأ في فحص الدفع: $e");
+       return {};
+     }
+   }
+
+
    Future<List<Detail>> getHomeDetail() async {
 
      isLoading.value = true;

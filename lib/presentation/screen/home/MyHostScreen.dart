@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:hotel_booking/Model/RestAreas.dart';
@@ -13,7 +14,11 @@ class MySotingScreen extends StatelessWidget {
 
   Future<int> _loadUserId() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
+
+    print("prefs.getInt('user_id')");
+    print(prefs.getInt('user_id'));
     return prefs.getInt('user_id') ?? 0;
+
   }
 
   @override
@@ -49,129 +54,187 @@ class MySotingScreen extends StatelessWidget {
             }
 
             final userId = snapshot.data!;
-            print("user_id ${userId}");
-            controller.getRestAreas(hostId: userId);
-            print("controller.restAreas.length");
-            print( controller.restAreas.length);
+            print("user_id $userId");
 
+            // تحميل الاستراحات والتحقق من الدفع
+            return FutureBuilder(
+              future: controller.getRestAreas(hostId: userId).then((_) async {
+                final ids = controller.restAreas.map((e) => e["id"] as int).toList();
+                controller.paymentStatusMap.value = await controller.checkPaymentStatus(ids);
+              }),
+              builder: (context, snapshot) {
+                if (controller.isLoading.value) {
+                  return const Center(child: CircularProgressIndicator());
+                }
 
-            return Obx(() {
-              if (controller.isLoading.value) {
-                return const Center(child: CircularProgressIndicator());
-              }
-
-              return ListView.builder(
-                physics: const AlwaysScrollableScrollPhysics(),
-                itemCount: controller.restAreas.length,
-                itemBuilder: (context, index) {
-                  final restArea = controller.restAreas[index];
-                  return InkWell(
-                    onTap: () {
-
-                        /*
-                          Get.toNamed("/hotelDetail", arguments: {'data' : controller.homeDetails[index]});
-                           */
-
-                        Detail detail = Detail.fromJson(restArea);
-
-                        // إضافة الكائن إلى homeDetails إذا كان ذلك مطلوبًا
-                        controller.homeDetails.add(detail);
-
-
-                        Get.toNamed("/hotelDetail", arguments: {'data': restArea});
-                        print("reservation");
-                        print(restArea);
-
-                    },
-                    child: Card(
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(16),
-                      ),
-                      elevation: 4,
-                      margin: const EdgeInsets.symmetric(
-                          vertical: 10.0, horizontal: 16.0),
-                      child: Container(
-                        padding: const EdgeInsets.all(12),
-                        child: Row(
-                          children: [
-                            ClipRRect(
-                              borderRadius: BorderRadius.circular(12),
-                                child: Image.network(
-                                  "http://10.0.2.2:8000/storage/${restArea["main_image"]}",
-                                  width: 100,
-                                  height: 100,
-                                  fit: BoxFit.cover,
-                                  errorBuilder: (BuildContext context, Object error, StackTrace? stackTrace) {
-                                    return Image.asset(
-                                      'assets/logo/logo.png', // مسار الصورة الافتراضية
-                                      width: 100,
-                                      height: 100,
-                                      fit: BoxFit.cover,
-                                    );
-                                  },
+                return Obx(() {
+                  return Column(
+                    children: [
+                      Expanded(
+                        child: ListView.builder(
+                          physics: const AlwaysScrollableScrollPhysics(),
+                          itemCount: controller.restAreas.length,
+                          itemBuilder: (context, index) {
+                            final restArea = controller.restAreas[index];
+                            final isPaid = controller.paymentStatusMap[restArea["id"]] ?? true;
+                        
+                            return Opacity(
+                              opacity: isPaid ? 1.0 : 0.4,
+                              child: Card(
+                                color: isPaid ? Colors.white : Colors.grey[300],
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(16),
                                 ),
-                            ),
-                            const SizedBox(width: 12),
-                            Expanded(
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.end,
-                                children: [
-                                  Text(
-                                    restArea["name"].toString(),
-                                    style: const TextStyle(
-                                      fontSize: 18,
-                                      fontWeight: FontWeight.bold,
-                                      fontFamily: 'Tajawal',
+                                elevation: 4,
+                                margin: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 16.0),
+                                child: InkWell(
+                                  onTap: () {
+                                    if (!isPaid) {
+                                      Get.snackbar("تنبيه", "هذه الاستراحة غير مفعلة بسبب عدم الدفع");
+                                      return;
+                                    }
+                        
+                                    Detail detail = Detail.fromJson(restArea);
+                                    controller.homeDetails.add(detail);
+                        
+                                    Get.toNamed("/hotelDetail", arguments: {'data': restArea});
+                                  },
+                                  child: Container(
+                                    padding: const EdgeInsets.all(12),
+                                    child: Row(
+                                      children: [
+                                        ClipRRect(
+                                          borderRadius: BorderRadius.circular(12),
+                                          child: Image.network(
+                                            "http://10.0.2.2:8000/storage/${restArea["main_image"]}",
+                                            width: 100,
+                                            height: 100,
+                                            fit: BoxFit.cover,
+                                            errorBuilder: (BuildContext context, Object error, StackTrace? stackTrace) {
+                                              return Image.asset(
+                                                'assets/logo/logo.png',
+                                                width: 100,
+                                                height: 100,
+                                                fit: BoxFit.cover,
+                                              );
+                                            },
+                                          ),
+                                        ),
+                                        const SizedBox(width: 12),
+                                        Expanded(
+                                          child: Column(
+                                            crossAxisAlignment: CrossAxisAlignment.end,
+                                            children: [
+                                              Text(
+                                                restArea["name"].toString(),
+                                                style: const TextStyle(
+                                                  fontSize: 18,
+                                                  fontWeight: FontWeight.bold,
+                                                  fontFamily: 'Tajawal',
+                                                ),
+                                              ),
+                                              IconButton(
+                                                icon: const Icon(Icons.edit, color: Colors.blue),
+                                                onPressed: () {
+                                                  Get.toNamed("/AddRestAreaScreen", arguments: {
+                                                    'isEdit': true,
+                                                    'restAreaData': restArea,
+                                                  });
+                                                },
+                                                tooltip: 'تعديل',
+                                              ),
+                                              IconButton(
+                                                icon: Icon(
+                                                  restArea["is_active"] == true
+                                                      ? Icons.toggle_on
+                                                      : Icons.toggle_off,
+                                                  color: restArea["is_active"] == true
+                                                      ? MyColors.tealColor
+                                                      : Colors.grey,
+                                                  size: 32,
+                                                ),
+                                                onPressed: () {
+                                                  controller.toggleRestAreaActiveStatus(restArea["id"]);
+                                                },
+                                              ),
+                                              const SizedBox(height: 4),
+                                              Text(
+                                                restArea["description"].toString(),
+                                                maxLines: 2,
+                                                overflow: TextOverflow.ellipsis,
+                                                style: const TextStyle(
+                                                  fontSize: 14,
+                                                  fontFamily: 'Tajawal',
+                                                  color: Colors.black54,
+                                                ),
+                                              ),
+                                              if (!isPaid)
+                                                const Text(
+                                                  "غير مدفوعة",
+                                                  style: TextStyle(
+                                                    color: Colors.red,
+                                                    fontWeight: FontWeight.bold,
+                                                    fontFamily: 'Tajawal',
+                                                  ),
+                                                ),
+                                            ],
+                                          ),
+                                        ),
+                                      ],
                                     ),
                                   ),
-                                  IconButton(
-                                    icon: const Icon(Icons.edit, color: Colors.blue),
-                                    onPressed: () {
-                                      Get.toNamed("/AddRestAreaScreen", arguments: {
-                                        'isEdit': true,
-                                        'restAreaData': restArea,
-                                      });
-                                    },
-                                    tooltip: 'تعديل',
-                                  ),
-                                  IconButton(
-                                    icon: Icon(
-                                      restArea["is_active"] == true
-                                          ? Icons.toggle_on
-                                          : Icons.toggle_off,
-                                      color: restArea["is_active"] == true
-                                          ? MyColors.tealColor
-                                          : Colors.grey,
-                                      size: 32,
-                                    ),
-                                    onPressed: () {
-                                      controller.toggleRestAreaActiveStatus(restArea["id"]);
-                                    },
-                                  ),
-                                  const SizedBox(height: 4),
-                                  Text(
-                                    restArea["description"].toString(),
-                                    maxLines: 2,
-                                    overflow: TextOverflow.ellipsis,
-                                    style: const TextStyle(
-                                      fontSize: 14,
-                                      fontFamily: 'Tajawal',
-                                      color: Colors.black54,
-                                    ),
-                                  ),
-                                ],
+                                ),
                               ),
-                            ),
-                          ],
+                            );
+                          },
                         ),
                       ),
-                    ),
+                      if (controller.hasUnpaidRestAreas())
+                        Padding(
+                          padding: const EdgeInsets.all(16.0),
+                          child: ElevatedButton(
+                            onPressed: () {
+                              final unpaidRestAreas = controller.restAreas.where((restArea) {
+                                final id = restArea["id"] as int;
+                                return controller.paymentStatusMap[id] == false;
+                              }).toList();
+
+                              // إنشاء قائمة تحتوي على Map لكل استراحة (id و price)
+                              final unpaidData = unpaidRestAreas.map((restArea) {
+                                return {
+                                  "id": restArea["id"],
+                                  "price": restArea["price"]
+                                };
+                              }).toList();
+
+                              print('Unpaid Rest Areas with prices: $unpaidData');
+
+                              // تمريرها إلى صفحة الباقات
+                              Get.toNamed('/PackageCard', arguments: {'unpaidData': unpaidData});
+                            },
+                            style: ElevatedButton.styleFrom(
+                              textStyle: TextStyle(    fontSize: 15,
+                                fontWeight: FontWeight.bold,
+                                fontFamily: 'Tajawal',),
+                              backgroundColor: MyColors.primaryColor,
+                              padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 12),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                            ),
+                            child: const Text('إتمام عملية الدفع'),
+                          ),
+                        ),
+
+                    ],
                   );
-                },
-              );
-            });
+                });
+              },
+            );
+
           },
         ),
+
         floatingActionButton: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.end,

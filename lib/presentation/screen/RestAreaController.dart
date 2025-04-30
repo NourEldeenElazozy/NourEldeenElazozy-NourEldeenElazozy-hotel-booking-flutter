@@ -14,6 +14,7 @@ class RestAreaController extends GetxController {
       // استرجاع التوكن من SharedPreferences
       final SharedPreferences prefs = await SharedPreferences.getInstance();
       String? token = prefs.getString('token');
+
       // ====== Validation before sending ======
       if (mainImage == null) {
         throw Exception('الصورة الرئيسية مطلوبة.');

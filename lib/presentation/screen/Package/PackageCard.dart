@@ -7,8 +7,7 @@ class Package {
   final String name;
   final String duration;
 
-  final int startRange;
-  final int endRange;
+
   final String percentage;
 
   Package({
@@ -16,8 +15,7 @@ class Package {
     required this.name,
     required this.duration,
 
-    required this.startRange,
-    required this.endRange,
+
     required this.percentage,
   });
 }
@@ -40,11 +38,16 @@ class _PackagesScreenState extends State<PackagesScreen> {
   final List<Package> packages = [
 
   ];
+  List<Map<String, dynamic>> unpaidData = [];
   PackageCardController controller = Get.put(PackageCardController());
   @override
   void initState() {
     super.initState();
-
+    final args = Get.arguments;
+    if (args != null && args['unpaidData'] != null) {
+      unpaidData = List<Map<String, dynamic>>.from(args['unpaidData']);
+      print('Received unpaid data: $unpaidData');
+    }
     _pageController.addListener(() {
       final currentPage = _pageController.page?.round() ?? 0;
       if (currentPage != _currentPage) {
@@ -61,6 +64,7 @@ class _PackagesScreenState extends State<PackagesScreen> {
 
   @override
   Widget build(BuildContext context) {
+
     controller.fetchPackages();
     return Scaffold(
       appBar: AppBar(
@@ -101,6 +105,14 @@ class _PackagesScreenState extends State<PackagesScreen> {
                   itemCount: controller.packages.length,
                   itemBuilder: (context, index) {
                     final pkg = controller.packages[index];
+                    double totalForPackage = 0;
+                    for (var item in unpaidData) {
+                      final price = double.parse(item['price'].toString());
+
+                      //totalForPackage += price * double.parse(pkg.percentage) * int.parse(pkg.duration);
+                      totalForPackage = calculateTotalPrice(price, pkg.duration, double.parse(pkg.percentage));
+                      print('السعر الإجمالي: $totalForPackage');
+                    }
                     final isSelected = selectedIndex == index;
 
                     return GestureDetector(
@@ -156,26 +168,8 @@ class _PackagesScreenState extends State<PackagesScreen> {
                                 Icon(Icons.access_time, color: Colors.white),
                             ],),
 
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Center(child: Text('عدد الإستراحات', style: TextStyle(color: Colors.white,fontSize: 16),)),
-                                const SizedBox(width: 5),
-                                const Icon(Icons.house, color: Colors.white),
-                              ],
-                            ),
-                           Row(
-                             crossAxisAlignment: CrossAxisAlignment.center,
-                             mainAxisAlignment: MainAxisAlignment.center,
-                             children: [
-                               Text(' الي ${pkg.endRange}', style: TextStyle(color: Colors.white)),
-                               Text('  -  ', style: TextStyle(color: Colors.white)),
-                               Text('من ${pkg.startRange}', style: TextStyle(color: Colors.white)),
 
 
-
-                             ],
-                           ),
                             Row(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
@@ -185,6 +179,23 @@ class _PackagesScreenState extends State<PackagesScreen> {
                                 const SizedBox(width: 5),
                                 Icon(Icons.percent, color: Colors.white),
                               ],
+                            ),
+                            Container(
+                              margin: const EdgeInsets.symmetric(vertical: 8),
+                              padding: const EdgeInsets.all(10),
+                              decoration: BoxDecoration(
+                                color: Colors.orange.shade100,
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                              child: Text(
+                                'إجمالي الدفع: ${totalForPackage.toStringAsFixed(2)} د.ل',
+                                style: const TextStyle(
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.bold,
+                                  fontFamily: 'Tajawal',
+
+                                ),
+                              ),
                             ),
                           ],
                         ),
@@ -299,22 +310,57 @@ class _PackagesScreenState extends State<PackagesScreen> {
   }
 
 
-  String _getDurationText(String key) {
-    final map = {
-      'free': 'مجانية',
-      '1_month': 'شهر',
-      '2_months': 'شهرين',
-      '3_months': '3 أشهر',
-      '4_months': '4 أشهر',
-      '5_months': '5 أشهر',
-      '6_months': '6 أشهر',
-      '7_month': '7 أشهر',
-      '8_months': '8 أشهر',
-      '9_months': '9 أشهر',
-      '10_months': '10 أشهر',
-      '11_months': '11 أشهر',
-      '12_months': 'سنة كاملة',
-    };
-    return map[key] ?? key;
-  }
+// خريطة لتحويل مدة الباقة إلى عدد الأيام
+final daysInMonth = {
+  '1_month': 30,
+  '2_months': 60,
+  '3_months': 90,
+  '4_months': 120,
+  '5_months': 150,
+  '6_months': 180,
+  '7_month': 210,
+  '8_months': 240,
+  '9_months': 270,
+  '10_months': 300,
+  '11_months': 330,
+  '12_months': 360,
+  'free': 0,  // مجانية
+};
 
+// دالة لتحويل مدة الباقة إلى عدد الأيام
+int getDaysFromDuration(String duration) {
+  return daysInMonth[duration] ?? 30;  // إذا كانت المدة غير معروفة نعتبرها 30 يومًا
+}
+
+// دالة لعرض النص المعتمد على المدة
+String _getDurationText(String key) {
+  final map = {
+    'free': 'مجانية',
+    '1_month': 'شهر',
+    '2_months': 'شهرين',
+    '3_months': '3 أشهر',
+    '4_months': '4 أشهر',
+    '5_months': '5 أشهر',
+    '6_months': '6 أشهر',
+    '7_month': '7 أشهر',
+    '8_months': '8 أشهر',
+    '9_months': '9 أشهر',
+    '10_months': '10 أشهر',
+    '11_months': '11 أشهر',
+    '12_months': 'سنة كاملة',
+  };
+
+  return map[key] ?? key;
+}
+
+// دالة لحساب السعر الإجمالي بناءً على المدة والنسبة
+double calculateTotalPrice(double price, String duration, double percentage) {
+  // تحويل النسبة إلى قيمة عشرية (مثلاً 15% تصبح 0.15)
+  double percentageDecimal = percentage / 100;
+
+  // حساب الأيام بناءً على المدة
+  int days = getDaysFromDuration(duration);
+
+  // حساب السعر الإجمالي
+  return price * percentageDecimal * days;
+}
