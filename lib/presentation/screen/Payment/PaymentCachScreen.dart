@@ -4,21 +4,18 @@ import 'package:hotel_booking/core/constants/my_colors.dart';
 import 'package:hotel_booking/core/constants/my_images.dart';
 import 'package:hotel_booking/presentation/screen/Payment/PaymentController.dart';
 
-class PaymentScreen extends StatelessWidget {
+class PaymentCachScreen extends StatelessWidget {
   final PaymentsController controller = Get.put(PaymentsController());
-  final args = Get.arguments as Map;
+
   final TextEditingController amountController = TextEditingController();
   final TextEditingController phoneController = TextEditingController();
   final TextEditingController emailController = TextEditingController();
 
   final _formKey = GlobalKey<FormState>();
-
+  final args = Get.arguments as Map;
   @override
   Widget build(BuildContext context) {
     amountController.text = double.parse(args['data'].toString()).toString();
-
-
-    print("pricex ${args['data']}");
     return Directionality(
       textDirection: TextDirection.rtl,
       child: Scaffold(
@@ -43,11 +40,12 @@ class PaymentScreen extends StatelessWidget {
             child: ListView(
               children: [
                 SizedBox(
-                  height: MediaQuery.of(context).size.height* 0.25,
+                  height: MediaQuery.of(context).size.height* 0.20,
+
 
                   child: ClipOval(
                     child: Image.asset(
-                      MyImages.tlync,
+                      MyImages.money,
                       fit: BoxFit.contain,
                     ),
                   ),
@@ -68,21 +66,7 @@ class PaymentScreen extends StatelessWidget {
                   },
                 ),
                 SizedBox(height: 16),
-                TextFormField(
-                  controller: phoneController,
-                  keyboardType: TextInputType.phone,
-                  decoration: InputDecoration(
-                    labelText: "رقم الجوال",
-                    border: OutlineInputBorder(),
-                    prefixIcon: Icon(Icons.phone),
-                  ),
-                  validator: (value) {
-                    if (value == null || value.isEmpty) return 'يرجى إدخال رقم الجوال';
-                    if (!RegExp(r'^09\d{8}$').hasMatch(value)) return 'رقم الجوال غير صالح';
-                    return null;
-                  },
-                ),
-                SizedBox(height: 16),
+
 
                 SizedBox(height: 24),
                 Obx(() => controller.isLoading.value

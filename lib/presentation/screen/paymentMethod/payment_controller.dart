@@ -6,21 +6,31 @@ class PaymentController extends GetxController {
   RxInt selectPayment = 0.obs;
   late RxString paymentType;
   late RxString paymentImage;
+  late RxDouble price;
 
   @override
   void onInit() {
     paymentType = ''.obs;
     paymentImage = ''.obs;
+    price =  0.0.obs;
     super.onInit();
   }
 
   void paymentContinue(BuildContext context) {
+    print(selectPayment.value);
     if(selectPayment.value == 0) {
-      showErrorMsg(context: context, message: "Select any One Payment Type");
+      showErrorMsg(context: context, message: "يرجي إختيار طريقة الدفع");
     }
-    else {
-      Get.toNamed("/paymentInfo", arguments: {'image' : paymentImage,'name': paymentType});
+    if(selectPayment.value == 1) {
+      print(price);
+
+      Get.toNamed("/PaymentCashScreen", arguments: {'data' : price,'name': paymentType});
     }
+    if(selectPayment.value == 2) {
+      print(paymentType);
+      Get.toNamed("/PaymentScreen", arguments: {'data' : price,'name': paymentType});
+    }
+
   }
 
 //----------------------------------- AddNewCard -------------------------------

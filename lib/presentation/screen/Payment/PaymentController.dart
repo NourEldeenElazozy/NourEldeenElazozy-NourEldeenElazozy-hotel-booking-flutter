@@ -5,7 +5,7 @@ import 'package:hotel_booking/core/constants/my_strings.dart';
 import 'package:hotel_booking/presentation/screen/Payment/PaymentWebView.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-class PaymentController extends GetxController {
+class PaymentsController extends GetxController {
 
   final RxString paymentUrl = ''.obs;
   final RxBool isLoading = false.obs;

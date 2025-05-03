@@ -256,7 +256,10 @@ class MyString {
   static const String paymentMethod = "طرق الدفع";
   static const String addNewCard = "إضافة بطاقة جديدة";
   static const String paypal = "باي بال";
+  static const String cash = "نقدي";
   static const String googlePay = "جوجل باي";
+  static const String tlync = "T-lync";
+
   static const String applePay = "آبل باي";
   static const String payDebitCreditCard = "ادفع باستخدام بطاقة الخصم/الائتمان";
   static const String changeCard = "تغيير البطاقة";

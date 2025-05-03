@@ -34,6 +34,12 @@ class Routes {
       transition: Transition.leftToRight,
       transitionDuration: const Duration(milliseconds: 600),
     ),
+    GetPage(
+      name: "/PaymentCashScreen",
+      page: () => PaymentCachScreen(),
+      transition: Transition.leftToRight,
+      transitionDuration: const Duration(milliseconds: 600),
+    ),
 
     GetPage(
       name: "/PackageCard",

@@ -13,7 +13,7 @@ class PaymentWebViewScreen extends StatefulWidget {
 }
 
 class _PaymentWebViewScreenState extends State<PaymentWebViewScreen> {
-  final PaymentController _paymentController = Get.put(PaymentController());
+  final PaymentsController _paymentController = Get.put(PaymentsController());
 
   @override
   Widget build(BuildContext context) {

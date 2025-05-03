@@ -12,11 +12,13 @@ class PaymentChoice extends StatefulWidget {
 class _PaymentChoiceState extends State<PaymentChoice> {
 
   late PaymentController controller;
-
+  final args = Get.arguments as Map;
   @override
   void initState() {
     controller = Get.put(PaymentController());
     super.initState();
+
+    print(args['data']); // أو خزّنها في متغير
   }
 
   @override
@@ -29,6 +31,9 @@ class _PaymentChoiceState extends State<PaymentChoice> {
         child:
         Button(
           onpressed: () {
+
+            controller.price.value=double.parse(args['data'].toString());
+            print("object ${controller.price.value}");
             return controller.paymentContinue(context);
           },
           text: MyString.continueButton,
@@ -39,12 +44,13 @@ class _PaymentChoiceState extends State<PaymentChoice> {
         padding: const EdgeInsets.all(15),
         child: Column(
           children: [
-            commonTitle(MyString.paymentMethod, MyString.addNewCard, controller.themeController.isDarkMode.value),
+
             const SizedBox(height: 30),
-            commonCancelBooking(1, MyImages.paypal, MyString.paypal, controller.themeController.isDarkMode.value),
+            commonCancelBooking(1, MyImages.money, MyString.cash, controller.themeController.isDarkMode.value),
             const SizedBox(height: 20),
-            commonCancelBooking(2, MyImages.googlePay, MyString.googlePay, controller.themeController.isDarkMode.value),
+            commonCancelBooking(2, MyImages.tlync, MyString.tlync, controller.themeController.isDarkMode.value),
             const SizedBox(height: 20),
+     /*
             InkWell(
               onTap: () {
                 controller.selectPayment.value = 3;
@@ -82,6 +88,7 @@ class _PaymentChoiceState extends State<PaymentChoice> {
             commonTitle(MyString.payDebitCreditCard, MyString.changeCard, controller.themeController.isDarkMode.value),
             const SizedBox(height: 30),
             commonCancelBooking(4, MyImages.cardTypeSvg, MyString.cardNumberShow, controller.themeController.isDarkMode.value),
+      */
           ],
         ),
       ),
@@ -94,36 +101,54 @@ class _PaymentChoiceState extends State<PaymentChoice> {
         controller.selectPayment.value = index;
         controller.paymentImage.value = image;
         controller.paymentType.value = paymentName;
+
       },
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 300),
+        curve: Curves.easeInOut,
+        padding: const EdgeInsets.all(12),
+        margin: const EdgeInsets.symmetric(vertical: 8),
         decoration: BoxDecoration(
           color: isDarkMode ? MyColors.darkTextFieldColor : MyColors.white,
-          borderRadius: BorderRadius.circular(15),
+          borderRadius: BorderRadius.circular(20),
+          border: Border.all(
+            color: controller.selectPayment.value == index
+                ? MyColors.primaryColor
+                : Colors.grey.shade300,
+            width: 1.5,
+          ),
         ),
         child: Row(
           children: [
-            SvgPicture.asset(image),
-            const SizedBox(width: 12),
-            Text(paymentName, style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 16)),
-            const Spacer(),
-            Obx(() => Radio(
-              value: index,
-              groupValue: controller.selectPayment.value,
-              activeColor: controller.themeController.isDarkMode.value ? Colors.white : Colors.black,
-              fillColor: MaterialStatePropertyAll(controller.themeController.isDarkMode.value ? Colors.white : Colors.black),
-              onChanged: (value) {
-                controller.selectPayment.value = value!;
-                controller.paymentImage.value = image;
-                controller.paymentType.value = paymentName;
-              },
-            ),),
+            ClipOval(
+              child: Image.asset(image, height: 50, width: 50, fit: BoxFit.contain),
+            ),
+            const SizedBox(width: 16),
+            Expanded(
+              child: Text(
+                paymentName,
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 16,
+                  color: isDarkMode ? Colors.white : Colors.black,
+                ),
+              ),
+            ),
+            Obx(() => Icon(
+              controller.selectPayment.value == index
+                  ? Icons.radio_button_checked
+                  : Icons.radio_button_off,
+              color: controller.selectPayment.value == index
+                  ? MyColors.primaryColor
+                  : (isDarkMode ? Colors.white54 : Colors.black38),
+            )),
           ],
         ),
       ),
     );
   }
 
+/*
   Widget commonTitle(String titleName, String subTitleName, bool isDarkMode) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -131,7 +156,7 @@ class _PaymentChoiceState extends State<PaymentChoice> {
         Text(titleName, style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 16)),
         InkWell(
           onTap: () {
-            Get.toNamed("/addNewCard");
+            Get.toNamed("/PaymentScreen");
           },
           child: Container(
             padding: const EdgeInsets.all(5),
@@ -141,6 +166,8 @@ class _PaymentChoiceState extends State<PaymentChoice> {
       ],
     );
   }
+
+ */
 }
 
 

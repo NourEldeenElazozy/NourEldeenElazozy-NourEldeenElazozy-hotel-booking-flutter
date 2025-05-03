@@ -30,7 +30,8 @@ class PackagesScreen extends StatefulWidget {
 
 class _PackagesScreenState extends State<PackagesScreen> {
 
-
+  double totalForPackage = 0;
+  double total = 0;
   final PageController _pageController = PageController(viewportFraction: 0.7);
   int _currentPage = 0;
   final RxInt selectedIndex = 0.obs; //
@@ -105,19 +106,22 @@ class _PackagesScreenState extends State<PackagesScreen> {
                   itemCount: controller.packages.length,
                   itemBuilder: (context, index) {
                     final pkg = controller.packages[index];
-                    double totalForPackage = 0;
+                     double price=0;
                     for (var item in unpaidData) {
-                      final price = double.parse(item['price'].toString());
+                       price = double.parse(item['price'].toString());
 
                       //totalForPackage += price * double.parse(pkg.percentage) * int.parse(pkg.duration);
                       totalForPackage = calculateTotalPrice(price, pkg.duration, double.parse(pkg.percentage));
-                      print('السعر الإجمالي: $totalForPackage');
+
                     }
                     final isSelected = selectedIndex == index;
 
                     return GestureDetector(
                       onTap: () {
                         selectedIndex.value = index; // تحديث
+
+                        total = calculateTotalPrice(price, pkg.duration, double.parse(pkg.percentage));
+                        print("calculateTotalPrice $total ");
                         // يمكنك إضافة منطق إضافي هنا عند اختيار باقة
                       },
                       child: AnimatedContainer(
@@ -210,7 +214,7 @@ class _PackagesScreenState extends State<PackagesScreen> {
                 onPressed: selectedIndex.value != null
                     ? () {
                   final selectedPkg = controller.packages[selectedIndex.value!];
-                  Get.toNamed("/PaymentScreen");
+                  Get.toNamed("/paymentChoice");
                   // تنفيذ الدفع أو الانتقال للخطوة التالية
                   print('تم اختيار الباقة: ${selectedPkg.id}');
 
@@ -238,7 +242,8 @@ class _PackagesScreenState extends State<PackagesScreen> {
         onPressed: () {
           final selectedPkg = controller.packages[selectedIndex.value!];
           // تنفيذ الدفع أو الانتقال للخطوة التالية
-          Get.toNamed("/PaymentScreen");
+          print('السعر الإجمالي: $total');
+          Get.toNamed("/paymentChoice",arguments: {'data': total});
           print('تم اختيار الباقة: ${selectedPkg.id}');
         },
         label: const Text(
