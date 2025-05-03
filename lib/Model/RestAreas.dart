@@ -166,13 +166,11 @@ class RestAreas {
       'power_generator': powerGenerator== true ? 1 : 0, // تحويل إلى 1 أو 0,,
       'outdoor_bathroom': outdoorBathroom== true ? 1 : 0, // تحويل إلى 1 أو 0,,
       'other_specs': otherSpecs,
-
       'main_image': mainImage,
       'details_images[]': detailsImages.join(','),
       'rating': rating,
       'description': description,
       'geo_area': geoArea,
-
       'city_id': 9,
       'check_in_time': checkInTime,
       'check_out_time': checkOutTime,

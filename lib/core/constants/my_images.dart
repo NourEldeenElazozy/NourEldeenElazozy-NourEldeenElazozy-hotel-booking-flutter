@@ -14,6 +14,7 @@ class MyImages {
   static const String helpCenterPath = "assets/images/helpCenter/";
 
   static const String splashLogo = "${path}splashlogo.svg";
+  static const String tlync = "${path}tlync.png";
   static const String welcome = "${path}welcome.png";
   static const String logo = "${path}logo.jpg";
 

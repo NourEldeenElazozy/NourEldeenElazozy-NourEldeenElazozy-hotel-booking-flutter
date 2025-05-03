@@ -27,6 +27,14 @@ class Routes {
       transition: Transition.leftToRight,
       transitionDuration: const Duration(milliseconds: 600),
     ),
+
+    GetPage(
+      name: "/PaymentScreen",
+      page: () => PaymentScreen(),
+      transition: Transition.leftToRight,
+      transitionDuration: const Duration(milliseconds: 600),
+    ),
+
     GetPage(
       name: "/PackageCard",
       page: () => PackagesScreen(),

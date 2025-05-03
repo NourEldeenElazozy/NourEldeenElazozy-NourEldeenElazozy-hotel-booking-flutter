@@ -83,7 +83,7 @@ class _PackagesScreenState extends State<PackagesScreen> {
       ),
       body: Obx(() {
         if (controller.isLoading.value) {
-          return Center(child: CircularProgressIndicator());
+          return const Center(child: CircularProgressIndicator());
         }
 
         return Padding(
@@ -137,10 +137,10 @@ class _PackagesScreenState extends State<PackagesScreen> {
                               ? Border.all(color: MyColors.primaryColor, width: 2)
                               : null,
                           boxShadow: [
-                            BoxShadow(
+                            const BoxShadow(
                               color: Colors.black12,
                               blurRadius: 0.50,
-                              offset: const Offset(0, 2),
+                              offset: Offset(0, 2),
                             ),
                           ],
                         ),
@@ -163,9 +163,9 @@ class _PackagesScreenState extends State<PackagesScreen> {
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
 
-                              Text('المدة: ${_getDurationText(pkg.duration)}', style: TextStyle(color: Colors.white)),
+                              Text('المدة: ${_getDurationText(pkg.duration)}', style: const TextStyle(color: Colors.white)),
                                 const SizedBox(width: 5),
-                                Icon(Icons.access_time, color: Colors.white),
+                                const Icon(Icons.access_time, color: Colors.white),
                             ],),
 
 
@@ -175,16 +175,16 @@ class _PackagesScreenState extends State<PackagesScreen> {
                               children: [
 
 
-                                Text('النسبة: ${pkg.percentage}', style: TextStyle(color: Colors.white)),
+                                Text(' عمولة إشتراك: ${pkg.percentage}', style: const TextStyle(color: Colors.white)),
                                 const SizedBox(width: 5),
-                                Icon(Icons.percent, color: Colors.white),
+                                const Icon(Icons.percent, color: Colors.white),
                               ],
                             ),
                             Container(
                               margin: const EdgeInsets.symmetric(vertical: 8),
                               padding: const EdgeInsets.all(10),
                               decoration: BoxDecoration(
-                                color: Colors.orange.shade100,
+                                color: Colors.white,
                                 borderRadius: BorderRadius.circular(12),
                               ),
                               child: Text(
@@ -210,8 +210,10 @@ class _PackagesScreenState extends State<PackagesScreen> {
                 onPressed: selectedIndex.value != null
                     ? () {
                   final selectedPkg = controller.packages[selectedIndex.value!];
+                  Get.toNamed("/PaymentScreen");
                   // تنفيذ الدفع أو الانتقال للخطوة التالية
                   print('تم اختيار الباقة: ${selectedPkg.id}');
+
                 }
                     : null,
                 style: ElevatedButton.styleFrom(
@@ -236,6 +238,7 @@ class _PackagesScreenState extends State<PackagesScreen> {
         onPressed: () {
           final selectedPkg = controller.packages[selectedIndex.value!];
           // تنفيذ الدفع أو الانتقال للخطوة التالية
+          Get.toNamed("/PaymentScreen");
           print('تم اختيار الباقة: ${selectedPkg.id}');
         },
         label: const Text(

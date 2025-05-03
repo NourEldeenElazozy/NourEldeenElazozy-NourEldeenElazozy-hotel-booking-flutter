@@ -1,4 +1,5 @@
 class MyString {
+  static String custom_ref = ""; // ✅ يمكن تغييره
 //----------------------------- Welcome_Screen -----------------------------
   static const String welcome = "مرحبا بك في";
   static const String bookNest = "إستراحة";

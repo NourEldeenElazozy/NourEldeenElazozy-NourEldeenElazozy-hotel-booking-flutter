@@ -5,6 +5,7 @@ import 'package:get/get_navigation/src/routes/transitions_type.dart';
 import 'package:hotel_booking/presentation/AddRestAreaScreen.dart';
 import 'package:hotel_booking/presentation/common_widgets/bottom_navigation_bar.dart';
 import 'package:hotel_booking/presentation/screen/Package/PackageCard.dart';
+import 'package:hotel_booking/presentation/screen/Payment/PaymentScreen.dart';
 import 'package:hotel_booking/presentation/screen/auth/Register/register_import.dart';
 import 'package:hotel_booking/presentation/screen/auth/forgetpassword/password_import.dart';
 import 'package:hotel_booking/presentation/screen/booking/booking_import.dart';
