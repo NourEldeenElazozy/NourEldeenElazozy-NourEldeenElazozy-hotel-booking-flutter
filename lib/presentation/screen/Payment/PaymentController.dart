@@ -1,5 +1,6 @@
 // controllers/payment_controller.dart
 import 'package:dio/dio.dart' as dio;
+import 'package:flutter/material.dart';
 import 'package:get/get.dart' ;
 import 'package:hotel_booking/core/constants/my_strings.dart';
 import 'package:hotel_booking/presentation/screen/Payment/PaymentWebView.dart';
@@ -9,13 +10,13 @@ class PaymentsController extends GetxController {
 
   final RxString paymentUrl = ''.obs;
   final RxBool isLoading = false.obs;
-
+  String? token;
   Future<void> initiatePayment({
     required double amount,
     required String phone,
   }) async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
-    String? token = prefs.getString('token');
+    token = prefs.getString('token');
     isLoading.value = true;
     try {
       final response = await dio.Dio().post(
@@ -41,7 +42,7 @@ class PaymentsController extends GetxController {
       print(MyString.custom_ref);
       if (data['result'] == 'success' && data['url'] != null) {
         paymentUrl.value = data['url'];
-        Get.to(() => PaymentWebViewScreen(url: data['url']));
+        Get.to(() => PaymentWebViewScreen(url: data['url'],price:amount));
       } else {
 
         Get.snackbar("Failed", data['message'] ?? 'Payment failed');
@@ -54,40 +55,65 @@ class PaymentsController extends GetxController {
     }
   }
   Future<dio.Response> transaction() async {
-
     try {
-      print ("transaction");
-      print (MyString.custom_ref);
-
-
-
+      print("transaction");
+      print(MyString.custom_ref);
 
       final response = await dio.Dio().post(
-          'https://c7drkx2ege.execute-api.eu-west-2.amazonaws.com/receipt/transaction',
-
-          data: {
-            "store_id": "L594BelkgyrDR9X631N7mAP4MEQBqVvdYqZnx5zWk2ow0eKGdLlOajYJbgDQEyKW",
-
-            "custom_ref": MyString.custom_ref
-          },
-          options: dio.Options(headers: {
-            "Content-Type": "application/json",
-            "Authorization":
-            "Bearer tyFD6SCj7EngBEAGVYLPQawTgdkdK15AG0uCSn67",
-          })
+        'http://10.0.2.2:8000/api/transaction',
+        data: {
+          "custom_ref": MyString.custom_ref,
+        },
+        options: dio.Options(headers: {
+          "Content-Type": "application/json",
+          'Authorization': 'Bearer $token',
+        }),
       );
-      print ("transaction");
-      print (MyString.custom_ref);
-      print (response.data);
-      print (response.data);
 
+      print("transaction");
+      print(MyString.custom_ref);
+      print(response.data);
 
       return response;
 
+    } on dio.DioError catch (e) {
+      if (e.response != null && e.response?.statusCode == 400) {
+        // إذا كان هناك رسالة خطأ مخصصة من السيرفر
+        final errorMessage = e.response?.data['message'] ?? 'حدث خطأ غير معروف.';
+        Get.back();
+        Get.snackbar(
+          "خطأ في العملية",
+          errorMessage,
+          snackPosition: SnackPosition.TOP,
+          backgroundColor: Colors.red,
+          colorText: Colors.white,
+        );
+
+      } else {
+        Get.snackbar(
+          "خطأ",
+          "تعذر الاتصال بالخادم",
+          snackPosition: SnackPosition.TOP,
+          backgroundColor: Colors.orange,
+          colorText: Colors.white,
+        );
+        Get.back();
+      }
+
+      // ارجع نفس الخطأ ليتمكن المستدعي من التعامل معه أيضًا إن أراد
+      rethrow;
     } catch (e) {
-      print('Error during request $e');
-      // يمكنك معالجة الخطأ هنا
-      rethrow; // لإعادة رمي الاستثناء إلى المستوى الأعلى
+      // أي أخطاء أخرى غير DioError
+      Get.snackbar(
+        "خطأ",
+        "حدث خطأ غير متوقع",
+        snackPosition: SnackPosition.TOP,
+        backgroundColor: Colors.orange,
+        colorText: Colors.white,
+      );
+      Get.back();
+      rethrow;
     }
   }
+
 }

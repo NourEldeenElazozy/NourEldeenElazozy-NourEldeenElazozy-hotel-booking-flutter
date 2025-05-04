@@ -6,7 +6,9 @@ import 'package:hotel_booking/presentation/screen/Payment/PaymentController.dart
 class PaymentWebViewScreen extends StatefulWidget {
   final String url;
 
-  const PaymentWebViewScreen({Key? key, required this.url}) : super(key: key);
+  final double price;
+
+  const PaymentWebViewScreen({Key? key, required this.url, required this.price}) : super(key: key);
 
   @override
   _PaymentWebViewScreenState createState() => _PaymentWebViewScreenState();
@@ -17,6 +19,7 @@ class _PaymentWebViewScreenState extends State<PaymentWebViewScreen> {
 
   @override
   Widget build(BuildContext context) {
+    print("ssss${widget.price}");
     return Scaffold(
       appBar: AppBar(
         title: Text('سداد الفاتورة'),
@@ -47,7 +50,8 @@ class _PaymentWebViewScreenState extends State<PaymentWebViewScreen> {
 
                 // بعد عرض النتيجة، اغلق الصفحة
                 Navigator.of(context).pop();
-              }).catchError((e) {
+                /*
+                .catchError((e) {
                 Get.snackbar(
                   "خطأ",
                   "حدث خطأ أثناء التحقق من العملية",
@@ -55,6 +59,8 @@ class _PaymentWebViewScreenState extends State<PaymentWebViewScreen> {
                   backgroundColor: Colors.orange,
                   colorText: Colors.white,
                 );
+              });
+                 */
               });
             },
           ),
