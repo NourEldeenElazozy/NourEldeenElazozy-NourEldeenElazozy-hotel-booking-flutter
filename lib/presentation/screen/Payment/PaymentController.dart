@@ -7,10 +7,18 @@ import 'package:hotel_booking/presentation/screen/Payment/PaymentWebView.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class PaymentsController extends GetxController {
-
+  List<Map<String, dynamic>> unpaidData = [];
   final RxString paymentUrl = ''.obs;
   final RxBool isLoading = false.obs;
   String? token;
+
+  @override
+  void onInit() {
+
+    unpaidData.clear();
+    super.onInit();
+  }
+
   Future<void> initiatePayment({
     required double amount,
     required String phone,
@@ -42,7 +50,7 @@ class PaymentsController extends GetxController {
       print(MyString.custom_ref);
       if (data['result'] == 'success' && data['url'] != null) {
         paymentUrl.value = data['url'];
-        Get.to(() => PaymentWebViewScreen(url: data['url'],price:amount));
+        Get.to(() => PaymentWebViewScreen(url: data['url'],price:amount, unpaidData: unpaidData,));
       } else {
 
         Get.snackbar("Failed", data['message'] ?? 'Payment failed');
@@ -116,4 +124,45 @@ class PaymentsController extends GetxController {
     }
   }
 
+  Future<dio.Response> storeUserPackage({
+    required int packageId,
+    required List<int> restAreaIds,
+    required String startDate,
+    required String endDate,
+    required double commissionRate,
+  }) async {
+    try {
+      final response = await dio.Dio().post(
+        'http://10.0.2.2:8000/api/user-packages',
+        data: {
+          'package_id': packageId,
+          'rest_area_ids': restAreaIds,
+          'start_date': startDate,
+          'end_date': endDate,
+          'commission_rate': commissionRate,
+        },
+        options: dio.Options(headers: {
+          'Authorization': 'Bearer $token',
+          'Content-Type': 'application/json',
+        }),
+      );
+
+      if (response.statusCode == 201) {
+        Get.snackbar("نجاح", "تم حفظ الباقة والفواتير بنجاح");
+      } else {
+        Get.snackbar("فشل", "حدث خطأ أثناء الحفظ");
+      }
+
+      return response;
+
+    } on dio.DioException catch (e) {
+      print("restAreaIds $restAreaIds");
+      print(e.error);
+      Get.snackbar("خطأ", e.response?.data["message"] ?? "فشل الاتصال بالخادم");
+      rethrow;
+    }
+  }
+
 }
+
+

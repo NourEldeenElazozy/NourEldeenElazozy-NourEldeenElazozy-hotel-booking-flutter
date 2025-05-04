@@ -7,12 +7,14 @@ class PaymentController extends GetxController {
   late RxString paymentType;
   late RxString paymentImage;
   late RxDouble price;
+  List<Map<String, dynamic>> unpaidData = [];
 
   @override
   void onInit() {
     paymentType = ''.obs;
     paymentImage = ''.obs;
     price =  0.0.obs;
+    unpaidData.clear();
     super.onInit();
   }
 
@@ -21,14 +23,15 @@ class PaymentController extends GetxController {
     if(selectPayment.value == 0) {
       showErrorMsg(context: context, message: "يرجي إختيار طريقة الدفع");
     }
+
     if(selectPayment.value == 1) {
       print(price);
 
-      Get.toNamed("/PaymentCashScreen", arguments: {'data' : price,'name': paymentType});
+      Get.toNamed("/PaymentCashScreen", arguments: {'data' : price,'name': paymentType,"unpaidData":unpaidData});
     }
     if(selectPayment.value == 2) {
       print(paymentType);
-      Get.toNamed("/PaymentScreen", arguments: {'data' : price,'name': paymentType});
+      Get.toNamed("/PaymentScreen", arguments: {'data' : price,'name': paymentType,"unpaidData":unpaidData});
     }
 
   }

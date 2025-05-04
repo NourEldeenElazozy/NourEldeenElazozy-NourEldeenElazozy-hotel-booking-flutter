@@ -12,6 +12,7 @@ class PaymentChoice extends StatefulWidget {
 class _PaymentChoiceState extends State<PaymentChoice> {
 
   late PaymentController controller;
+
   final args = Get.arguments as Map;
   @override
   void initState() {
@@ -19,6 +20,7 @@ class _PaymentChoiceState extends State<PaymentChoice> {
     super.initState();
 
     print(args['data']); // أو خزّنها في متغير
+    print("unpaidData ${args['unpaidData']}"); // أو خزّنها في متغير
   }
 
   @override
@@ -33,7 +35,12 @@ class _PaymentChoiceState extends State<PaymentChoice> {
           onpressed: () {
 
             controller.price.value=double.parse(args['data'].toString());
-            print("object ${controller.price.value}");
+
+            print("objects ${controller.price.value}");
+            if (args != null && args['unpaidData'] != null) {
+              controller.unpaidData = List<Map<String, dynamic>>.from(args['unpaidData']);
+              print('Received unpaid data: ${ controller.unpaidData}');
+            }
             return controller.paymentContinue(context);
           },
           text: MyString.continueButton,

@@ -77,7 +77,8 @@ class MySotingScreen extends StatelessWidget {
                           itemBuilder: (context, index) {
                             final restArea = controller.restAreas[index];
                             final isPaid = controller.paymentStatusMap[restArea["id"]] ?? true;
-                        
+                            final isNotPaid = controller.paymentStatusMap[restArea["id"]] ?? true;
+
                             return Opacity(
                               opacity: isPaid ? 1.0 : 0.4,
                               child: Card(

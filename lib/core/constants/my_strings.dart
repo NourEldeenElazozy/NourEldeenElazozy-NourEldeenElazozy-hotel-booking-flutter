@@ -1,5 +1,8 @@
 class MyString {
   static String custom_ref = ""; // ✅ يمكن تغييره
+  static int duration = 0; // ✅ يمكن تغييره
+  static double commission_rate = 0; // ✅ يمكن تغييره
+  static int packageId = 0; // ✅ يمكن تغييره
 //----------------------------- Welcome_Screen -----------------------------
   static const String welcome = "مرحبا بك في";
   static const String bookNest = "إستراحة";

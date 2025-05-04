@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:hotel_booking/core/constants/my_colors.dart';
+import 'package:hotel_booking/core/constants/my_strings.dart';
 import 'package:hotel_booking/presentation/screen/Package/PackageCardController.dart';
 import 'package:get/get.dart';
 class Package {
@@ -106,21 +107,23 @@ class _PackagesScreenState extends State<PackagesScreen> {
                   itemCount: controller.packages.length,
                   itemBuilder: (context, index) {
                     final pkg = controller.packages[index];
-                     double price=0;
+                    double totalForPackage = 0;
+
+                    double price=0;
                     for (var item in unpaidData) {
-                       price = double.parse(item['price'].toString());
-
-                      //totalForPackage += price * double.parse(pkg.percentage) * int.parse(pkg.duration);
-                      totalForPackage = calculateTotalPrice(price, pkg.duration, double.parse(pkg.percentage));
-
+                      double price = double.parse(item['price'].toString());
+                      double singleTotal = calculateTotalPrice(price, pkg.duration, double.parse(pkg.percentage));
+                      totalForPackage += singleTotal;
                     }
+
                     final isSelected = selectedIndex == index;
+
 
                     return GestureDetector(
                       onTap: () {
                         selectedIndex.value = index; // تحديث
 
-                        total = calculateTotalPrice(price, pkg.duration, double.parse(pkg.percentage));
+                        total = totalForPackage; // التوتال النهائي
                         print("calculateTotalPrice $total ");
                         // يمكنك إضافة منطق إضافي هنا عند اختيار باقة
                       },
@@ -240,11 +243,22 @@ class _PackagesScreenState extends State<PackagesScreen> {
   floatingActionButton: selectedIndex != null
           ? FloatingActionButton.extended(
         onPressed: () {
+          MyString.duration = 0;
+          MyString.commission_rate= 0;
+          MyString.packageId= 0;
+
+
+
+
           final selectedPkg = controller.packages[selectedIndex.value!];
+          final durationKey = selectedPkg.duration;
           // تنفيذ الدفع أو الانتقال للخطوة التالية
           print('السعر الإجمالي: $total');
-          Get.toNamed("/paymentChoice",arguments: {'data': total});
-          print('تم اختيار الباقة: ${selectedPkg.id}');
+          MyString.commission_rate= double.parse(selectedPkg.percentage);
+          MyString.packageId= selectedPkg.id;
+          MyString.duration = daysInMonth[durationKey] ?? 0;
+          Get.toNamed("/paymentChoice",arguments: {'data': total,'unpaidData': unpaidData});
+          print('تم اختيار الباقةs: ${MyString.duration}');
         },
         label: const Text(
           'متابعة الدفع',

@@ -19,6 +19,8 @@ class PaymentScreen extends StatelessWidget {
 
 
     print("pricex ${args['data']}");
+    print("unpaidData ${args['unpaidData']}");
+
     return Directionality(
       textDirection: TextDirection.rtl,
       child: Scaffold(
@@ -95,6 +97,10 @@ class PaymentScreen extends StatelessWidget {
                   ),
                   onPressed: () {
                     if (_formKey.currentState!.validate()) {
+                      if (args != null && args['unpaidData'] != null) {
+                        controller.unpaidData = List<Map<String, dynamic>>.from(args['unpaidData']);
+                        print('Received unpaid dataw: ${ controller.unpaidData}');
+                      }
                       controller.initiatePayment(
                         amount: double.parse(amountController.text),
                         phone: phoneController.text,
