@@ -33,11 +33,13 @@ class _PaymentWebViewScreenState extends State<PaymentWebViewScreen> {
                     backgroundColor: Colors.red,
                     colorText: Colors.white,
                   );
-                } else if (value.data["data"]['notes_to_shop']['payment_status'] == "تم استكمال سداد القيمة") {
+                } else if (value.data["data"]['notes_to_shop']['payment_status'].toString().trim() == "تم استكمال سداد القيمة"
+                ) {
+                  print("تم استكمال سداد القيمة s");
                   Get.snackbar(
                     "نجاح العملية",
                     "تم سداد القيمة بنجاح",
-                    snackPosition: SnackPosition.BOTTOM,
+                    snackPosition: SnackPosition.TOP,
                     backgroundColor: Colors.green,
                     colorText: Colors.white,
                   );
