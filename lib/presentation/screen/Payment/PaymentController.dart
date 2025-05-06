@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart' ;
 import 'package:hotel_booking/core/constants/my_strings.dart';
 import 'package:hotel_booking/presentation/screen/Payment/PaymentWebView.dart';
+import 'package:hotel_booking/presentation/screen/home/MyHostScreen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class PaymentsController extends GetxController {
@@ -17,6 +18,86 @@ class PaymentsController extends GetxController {
 
     unpaidData.clear();
     super.onInit();
+  }
+  Future<void> initiateCashPayment({
+    required double amount,
+    required int packageId,
+  }) async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    token = prefs.getString('token');
+    isLoading.value = true;
+
+    try {
+      final response = await dio.Dio().post(
+        'http://10.0.2.2:8000/api/test-cash-payment',
+        data: {
+          'amount': amount,
+          'package_id': packageId,
+          'rest_area_id': unpaidData.map<int>((item) => item['id'] as int).toList(),
+        },
+        options: dio.Options(
+          headers: {
+            'Accept': 'application/json',
+            'Authorization': 'Bearer $token',
+          },
+        ),
+      );
+
+      final data = response.data;
+      MyString.custom_ref = data['custom_ref'].toString();
+      Get.to(() => MySotingScreen());
+
+    } on dio.DioError catch (e) {
+      if (e.response != null) {
+        final statusCode = e.response?.statusCode ?? 0;
+        final errorData = e.response?.data;
+
+        if (statusCode == 422 && errorData['errors'] != null) {
+          // عرض كل أخطاء الفالديشن في سناك بار منفصل لكل خطأ
+          final Map<String, dynamic> errors = errorData['errors'];
+          errors.forEach((field, messages) {
+            for (var msg in messages) {
+              Get.snackbar(
+                "خطأ في الحقل: $field",
+                msg,
+                snackPosition: SnackPosition.TOP,
+                backgroundColor: Colors.red,
+                colorText: Colors.white,
+                duration: const Duration(seconds: 3),
+              );
+            }
+          });
+        } else {
+          // عرض رسالة عامة أخرى
+          Get.snackbar(
+            "خطأ",
+            errorData['message'] ?? 'حدث خطأ أثناء المعالجة.',
+            snackPosition: SnackPosition.TOP,
+            backgroundColor: Colors.red,
+            colorText: Colors.white,
+          );
+        }
+      } else {
+        // لا يوجد استجابة من السيرفر
+        Get.snackbar(
+          "خطأ",
+          "تعذر الاتصال بالخادم.",
+          snackPosition: SnackPosition.TOP,
+          backgroundColor: Colors.orange,
+          colorText: Colors.white,
+        );
+      }
+    } catch (e) {
+      Get.snackbar(
+        "خطأ",
+        "حدث خطأ غير متوقع.",
+        snackPosition: SnackPosition.TOP,
+        backgroundColor: Colors.orange,
+        colorText: Colors.white,
+      );
+    } finally {
+      isLoading.value = false;
+    }
   }
 
   Future<void> initiatePayment({

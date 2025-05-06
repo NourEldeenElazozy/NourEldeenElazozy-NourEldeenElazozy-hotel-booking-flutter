@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:hotel_booking/core/constants/my_colors.dart';
 import 'package:hotel_booking/core/constants/my_images.dart';
+import 'package:hotel_booking/core/constants/my_strings.dart';
 import 'package:hotel_booking/presentation/screen/Payment/PaymentController.dart';
 
 class PaymentCachScreen extends StatelessWidget {
@@ -13,8 +14,10 @@ class PaymentCachScreen extends StatelessWidget {
 
   final _formKey = GlobalKey<FormState>();
   final args = Get.arguments as Map;
+
   @override
   Widget build(BuildContext context) {
+    print("unpaidData ${args['unpaidData']}");
     amountController.text = double.parse(args['data'].toString()).toString();
     return Directionality(
       textDirection: TextDirection.rtl,
@@ -79,9 +82,14 @@ class PaymentCachScreen extends StatelessWidget {
                   ),
                   onPressed: () {
                     if (_formKey.currentState!.validate()) {
-                      controller.initiatePayment(
+                      if (args != null && args['unpaidData'] != null) {
+                        controller.unpaidData = List<Map<String, dynamic>>.from(args['unpaidData']);
+                        print('Received unpaid dataw: ${ controller.unpaidData}');
+                      }
+                      controller.initiateCashPayment(
                         amount: double.parse(amountController.text),
-                        phone: phoneController.text,
+                        packageId: MyString.packageId
+
                       );
                     }
                   },
