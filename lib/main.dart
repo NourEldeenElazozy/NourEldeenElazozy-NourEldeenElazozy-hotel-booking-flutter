@@ -6,7 +6,7 @@ import 'package:hotel_booking/presentation/routes/routes_imports.dart';
 import 'package:hotel_booking/utils/flutter_web_frame/flutter_web_frame.dart';
 
 import 'core/themes/themes_controller.dart';
-
+import 'package:flutter_localizations/flutter_localizations.dart';
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
   runApp(const MyApp());
@@ -30,6 +30,10 @@ class _MyAppState extends State<MyApp> {
         backgroundColor: Colors.grey, // Background color/white space
         builder: (context) {
           return Obx(() => GetMaterialApp(
+            localizationsDelegates: GlobalMaterialLocalizations.delegates,
+            supportedLocales: const [
+              Locale('ar'), // العربية
+            ],
                 debugShowCheckedModeBanner: false,
                 theme: themeController.darkMode.value
                     ? Themes.darkTheme

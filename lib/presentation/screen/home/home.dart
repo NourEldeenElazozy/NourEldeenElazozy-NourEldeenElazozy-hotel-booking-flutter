@@ -63,7 +63,7 @@ class _HomeState extends State<Home> {
     //controller.getRestAreas(cityId: 1);
 
     _loaduserType();
-   controller.getReservations();
+   //controller.getReservations();
    controller.fetchRecentlyBooked();
   //removeToken();
     print('════════ Token ════════');

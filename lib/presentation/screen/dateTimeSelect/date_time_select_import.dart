@@ -13,6 +13,7 @@ import 'package:dio/dio.dart' as Dio;
 import 'package:get/get.dart';
 import '../../../core/constants/my_colors.dart';
 import '../../../core/constants/my_images.dart';
+import 'package:intl/intl.dart' as intl;
 
 part 'date_time_select.dart';
 part 'date_time_select_controller.dart';

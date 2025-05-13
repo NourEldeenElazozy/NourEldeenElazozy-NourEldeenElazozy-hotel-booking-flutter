@@ -43,7 +43,7 @@ class _VerticalViewState extends State<VerticalView> {
             controller.homeDetails.add(detail);
 
 
-            Get.toNamed("/hotelDetail", arguments: {'data': reservation});
+            //Get.toNamed("/hotelDetail", arguments: {'data': reservation});
             print("reservation");
             print(reservation);
           },
@@ -70,7 +70,7 @@ class _VerticalViewState extends State<VerticalView> {
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(15),
                     image: DecorationImage(
-                      image: NetworkImage("http://10.0.2.2:8000/storage/${controller.recently[widget.index]['main_image']}"),
+                      image: NetworkImage("http://10.0.2.2:8000/storage/${controller.recently[widget.index]['rest_area']['main_image']}"),
                       fit: BoxFit.cover,
                     ),
                   ),
@@ -81,14 +81,14 @@ class _VerticalViewState extends State<VerticalView> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        "${controller.recently[widget.index]['name']}",
+                        "${controller.recently[widget.index]['rest_area']['name']}",
                         style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 16),
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                       ),
                       const SizedBox(height: 5),
                       Text(
-                        "${controller.recently[widget.index]['location']}",
+                        "${controller.recently[widget.index]['rest_area']['location']}",
                         style: TextStyle(
                           color: controller.themeController.isDarkMode.value ? MyColors.switchOffColor : MyColors.textPaymentInfo,
                           fontWeight: FontWeight.w400,
@@ -103,7 +103,7 @@ class _VerticalViewState extends State<VerticalView> {
                           SvgPicture.asset(MyImages.yellowStar),
                           const SizedBox(width: 5),
                           Text(
-                            "${controller.recently[widget.index]['rating']}", // استخدام "rating" بدلاً من "rate"
+                            "${controller.recently[widget.index]['rest_area']['rating']}", // استخدام "rating" بدلاً من "rate"
                             style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 13),
                           ),
                           const SizedBox(width: 5),
@@ -118,21 +118,14 @@ class _VerticalViewState extends State<VerticalView> {
                   crossAxisAlignment: CrossAxisAlignment.end,
                   children: [
                     Text(
-                      "${controller.recently[widget.index]['price']} د.ل",
+                      "${controller.recently[widget.index]['rest_area']['price']} د.ل",
                       style: TextStyle(
                         color: controller.themeController.isDarkMode.value ? MyColors.white : MyColors.primaryColor,
                         fontWeight: FontWeight.w700,
                         fontSize: 18,
                       ),
                     ),
-                    Text(
-                      "/ night",
-                      style: TextStyle(
-                        color: controller.themeController.isDarkMode.value ? MyColors.switchOffColor : MyColors.textPaymentInfo,
-                        fontWeight: FontWeight.w400,
-                        fontSize: 8,
-                      ),
-                    ),
+
                     const SizedBox(height: 12),
                     InkWell(
                       onTap: () {

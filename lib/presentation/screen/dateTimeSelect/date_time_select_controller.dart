@@ -20,11 +20,15 @@ class DateTimeSelectController extends GetxController {
 
       if (response.statusCode == 200 && response.data != null) {
         // تحويل التواريخ المستلمة من JSON إلى قائمة من DateTime
+        print("reservedDates.value ${restAreaId}");
         reservedDates.value = List<DateTime>.from(
-            response.data.map((date) => DateTime.parse(date)));
-        print("dates${reservedDates.value}");
+            (response.data['reserved_dates'] as List).map((date) => DateTime.parse(date))
+        );
+
+
       } else {
         // التعامل مع حالة عدم النجاح
+
         Get.snackbar('Error', 'No reserved dates found');
       }
     } catch (e) {
@@ -33,14 +37,63 @@ class DateTimeSelectController extends GetxController {
       Get.snackbar('Error', e.toString());
     }
   }
+  Future<void> makeReservation(int restAreaId) async {
+    try {
+      loading();
+      // استرجاع التوكن من SharedPreferences
+      final SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? token = prefs.getString('token');
+      final checkInText = checkInDateController.value.text;
+      final checkOutText = checkOutDateController.value.text;
+/*
+      final DateTime checkInDate = intl.DateFormat("dd MMM yyyy", "en").parse(checkInText);
+      final DateTime checkOutDate = intl.DateFormat("dd MMM yyyy", "en").parse(checkOutText);
+
+      final String formattedCheckIn = intl.DateFormat("yyyy-MM-dd").format(checkInDate);
+      final String formattedCheckOut = intl.DateFormat("yyyy-MM-dd").format(checkOutDate);
+ */
+
+      final response = await Dio.Dio().post(
+        'http://10.0.2.2:8000/api/reservations',
+        options: Dio.Options(
+          headers: {
+            'Authorization': 'Bearer $token',
+            'Accept': 'application/json',
+          },
+        ),
+        data: {
+          'rest_area_id':restAreaId ,
+          'check_in': checkInDateController.value.text,
+          'check_out': checkOutDateController.value.text,
+          'adults_count': adult.value,
+          'children_count': children.value,
+        },
+      );
+      print("response.data");
+      print(response.data);
+      dismissLoading();
+      Get.snackbar("نجاح", "تم الحجز بنجاح", backgroundColor: Colors.green);
+      Get.offAllNamed("/bottomBar"); // أو Get.toNamed إذا كانت الصفحة غير موجودة مسبقاً
+    } catch (e) {
+      print("response.data");
+      print(restAreaId);
+
+      print(checkOutDateController.value.text);
+      print(adult.value);
+      print(children.value);
+      dismissLoading();
+      Get.snackbar("خطأ", "فشل في إرسال الحجز", backgroundColor: Colors.red);
+      print(e);
+    }
+  }
   void setFromDate(DateTime date) {
     fromDate.value = date;
-    checkInDateController.value.text=  intl.DateFormat('dd MMM yyyy').format(fromDate.value);
+    checkInDateController.value.text=  intl.DateFormat('yyyy-MM-dd').format(fromDate.value);
   }
 
   void setToDate(DateTime date) {
     toDate.value = date;
-    checkOutDateController.value.text=  intl.DateFormat('dd MMM yyyy').format(toDate.value);
+    checkOutDateController.value.text=  intl.DateFormat('yyyy-MM-dd').format(toDate.value);
   }
 
   bool isToDateSelectable(DateTime day) {

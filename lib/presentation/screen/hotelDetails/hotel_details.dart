@@ -37,7 +37,12 @@ print(controller.detail.detailsImages.length);
           padding: const EdgeInsets.all(15),
           child: Button(
             onpressed: () {
-              Get.toNamed("/dateTimeSelect");
+              Get.toNamed(
+                "/dateTimeSelect",
+                arguments: {
+                  'restAreaId': controller.detail.id,
+                },
+              );
             },
             text: MyString.bookNow,
             textSize: 16,

@@ -134,13 +134,24 @@ class HomeController extends GetxController {
    Future<void> getReservations() async {
      try {
        isLoading.value = true;
+       final SharedPreferences prefs = await SharedPreferences.getInstance();
+       String? token = prefs.getString('token');
 
-
-       final response = await Dio().get('http://10.0.2.2:8000/api/reservations');
-
+       final response = await Dio().get(
+         'http://10.0.2.2:8000/api/reservations',
+         options: Options(
+           headers: {
+             'Authorization': 'Bearer $token',
+             'Accept': 'application/json',
+           },
+         ),
+       );
        if (response.statusCode == 200) {
+         print("response.data5");
+         print(response.data);
          reservations.value = response.data['reservations']; // تخزين البيانات في المتغير
          print(" reservations.value");
+         print(response.statusCode);
          print( reservations.value);
 
        } else {
@@ -148,7 +159,7 @@ class HomeController extends GetxController {
        }
      } catch (e) {
        Get.snackbar('خطأ', 'حدث خطأ أثناء جلب البيانات: $e');
-      print('حدث خطأ أثناء جلب البيانات: $e');
+      print('حدث خطأ أثناء جلب البياناsت: $e');
      } finally {
        isLoading.value = false;
      }
@@ -251,11 +262,20 @@ class HomeController extends GetxController {
    }
    Future<void> fetchRecentlyBooked({String? filter}) async {
      isLoading.value = true;
+     final SharedPreferences prefs = await SharedPreferences.getInstance();
+     String? token = prefs.getString('token');
 
      try {
-       String url = 'http://10.0.2.2:8000/api/most-booked';
-       final response = await Dio().get(url);
 
+       final response = await Dio().get(
+         'http://10.0.2.2:8000/api/most-booked',
+         options: Options(
+           headers: {
+             'Authorization': 'Bearer $token',
+             'Accept': 'application/json',
+           },
+         ),
+       );
        // تحويل البيانات إلى كائنات RestArea
        print("done $response");
        recently.value =response.data;

@@ -29,14 +29,15 @@ class _DateTimeSelectState extends State<DateTimeSelect> {
     final prefs = await SharedPreferences.getInstance();
     return prefs.getString('token');
   }
-
+  final restId = Get.arguments['restAreaId'];
   Future<void> _selectDate(BuildContext context, bool isFromDate, int restAreaId) async {
     // جلب الأيام المحجوزة من API
-    await controller.fetchReservedDates(restAreaId);
+    await controller.fetchReservedDates(restId);
 
     final DateTime? picked = await showDatePicker(
       context: context,
-      initialDate: isFromDate ? controller.fromDate.value : controller.toDate.value,
+
+      //initialDate: isFromDate ? controller.fromDate.value : controller.toDate.value,
       firstDate: DateTime.now(),
       lastDate: DateTime.now().add(const Duration(days: 365)),
       selectableDayPredicate: (DateTime day) {
@@ -63,7 +64,7 @@ class _DateTimeSelectState extends State<DateTimeSelect> {
                 onPressed: () {
                   Get.back();
                 },
-                child: const Text("Close"),
+                child: const Text("إغلاق"),
               ),
             ],
           );
@@ -75,7 +76,7 @@ class _DateTimeSelectState extends State<DateTimeSelect> {
   @override
   Widget build(BuildContext context) {
 
-    controller.fetchReservedDates(1);
+    controller.fetchReservedDates(restId);
     return FutureBuilder(
       future: _loadToken(),
       builder: (context, snapshot) {
@@ -104,25 +105,39 @@ class _DateTimeSelectState extends State<DateTimeSelect> {
                 child: Obx(() => controller.isLoading.value
                     ? Center(child: CircularProgressIndicator()) // عرض دائرة التحميل
                     : Button(
+
                   onpressed: () async {
-                    // استدعاء دالة التحميل
-                    controller.loading();
+                    if (controller.dateTimeKey.currentState!.validate()) {
+                      if(controller.adult.value==0){
+                        Get.snackbar("خطأ", "لايمكن ان يكون عدد البالغين صفر",backgroundColor: Colors.red);
+                      }else{
+                        // استدعاء دالة التحميل
+                        print(controller.adult.value);
+                        print(controller.children.value);
+                        //controller.loading();
+                        controller.makeReservation(restId);
+                        // معالجة التاريخ
+                        String dateText = controller.checkInDateController.value.text; // "27 Mar 2025"
+                        DateTime date = intl.DateFormat("dd MMM yyyy").parse(dateText);
+                        String formattedDate = intl.DateFormat("dd/MM/yyyy").format(date);
 
-                    // معالجة التاريخ
-                    String dateText = controller.checkInDateController.value.text; // "27 Mar 2025"
-                    DateTime date = intl.DateFormat("dd MMM yyyy").parse(dateText);
-                    String formattedDate = intl.DateFormat("dd/MM/yyyy").format(date);
+                        print(formattedDate); // سيظهر 27/03/2025
 
-                    print(formattedDate); // سيظهر 27/03/2025
+                        // تنفيذ التحقق من التاريخ
+                        //controller.dateTimeValidation(context);
 
-                    // تنفيذ التحقق من التاريخ
-                    //controller.dateTimeValidation(context);
+                        // إغلاق التحميل بعد الانتهاء من العملية
+                        //controller.dismissLoading();
 
-                    // إغلاق التحميل بعد الانتهاء من العملية
-                    controller.dismissLoading();
-                    Get.toNamed("/selectRoom");
-                    // يمكنك الانتقال إلى صفحة أخرى إذا كان ذلك مطلوبًا
-                    // Get.toNamed("/dateTimeSelect");
+                        // يمكنك الانتقال إلى صفحة أخرى إذا كان ذلك مطلوبًا
+                        // Get.toNamed("/dateTimeSelect");
+                      }
+
+                    } else {
+                      // ❌ أحد التواريخ غير موجود
+                      Get.snackbar("خطأ", "يرجى ملء جميع الحقول المطلوبة",backgroundColor: Colors.red);
+                    }
+
                   },
                   text: MyString.continueButton,
                   textSize: 16,
@@ -211,11 +226,17 @@ class _DateTimeSelectState extends State<DateTimeSelect> {
                                     const SizedBox(height: 7),
                                     Obx(() => InkWell(
                                       onTap: () {
-                                        _selectDate(context, true,1);
+                                        _selectDate(context, true,restId);
                                       },
                                       child: AbsorbPointer(
                                         child: SizedBox(
                                           child: TextFormField(
+                                            validator:  (value) {
+    if (value == null || value.isEmpty) {
+    return 'يرجى اختيار تاريخ الوصول';
+    }
+    return null;
+                                            },
                                             controller: controller.checkInDateController.value,
                                             style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 14),
                                             decoration: InputDecoration(
@@ -255,11 +276,17 @@ class _DateTimeSelectState extends State<DateTimeSelect> {
                                     const SizedBox(height: 7),
                                     InkWell(
                                       onTap: () {
-                                        _selectDate(context, false,1);
+                                        _selectDate(context, false,restId);
                                       },
                                       child: AbsorbPointer(
                                         child: SizedBox(
                                           child: TextFormField(
+                                            validator:  (value) {
+                                              if (value == null || value.isEmpty) {
+                                                return 'يرجى اختيار تاريخ المغادرة';
+                                              }
+                                              return null;
+                                            },
                                             readOnly: true,
                                             controller: controller.checkOutDateController.value,
                                             style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 14),
@@ -287,6 +314,7 @@ class _DateTimeSelectState extends State<DateTimeSelect> {
                             ],
                           ),
                           const SizedBox(height: 20),
+                        /*
                           Row(
                             children: [
                               Expanded(
@@ -372,6 +400,7 @@ class _DateTimeSelectState extends State<DateTimeSelect> {
                               ),
                             ],
                           ),
+                         */
                           const SizedBox(height: 20),
                           Row(
                             children: [
