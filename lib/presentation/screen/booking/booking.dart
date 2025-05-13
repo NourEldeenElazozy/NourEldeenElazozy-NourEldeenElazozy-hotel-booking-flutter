@@ -9,10 +9,12 @@ class Booking extends StatefulWidget {
 
 class _BookingState extends State<Booking> with SingleTickerProviderStateMixin {
   late BookingController controller = Get.put(BookingController());
+  late HomeController Hocontroller = Get.put(HomeController());
 
   @override
   void initState() {
     super.initState();
+    Hocontroller.getReservations();
     controller.getMyBooking();
     controller.selectedItem.value = 0;
     controller.passingStatus.value = 'Paid';
@@ -85,7 +87,7 @@ class _BookingState extends State<Booking> with SingleTickerProviderStateMixin {
                 color: controller.themeController.isDarkMode.value ? Colors.white : MyColors.successColor),
               )
               : ListView.builder(
-                itemCount: controller.filterListView.length,
+                itemCount: Hocontroller.reservations.length,
                 itemBuilder: (context, index) {
                   return Column(
                     children: [
@@ -111,7 +113,7 @@ class _BookingState extends State<Booking> with SingleTickerProviderStateMixin {
                                   decoration: BoxDecoration(
                                       color: Colors.grey.shade300,
                                       borderRadius: BorderRadius.circular(15),
-                                      image: DecorationImage(image: NetworkImage("${controller.filterListView[index].image}"))
+                                      image: DecorationImage(image: NetworkImage("${Hocontroller.reservations[index]['rest_area']['main_image']}"))
                                   ),
                                 ),
                                 const SizedBox(width: 10),
@@ -119,24 +121,33 @@ class _BookingState extends State<Booking> with SingleTickerProviderStateMixin {
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                   children: [
-                                    Text("${controller.filterListView[index].hotelName}", style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 16),),
-                                    Text("${controller.filterListView[index].location}", style: TextStyle(
-                                        color: controller.themeController.isDarkMode.value ? MyColors.onBoardingDescriptionDarkColor : MyColors.textPaymentInfo,
+                                    Text("${Hocontroller.reservations[index]['rest_area']['name']}", style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 16),),
+                                   /*
+                                    Text(
+                                      "${Hocontroller.reservations[index]['rest_area']['location']}",
+                                      style: TextStyle(
+                                        overflow: TextOverflow.ellipsis,
+                                        color: controller.themeController.isDarkMode.value
+                                            ? MyColors.onBoardingDescriptionDarkColor
+                                            : MyColors.textPaymentInfo,
                                         fontWeight: FontWeight.w400,
-                                        fontSize: 12),
+                                        fontSize: 12,
+                                      ),
+                                      maxLines: 1, // يمكنك تحديد عدد الأسطر
                                     ),
+                                    */
                                     const SizedBox(height: 10),
                                     Container(
                                       padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 5),
                                       decoration: BoxDecoration(
-                                        color: controller.filterListView[index].status == 'Completed' || controller.filterListView[index].status == 'Paid'
+                                        color: Hocontroller.reservations[index]['status'] == 'completed' || Hocontroller.reservations[index]['status'] == 'pending'
                                             ? controller.themeController.isDarkMode.value ? MyColors.statusBoxDarkColor : MyColors.statusBoxColor
                                             : controller.themeController.isDarkMode.value ? MyColors.statusBoxRedDarkColor : MyColors.statusMessageBoxRedColor,
                                         borderRadius: BorderRadius.circular(5),
                                       ),
-                                      child: Text("${controller.filterListView[index].status}",
+                                      child: Text("${Hocontroller.reservations[index]['status']}",
                                         style: TextStyle(
-                                            color: controller.filterListView[index].status == 'Completed' || controller.filterListView[index].status == 'Paid'
+                                            color: Hocontroller.reservations[index]['status'] == 'completed' || Hocontroller.reservations[index]['status'] == 'pending'
                                                 ? controller.themeController.isDarkMode.value ? MyColors.white : Colors.green
                                                 : MyColors.errorColor,
                                             fontWeight: FontWeight.w600,
@@ -151,7 +162,7 @@ class _BookingState extends State<Booking> with SingleTickerProviderStateMixin {
                             const SizedBox(height: 10),
                             const CustomDivider(size: 1,),
                             const SizedBox(height: 10),
-                            controller.filterListView[index].status == 'Paid'
+                            Hocontroller.reservations[index]['status'] == 'Paid'
                             ? Row(
                               children: [
                                 Expanded(
@@ -232,7 +243,7 @@ class _BookingState extends State<Booking> with SingleTickerProviderStateMixin {
                             : Container(
                               width: MediaQuery.of(context).size.width,
                               decoration: BoxDecoration(
-                                color: controller.filterListView[index].status == 'Completed'
+                                color: Hocontroller.reservations[index]['status'] == 'Completed'
                                     ? controller.themeController.isDarkMode.value
                                       ? MyColors.statusDarkGreenBoxColor
                                       : MyColors.statusBoxColor
@@ -244,13 +255,13 @@ class _BookingState extends State<Booking> with SingleTickerProviderStateMixin {
                               padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 10),
                               child: Row(
                                 children: [
-                                  controller.filterListView[index].status == 'Completed'
+                                  Hocontroller.reservations[index]['status'] == 'Completed'
                                   ? SvgPicture.asset(MyImages.completed, colorFilter: ColorFilter.mode(controller.themeController.isDarkMode.value ? MyColors.white : MyColors.primaryColor, BlendMode.srcIn),)
                                   : SvgPicture.asset(MyImages.canceled),
                                   const SizedBox(width: 5),
-                                  Text(controller.filterListView[index].status == 'Completed' ? MyString.completed : MyString.canceled,
+                                  Text(Hocontroller.reservations[index]['status'] == 'Completed' ? MyString.completed : MyString.canceled,
                                     style: TextStyle(
-                                        color: controller.filterListView[index].status == 'Completed'
+                                        color: Hocontroller.reservations[index]['status'] == 'Completed'
                                             ? Colors.green
                                             : Colors.red,
                                         fontWeight: FontWeight.w400,
