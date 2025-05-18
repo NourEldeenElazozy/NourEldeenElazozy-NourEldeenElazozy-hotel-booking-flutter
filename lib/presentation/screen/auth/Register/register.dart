@@ -258,7 +258,7 @@ class RegisterScreenState extends State<RegisterScreen> with SingleTickerProvide
                     onpressed: () {
                       if (customerFormKey.currentState!.validate()) {
                         // إذا كان النموذج صحيحًا، قم بتنفيذ التسجيل
-                        controller.submit("user");
+                        controller.submit("user",context);
                       } else {
                         // عرض رسالة خطأ إذا كان هناك مشاكل في التحقق
                         Get.snackbar(
@@ -520,7 +520,7 @@ class RegisterScreenState extends State<RegisterScreen> with SingleTickerProvide
                     onpressed: () {
                       if (hostFormKey.currentState!.validate()) {
 
-                        controller.submit("host");
+                        controller.submit("host",context);
                       } else {
                         // عرض رسالة خطأ إذا كان هناك مشاكل في التحقق
                         Get.snackbar(

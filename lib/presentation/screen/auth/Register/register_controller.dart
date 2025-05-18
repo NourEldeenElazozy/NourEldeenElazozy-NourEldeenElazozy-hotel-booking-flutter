@@ -38,7 +38,8 @@ class RegisterController extends GetxController {
   final TextEditingController nickNameController = TextEditingController();
   final TextEditingController dateController = TextEditingController();
   TextEditingController mobileNumberController = TextEditingController();
-
+  final otp = ''.obs;
+  final generatedOtp = ''.obs;
   String? selectedGender;
   String countryCode = "+93";
   RxList<Map<String, dynamic>> countryCodes = <Map<String, dynamic>>[].obs;
@@ -50,63 +51,296 @@ class RegisterController extends GetxController {
   }
 
 
-  Future<void> submit(String useType) async {
+  Future<void> submit(String useType, BuildContext context) async {
     try {
       print(nameController.text);
       print(phoneController.text);
       print(birthDate.value);
       print(gender.value);
       print(useType);
-      final response = await Dio().post(
-        'http://10.0.2.2:8000/api/register', // تعديل الرابط حسب الحاجة
-        data: {
-          'name': nameController.text,
-          'phone': phoneController.text,
-          'date_of_birth': birthDate.value,
-          'city': int.parse(cityController.text),
-          'gender': gender.value,
-          'user_type': useType, // أو 'host' حسب الحاجة
-          'password': passwordController.text, // تأكد من استخدام القيمة المناسبة
-        },
+
+      // تحويل الرقم: إزالة الصفر الأول وإضافة 218
+      String rawPhone = phoneController.text;
+      String phone = '218${rawPhone.replaceFirst(RegExp(r'^0'), '')}';
+
+      // ✅ إظهار لودينق قبل إرسال OTP
+      Get.dialog(
+        const Center(child: CircularProgressIndicator()),
+        barrierDismissible: false,
       );
 
-      // إذا كانت الاستجابة ناجحة
-      if (response.statusCode == 200) {
-        LoginResponse loginResponse = LoginResponse.fromJson(response.data);
-        token.value = loginResponse.token;
-        user.value = loginResponse.user;
-        await _storeData(loginResponse.token, loginResponse.user);
-        Get.snackbar('نجاح', 'تم تسجيل المستخدم بنجاح!', backgroundColor: Colors.green);
-        if (token.isNotEmpty) {
-          Get.offNamedUntil("/bottomBar", (route) => false);
-        }
+      // 1. إرسال OTP
+      final otpResponse = await Dio().post(
+        'http://10.0.2.2:8000/api/send-otp',
+        data: {"phonenumber": phone},
+      );
+
+      // ✅ إغلاق اللودينق بعد إرسال OTP
+      Get.back();
+
+
+      if (otpResponse.statusCode == 200 && otpResponse.data['success'] == true) {
+        int otp = otpResponse.data['otp'];
+        print(otpResponse.data['otp']);
+        // 2. عرض الـ BottomSheet لتأكيد OTP
+        showModalBottomSheet(
+          context: context,
+          isDismissible: false,
+          builder: (_) {
+            TextEditingController otpController = TextEditingController();
+
+            return Directionality(
+              textDirection: TextDirection.rtl,
+              child: Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Center(
+                      child: Text(
+                        "أدخل رمز التحقق المرسل إلى رقمك",
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 20,
+                          color: Colors.black87,
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 10),
+                    TextField(
+                      controller: otpController,
+                      keyboardType: TextInputType.number,
+                      maxLength: 4,
+                      decoration: const InputDecoration(
+                        border: OutlineInputBorder(),
+                        hintText: 'رمز التحقق',
+                      ),
+                    ),
+                    ElevatedButton(
+                      onPressed: () async {
+                        if (otpController.text == otp.toString()) {
+                          Navigator.pop(context); // إغلاق البوتوم شيت
+              
+                          // ✅ إظهار لودينق قبل التسجيل
+                          Get.dialog(
+                            const Center(child: CircularProgressIndicator()),
+                            barrierDismissible: false,
+                          );
+              
+                          // 3. تنفيذ التسجيل
+                          final response = await Dio().post(
+                            'http://10.0.2.2:8000/api/register',
+                            data: {
+                              'name': nameController.text,
+                              'phone': rawPhone,
+                              'date_of_birth': birthDate.value,
+                              'city': int.parse(cityController.text),
+                              'gender': gender.value,
+                              'user_type': useType,
+                              'password': passwordController.text,
+                            },
+                            options: Options(
+                              validateStatus: (status) => status! < 500, // يقبل 422 ولا يرمي Exception
+                            ),
+                          );
+              
+                          // ✅ إغلاق اللودينق
+                          Get.back();
+              
+                          if (response.statusCode == 200) {
+                            LoginResponse loginResponse = LoginResponse.fromJson(response.data);
+                            token.value = loginResponse.token;
+                            user.value = loginResponse.user;
+                            await _storeData(loginResponse.token, loginResponse.user);
+                            Get.snackbar('نجاح', 'تم تسجيل المستخدم بنجاح!', backgroundColor: Colors.green);
+                            if (token.isNotEmpty) {
+                              Get.offNamedUntil("/bottomBar", (route) => false);
+                            }
+              } else if (response.statusCode == 422) {
+              final errorData = response.data;
+              
+              if (errorData is List) {
+              for (var msg in errorData) {
+              Get.snackbar('خطأ', msg.toString());
+              }}
+                          } else {
+                            Get.snackbar('خطأ', 'فشل في التسجيل: ${response.statusCode}');
+                          }
+                        } else {
+                          Get.snackbar('خطأ', 'رمز التحقق غير صحيح',backgroundColor: Colors.red);
+                        }
+                      },
+                      child: Center(child: const Text("تأكيد")),
+                    ),
+                  ],
+                ),
+              ),
+            );
+          },
+        );
       } else {
-        // إذا كانت الاستجابة غير ناجحة
-        Get.snackbar('خطأ', 'فشل في التسجيل: ${response.statusCode}');
+        Get.back(); // احتياطي، في حالة لم يتم إغلاق اللودينق
+        Get.snackbar('خطأ', 'فشل إرسال رمز التحقق، تأكد من صحة الرقم');
       }
     } catch (e) {
-      // التعامل مع الأخطاء
-      if (e is DioException) {
-        final errorResponse = e.response?.data;
+      Get.back(); // إغلاق اللودينق
 
-        // التأكد من أن الخطأ يحتوي على الرسالة والأخطاء
-        if (errorResponse != null && errorResponse is List) {
-          // عرض الأخطاء مباشرة من القائمة
-          for (var error in errorResponse) {
-            Get.snackbar('خطأ', error); // عرض كل خطأ في Snackbar
+      if (e is DioException) {
+        print("errrr ${e.response} ");
+        print("errrr ${e.error} ");
+        print("errrr ${e.message} ");
+        final errorData = e.response?.data;
+
+        if (errorData != null) {
+          // إذا كانت رسالة عامة
+          if (errorData is Map && errorData['message'] != null) {
+            Get.snackbar('خطأ', errorData['message']);
           }
+
+          // إذا كانت الأخطاء عبارة عن قائمة مثل ["هذا الرقم موجود بالفعل."]
+          else if (errorData is List) {
+            for (var error in errorData) {
+              Get.snackbar('خطأ', error.toString());
+            }
+          }
+
+          // إذا كانت صيغة Laravel الافتراضية (errors داخلها map)
+          else if (errorData is Map && errorData['errors'] != null) {
+            (errorData['errors'] as Map).forEach((key, value) {
+              if (value is List) {
+                for (var msg in value) {
+                  Get.snackbar('خطأ', msg.toString());
+                }
+              }
+            });
+          }
+
+          // طباعة للديبغ
+          print("Error from backend: $errorData");
         } else {
-          // إذا كان هناك خطأ آخر
-          print('Error: ${e.response?.data}');
-          Get.snackbar('خطأ', 'حدث خطأ غير متوقع.');
+          Get.snackbar('خطأ', 'حدث خطأ أثناء الاتصال بالخادم.');
         }
       } else {
-        // أخطاء أخرى
-        print('Error: $e');
         Get.snackbar('خطأ', 'حدث خطأ غير متوقع.');
+        print("Unexpected Error: $e");
       }
     }
   }
+
+  Future<void> sendOtp(String phoneNumber) async {
+    try {
+      // حذف الصفر الأول وإضافة 218
+      String normalizedPhone = phoneNumber.startsWith('0')
+          ? '218${phoneNumber.substring(1)}'
+          : phoneNumber;
+      final response = await Dio().post(
+        'http://10.0.2.2:8000//api/send-otp',
+        data: {
+          "phonenumber": normalizedPhone,
+        },
+      );
+
+      if (response.statusCode == 200 && response.data['success'] == true) {
+        generatedOtp.value = response.data['otp'].toString(); // خزن OTP للمقارنة لاحقاً
+        //showOtpBottomSheet(phoneNumber);
+      } else {
+        Get.snackbar('خطأ', 'فشل في إرسال رمز التحقق');
+      }
+    } catch (e) {
+      Get.snackbar('خطأ', 'حدث خطأ أثناء إرسال رمز التحقق');
+    }
+  }
+
+/*
+ void showOtpBottomSheet(String phoneNumber) {
+    Get.bottomSheet(
+      Directionality(
+        textDirection: TextDirection.rtl,
+        child: Container(
+          padding: const EdgeInsets.all(16),
+          decoration: const BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Center(
+                child: Text(
+                  "أدخل رمز التحقق المرسل إلى رقمك",
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 20,
+                    color: Colors.black87,
+                  ),
+                ),
+              ),
+              const SizedBox(height: 20),
+              TextField(
+                onChanged: (value) => otp.value = value,
+                keyboardType: TextInputType.number,
+                maxLength: 4,
+                decoration: InputDecoration(
+                  labelText: "رمز التحقق",
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  counterText: "",
+                ),
+              ),
+              const SizedBox(height: 20),
+              SizedBox(
+                width: double.infinity,
+                child: ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    padding: const EdgeInsets.symmetric(vertical: 14),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    backgroundColor: Colors.blue,
+                  ),
+                  onPressed: () {
+                    if (otp.value == generatedOtp.value) {
+                      Get.back(); // إغلاق البوتوم شيت
+                      createAccount(); // إنشاء الحساب
+                    } else {
+                      Get.snackbar("خطأ", "رمز التحقق غير صحيح",backgroundColor: Colors.red);
+                    }
+                  },
+                  child: const Text(
+                    "تأكيد",
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.w600,
+                      color: Colors.white,
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+      isScrollControlled: true,
+    );
+  }
+ */
+
+
+  void createAccount() {
+
+    Get.snackbar("نجاح", "تم إنشاء الحساب بنجاح");
+  }
+
+
+
+  void completeRegistration() {
+    Get.snackbar('نجاح', 'تم تأكيد الرقم بنجاح وإنشاء الحساب');
+
+  }
+
 
   Future<void> _loadCountryCodes() async {
     String data = await rootBundle.loadString('assets/data/countryPicker.json');

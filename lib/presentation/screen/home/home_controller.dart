@@ -10,10 +10,11 @@ class HomeController extends GetxController {
    RxBool bookMark = false.obs;
    RxInt selectedItem = 0.obs;
    RxBool isLoading = true.obs;
-   RxString passingStatus = 'Recommended'.obs;
+   var passingStatus = ''.obs; // لتخزين الفلتر الحالي
    var reservations = [].obs; // متغير لتخزين الحجوزات
+   var filteredReservations = [].obs;
    RxList<Detail> homeDetails = <Detail>[].obs;
-   List<Detail> filterListView = <Detail>[].obs;
+   var filterListView = [].obs; // القائمة التي ستُعرض في واجهة المستخدم
    var selectedGeoArea = "وسط البلاد".obs; // قيمة افتراضية
    var recentlyBooked = [].obs;
    var recently = [].obs;
@@ -48,9 +49,13 @@ class HomeController extends GetxController {
      "مولد كهربائي": "power_generator",
    };
    void filterList(String status) {
-     filterListView.clear();
-     //filterListView.addAll(homeDetails.where((element) => element.status == status));
+     filteredReservations.value = reservations.where((element) {
+       return element['status'].toString().toLowerCase() == status.toLowerCase();
+     }).toList();
    }
+
+
+
    void toggleRestAreaActiveStatus(int id) async {
      // نفّذ هنا طلب HTTP أو تعديل الحالة في القائمة حسب مشروعك
      // مثلاً:
@@ -150,6 +155,8 @@ class HomeController extends GetxController {
          print("response.data5");
          print(response.data);
          reservations.value = response.data['reservations']; // تخزين البيانات في المتغير
+         filteredReservations.value = List.from(reservations); // مبدئياً نعرض الكل
+         filterList('pending'); // أول فلتر افتراضي
          print(" reservations.value");
          print(response.statusCode);
          print( reservations.value);

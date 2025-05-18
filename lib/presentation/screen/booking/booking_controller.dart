@@ -14,12 +14,14 @@ class BookingController extends GetxController {
   //   getMyBooking();
   //   super.onInit();
   // }
-
+/*
   void filterList(String status) {
     filterListView.clear();
     filterListView.addAll(myBooking.where((element) => element.status == status));
   }
 
+
+ */
   Future<List<RecentlyBook>> getMyBooking() async {
     isLoading.value = true; // Set isLoading to true before loading data
     try {
@@ -30,7 +32,7 @@ class BookingController extends GetxController {
       for (int i = 0; i < jsonArray.length; i++) {
         myBooking.add(RecentlyBook.fromJson(jsonArray[i]));
       }
-      filterList(passingStatus.value);
+     // filterList(passingStatus.value);
       isLoading.value = false; // Set isLoading to false after data is loaded
       return myBooking;
     } catch (e) {
