@@ -301,6 +301,7 @@ class MyString {
 //----------------------------------- profile_Screen ------------------------------
   static const String editProfile = "تعديل الملف الشخصي";
   static const String myHost = "إسترحاتي";
+  static const String myBook = "حجوزاتي";
   static const String notifications = "الإشعارات";
   static const String darkTheme = "الوضع الداكن";
   static const String language = "اللغة";

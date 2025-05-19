@@ -217,6 +217,16 @@ class _ProfileState extends State<Profile> {
                 child: commonListTile(MyImages.myHost,
                     MyString.myHost, controller.isDarkMode.value),
               ),
+              if(userType.value=="host")
+                InkWell(
+                  onTap: () {
+                    Get.toNamed("/Booking");
+                  },
+
+                  child: commonListTile(MyImages.selectedBooking,
+                      MyString.myBook, controller.isDarkMode.value),
+                ),
+
               InkWell(
                 onTap: () {
                   Get.toNamed('/profileNotification');

@@ -205,6 +205,13 @@ class Routes {
       transitionDuration: const Duration(milliseconds: 600),
     ),
     GetPage(
+      name: "/Booking",
+      page: () => const Booking(),
+      transition: Transition.rightToLeft,
+      transitionDuration: const Duration(milliseconds: 600),
+    ),
+
+    GetPage(
       name: "/myHosting",
       page: () =>  MySotingScreen(),
       transition: Transition.leftToRight,
