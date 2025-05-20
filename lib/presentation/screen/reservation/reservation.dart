@@ -22,6 +22,7 @@ class _ReservationState extends State<Reservation> {
     final reservation = widget.reservationData['reservations'][0]; // Assuming only one reservation for this page
     final user = reservation['user'];
     final restArea = reservation['rest_area'];
+    final reservationStatus = reservation['status'] ?? 'unknown'; // Get the reservation status
 
     // Helper to format date
     String formatDate(String dateString) {
@@ -169,18 +170,21 @@ class _ReservationState extends State<Reservation> {
                           Container(
                             padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
                             decoration: BoxDecoration(
-                              color: getStatusColor(reservation['status']),
+                              color: getStatusColor(reservationStatus),
                               borderRadius: BorderRadius.circular(8),
                             ),
                             child: Text(
-                              reservation['status'] == 'pending'
+                              reservationStatus == 'pending'
                                   ? 'معلقة'
-                                  : reservation['status'] == 'completed'
+                                  : reservationStatus == 'completed'
                                   ? 'مكتملة'
-                                  : 'ملغاة',
+                                  : reservationStatus == 'canceled'
+                                  ? 'ملغاة'
+                                  : 'غير معروف',
                               style: const TextStyle(
                                 color: Colors.white,
                                 fontWeight: FontWeight.w600,
+                                fontSize: 13,
                               ),
                             ),
                           ),
@@ -236,9 +240,81 @@ class _ReservationState extends State<Reservation> {
                   ),
                 ),
               ),
+              const SizedBox(height: 80), // Add extra space at the bottom to prevent FAB from overlapping content
             ],
           ),
         ),
+        // Floating Action Buttons
+        floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
+        floatingActionButton:
+        // Only show buttons if the reservation status is 'pending'
+        reservationStatus == 'pending'
+            ? Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16.0),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              Expanded(
+                child: FloatingActionButton.extended(
+                  heroTag: 'approve_fab', // Unique tag for each FAB
+                  onPressed: () {
+                    // Implement approval logic here
+                    Get.defaultDialog(
+                      title: "تأكيد الموافقة",
+                      middleText: "هل أنت متأكد من الموافقة على الحجز؟",
+                      textConfirm: "نعم",
+                      textCancel: "لا",
+                      confirmTextColor: Colors.white,
+                      buttonColor: Colors.green,
+                      cancelTextColor: Colors.black,
+                      onConfirm: () {
+                        Get.back(); // Close dialog
+                        // Call your controller method to approve the reservation
+                        // controller.approveReservation(reservation['id']);
+                        Get.snackbar('تم', 'تم تأكيد الحجز بنجاح!');
+                      },
+                      onCancel: () {},
+                    );
+                  },
+                  label: const Text('موافقة', style: TextStyle(color: Colors.white)),
+                  icon: const Icon(Icons.check, color: Colors.white),
+                  backgroundColor: Colors.green,
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                ),
+              ),
+              const SizedBox(width: 15), // Space between buttons
+              Expanded(
+                child: FloatingActionButton.extended(
+                  heroTag: 'reject_fab', // Unique tag for each FAB
+                  onPressed: () {
+                    // Implement rejection logic here
+                    Get.defaultDialog(
+                      title: "تأكيد الرفض",
+                      middleText: "هل أنت متأكد من رفض الحجز؟",
+                      textConfirm: "نعم",
+                      textCancel: "لا",
+                      confirmTextColor: Colors.white,
+                      buttonColor: Colors.red,
+                      cancelTextColor: Colors.black,
+                      onConfirm: () {
+                        Get.back(); // Close dialog
+                        // Call your controller method to reject the reservation
+                        // controller.rejectReservation(reservation['id']);
+                        Get.snackbar('تم', 'تم رفض الحجز.');
+                      },
+                      onCancel: () {},
+                    );
+                  },
+                  label: const Text('رفض', style: TextStyle(color: Colors.white)),
+                  icon: const Icon(Icons.close, color: Colors.white),
+                  backgroundColor: Colors.red,
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                ),
+              ),
+            ],
+          ),
+        )
+            : null, // Don't show buttons if status is not 'pending'
       ),
     );
   }
