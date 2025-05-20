@@ -136,20 +136,31 @@ class HomeController extends GetxController {
       return recentlyBooked;
    }
    */
-   Future<void> getReservations() async {
+   Future<void> getReservations({bool isHost=false}) async {
      try {
        isLoading.value = true;
        final SharedPreferences prefs = await SharedPreferences.getInstance();
        String? token = prefs.getString('token');
+       String? userType = prefs.getString('user_type');
+       if(userType=="host"){
+         isHost=true;
+         print("isHost $userType");
+       }
+
+
 
        final response = await Dio().get(
          'http://10.0.2.2:8000/api/reservations',
+
          options: Options(
            headers: {
              'Authorization': 'Bearer $token',
              'Accept': 'application/json',
            },
          ),
+         data: {
+           'type': isHost ? 'host' : 'user', // استخدم هذا حسب الحالة
+         },
        );
        if (response.statusCode == 200) {
          print("response.data5");
@@ -267,11 +278,15 @@ class HomeController extends GetxController {
        isLoading.value = false;
      }
    }
-   Future<void> fetchRecentlyBooked({String? filter}) async {
+   Future<void> fetchRecentlyBooked({String? filter,bool isHost=false}) async {
      isLoading.value = true;
      final SharedPreferences prefs = await SharedPreferences.getInstance();
      String? token = prefs.getString('token');
-
+     String? userType = prefs.getString('user_type');
+     if(userType=="host"){
+       isHost=true;
+       print("isHost $userType");
+     }
      try {
 
        final response = await Dio().get(
@@ -282,6 +297,9 @@ class HomeController extends GetxController {
              'Accept': 'application/json',
            },
          ),
+         data: {
+           'type': isHost ? 'host' : 'user', // استخدم هذا حسب الحالة
+         },
        );
        // تحويل البيانات إلى كائنات RestArea
        print("done $response");

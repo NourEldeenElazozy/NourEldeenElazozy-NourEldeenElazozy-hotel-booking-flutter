@@ -53,7 +53,7 @@ class ReservationController extends GetxController {
         );
       } else {
         selectedDate.value = pickedDate;
-        dateController.text = DateFormat('yyyy-MM-dd').format(selectedDate.value);
+        dateController.text = intl.DateFormat('yyyy-MM-dd').format(selectedDate.value);
       }
     }
   }

@@ -49,39 +49,49 @@ class CustomFullAppBar extends StatelessWidget implements PreferredSizeWidget {
   }
 }
 
-PreferredSizeWidget homeAppBar(String title, bool status, bool isDarkMode) {
+PreferredSizeWidget homeAppBar(String title, bool status, bool isDarkMode, {bool showBackButton = false}) {
   return PreferredSize(
     preferredSize: const Size.fromHeight(kToolbarHeight),
     child: SizedBox(
-      height: 100,
+      height: 100, // You might need to adjust this height based on content
       child: Column(
-        mainAxisAlignment: MainAxisAlignment.end,
+        mainAxisAlignment: MainAxisAlignment.end, // Align content to the bottom
         children: [
           Row(
             children: [
-              Container(
-                width: 32,
-                margin: const EdgeInsets.only(left: 15),
-                height: 32,
-                padding: const EdgeInsets.all(8),
-                decoration: BoxDecoration(
-
-                  borderRadius: BorderRadius.circular(10),
+              // Back Button (Conditional)
+              if (showBackButton)
+                IconButton(
+                  icon: Icon(
+                    Icons.arrow_back,
+                    color: isDarkMode ? MyColors.white : MyColors.black,
+                  ),
+                  onPressed: () {
+                    Get.back(); // Use Get.back() to navigate back
+                  },
+                )
+              else
+                Container( // Original app icon container if no back button
+                  width: 32,
+                  margin: const EdgeInsets.only(left: 15),
+                  height: 32,
+                  padding: const EdgeInsets.all(8),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  child: Image.asset(
+                    MyImages.appIcon,
+                    width: 20,
+                    height: 20,
+                  ),
                 ),
-                child: Image.asset(
-                  MyImages.appIcon,
-                  width: 20,
-                  height: 20,
-
-                ),
-              ),
               const SizedBox(width: 10),
               Text(
                 title,
                 style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 22),
               ),
               const Spacer(),
-              if (status == true)
+              if (status == true) // Checks if status is true to show these icons
                 Row(
                   children: [
                     InkWell(
@@ -90,7 +100,6 @@ PreferredSizeWidget homeAppBar(String title, bool status, bool isDarkMode) {
                       },
                       child: Container(
                         padding: const EdgeInsets.all(5),
-                        // color: Colors.red,
                         child: SvgPicture.asset(MyImages.notification,
                             colorFilter: ColorFilter.mode(
                                 isDarkMode ? MyColors.white : MyColors.black,
@@ -105,7 +114,6 @@ PreferredSizeWidget homeAppBar(String title, bool status, bool isDarkMode) {
                       },
                       child: Container(
                         padding: const EdgeInsets.all(5),
-                        // color: Colors.green,
                         child: SvgPicture.asset(MyImages.bookMarkBlack,
                             colorFilter: ColorFilter.mode(
                                 isDarkMode ? MyColors.white : MyColors.black,
@@ -115,10 +123,10 @@ PreferredSizeWidget homeAppBar(String title, bool status, bool isDarkMode) {
                     ),
                   ],
                 ),
-              const SizedBox(width: 15),
+              const SizedBox(width: 15), // Padding on the right
             ],
           ),
-          const SizedBox(height: 10),
+          const SizedBox(height: 10), // Space below the row
         ],
       ),
     ),
