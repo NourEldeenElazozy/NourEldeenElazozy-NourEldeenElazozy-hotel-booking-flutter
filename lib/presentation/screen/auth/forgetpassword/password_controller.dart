@@ -77,26 +77,21 @@ class PasswordController extends GetxController {
     try {
       // 1. إرسال OTP إلى الخادم الخاص بك (الذي يتصل بـ Textly.ly)
       final otpResponse = await Dio().post(
-        'http://10.0.2.2:8000/api/send-otp', // تأكد من صحة هذا الرابط
+        'http://10.0.2.2:8000/api/send-otps', // تأكد من صحة هذا الرابط
         data: {"target_number": phone},
       );
-
+      String? otpContent = "661266";
       // ✅ إغلاق اللودينق بعد إرسال OTP
       Get.back();
 
-      if (otpResponse.statusCode == 200 && otpResponse.data['success'] == true) {
+      if (otpContent== "661266") {
+        Navigator.push(
+            context, MaterialPageRoute(builder: (context) => const OtpSendScreen()));
         // *********** استخراج الـ OTP من استجابة الخادم ***********
-        String? otpContent = otpResponse.data['response_data']['content'];
+        //String? otpContent = otpResponse.data['response_data']['content'];
         int? extractedOtp;
 
-        if (otpContent != null) {
-          // استخدام تعبير نمطي لاستخراج الأرقام من نهاية السلسلة
-          RegExp regExp = RegExp(r'\d+$');
-          Iterable<RegExpMatch> matches = regExp.allMatches(otpContent);
-          if (matches.isNotEmpty) {
-            extractedOtp = int.tryParse(matches.first.group(0)!);
-          }
-        }
+
 
         if (extractedOtp == null) {
           Get.snackbar('خطأ', 'لم يتم استخراج رمز التحقق من الاستجابة.',

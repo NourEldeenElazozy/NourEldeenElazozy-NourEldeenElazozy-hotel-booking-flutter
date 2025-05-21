@@ -8,32 +8,19 @@ class OtpSendScreen extends StatefulWidget {
 }
 
 class _OtpSendScreenState extends State<OtpSendScreen> {
-  // استخدام Get.find للحصول على نسخة المتحكم الموجودة
   late PasswordController controller;
 
   @override
   void initState() {
     super.initState();
     controller = Get.find<PasswordController>();
-    // ✅ إزالة استدعاء controller.startTimer() هنا
-    // لأنه يتم استدعاؤه بالفعل في selectSmsEmailSubmit بعد استلام الـ OTP
-    // وهذا يضمن أن الـ _timer سيكون قد تم تهيئته.
   }
 
   @override
   void dispose() {
-    // ✅ التأكد من إلغاء المؤقت عند التخلص من الشاشة
-    // يتم التعامل مع هذا الآن في onClose الخاص بالـ Controller بشكل أفضل
-    // ولكن إبقاؤه هنا لضمان قوي لا يضر.
-    // يفضل الاعتماد على onClose في Controller بشكل أساسي.
-    // إذا كنت متأكدًا أن `onClose` للمتحكم ستنفذ دائمًا، يمكنك إزالته من هنا.
-    // ولكن للتأكد، لا بأس بتركه.
-    // لا نحتاج للتحقق من isActive هنا لأن الـ `_timer` أصبح nullable
-    // و `.cancel()` على null آمن.
     controller._timer?.cancel();
     super.dispose();
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -46,7 +33,6 @@ class _OtpSendScreenState extends State<OtpSendScreen> {
             padding: const EdgeInsets.all(15),
             child: Button(
               onpressed: () {
-                // استدعاء دالة التحقق من الـ OTP في المتحكم
                 controller.otpSend(context);
               },
               text: MyString.verify,
@@ -55,12 +41,11 @@ class _OtpSendScreenState extends State<OtpSendScreen> {
               textColor: MyColors.white,
             ),
           ),
-          body: SingleChildScrollView( // ✅ SingleChildScrollView هنا
+          body: SingleChildScrollView(
             padding: EdgeInsets.only(
               left: 16.0,
               right: 16.0,
               top: 16.0,
-              // ✅ إضافة الحشوة السفلية بناءً على ارتفاع لوحة المفاتيح
               bottom: MediaQuery.of(context).viewInsets.bottom + 16.0,
             ),
             child: Form(
@@ -73,7 +58,6 @@ class _OtpSendScreenState extends State<OtpSendScreen> {
                     children: [
                       const Text(MyString.codeSend,
                           style: TextStyle(fontWeight: FontWeight.w400, fontSize: 14)),
-                      // ✅ عرض الرقم الذي تم إرسال الـ OTP إليه
                       Text(controller.smsController.text,
                           style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 14)),
                     ],
@@ -83,8 +67,8 @@ class _OtpSendScreenState extends State<OtpSendScreen> {
                     obscureText: false,
                     autoDisposeControllers: false,
                     appContext: context,
-                    // ✅ طول الـ OTP ديناميكيًا بناءً على ما تم استقباله
-                    length: controller.receivedOtp.value.toString().length,
+                    // ✅ ثبت الطول إلى 6 بدلاً من القيمة الديناميكية
+                    length: 6,
                     controller: controller.otpController,
                     animationType: AnimationType.scale,
                     keyboardType: TextInputType.number,
@@ -92,18 +76,18 @@ class _OtpSendScreenState extends State<OtpSendScreen> {
                         shape: PinCodeFieldShape.box,
                         borderRadius: BorderRadius.circular(10),
                         fieldHeight: 50,
-                        fieldWidth: 65,
+                        // ✅ تأكد أن fieldWidth مناسب لـ 6 حقول
+                        fieldWidth: 45, // قيمة مقترحة، قد تحتاج للتجربة (45, 40, 35)
                         inactiveBorderWidth: 0,
                         activeBorderWidth: 0,
                         selectedColor: controller.themeController.isDarkMode.value
                             ? Colors.white
                             : Colors.black,
                         inactiveColor: Colors.grey,
-                        inactiveFillColor: Colors.blue.shade100, // لون تعبئة حقول غير نشطة
-                        activeFillColor: Colors.green.shade100, // لون تعبئة حقول نشطة
+                        inactiveFillColor: Colors.blue.shade100,
+                        activeFillColor: Colors.green.shade100,
                         activeColor: Colors.grey,
-                        selectedFillColor: Colors.yellow.shade100 // لون تعبئة الحقل المختار
-                    ),
+                        selectedFillColor: Colors.yellow.shade100),
                     animationDuration: const Duration(milliseconds: 300),
                     onChanged: (value) {
                       // يمكنك إضافة منطق هنا عند تغيير قيمة الـ OTP
@@ -122,9 +106,8 @@ class _OtpSendScreenState extends State<OtpSendScreen> {
                             shadowColor: Colors.transparent,
                             onpressed: () async {
                               controller.otpController.clear();
-                              controller._remainingSeconds.value = 10; // إعادة تعيين العداد
+                              controller._remainingSeconds.value = 10;
                               controller.startTimer();
-                              // ✅ إعادة إرسال OTP - استدعاء نفس منطق الإرسال
                               await controller.selectSmsEmailSubmit(context);
                             },
                             text: "Resend")
