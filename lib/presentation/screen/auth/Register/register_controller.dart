@@ -51,6 +51,8 @@ class RegisterController extends GetxController {
   }
 
 
+
+
   Future<void> submit(String useType, BuildContext context) async {
     try {
       print(nameController.text);
@@ -61,7 +63,15 @@ class RegisterController extends GetxController {
 
       // تحويل الرقم: إزالة الصفر الأول وإضافة 218
       String rawPhone = phoneController.text;
-      String phone = '218${rawPhone.replaceFirst(RegExp(r'^0'), '')}';
+      String phone;
+      if (rawPhone.startsWith('09')) {
+        phone = '218${rawPhone.substring(1)}';
+      } else if (rawPhone.startsWith('9')) {
+        phone = '218$rawPhone';
+      } else {
+        Get.snackbar('خطأ', 'تنسيق رقم الهاتف غير صحيح. يجب أن يبدأ بـ 09 أو 9.', backgroundColor: Colors.red);
+        return;
+      }
 
       // ✅ إظهار لودينق قبل إرسال OTP
       Get.dialog(
@@ -72,29 +82,52 @@ class RegisterController extends GetxController {
       // 1. إرسال OTP
       final otpResponse = await Dio().post(
         'http://10.0.2.2:8000/api/send-otp',
-        data: {"phonenumber": phone},
+        data: {"target_number": phone},
       );
 
       // ✅ إغلاق اللودينق بعد إرسال OTP
       Get.back();
 
-
       if (otpResponse.statusCode == 200 && otpResponse.data['success'] == true) {
-        int otp = otpResponse.data['otp'];
-        print(otpResponse.data['otp']);
-        // 2. عرض الـ BottomSheet لتأكيد OTP
+        String? otpContent = otpResponse.data['response_data']['content'];
+        int? otp;
+
+        if (otpContent != null) {
+          RegExp regExp = RegExp(r'\d+$');
+          Iterable<RegExpMatch> matches = regExp.allMatches(otpContent);
+          if (matches.isNotEmpty) {
+            otp = int.tryParse(matches.first.group(0)!);
+          }
+        }
+
+        if (otp == null) {
+          Get.snackbar('خطأ', 'لم يتم استخراج رمز التحقق من الاستجابة.', backgroundColor: Colors.red);
+          return;
+        }
+
+        print("Received OTP: $otp");
+
+        // *********** التغييرات هنا لحل مشكلة لوحة المفاتيح ***********
         showModalBottomSheet(
           context: context,
-          isDismissible: false,
+          isScrollControlled: true, // مهم: يجعل الـ BottomSheet يأخذ كامل الارتفاع المتاح
           builder: (_) {
             TextEditingController otpController = TextEditingController();
 
             return Directionality(
               textDirection: TextDirection.rtl,
+              // استخدام MediaQuery.of(context).viewInsets.bottom لتعديل الحشوة
+              // بحيث ترتفع الـ BottomSheet مع لوحة المفاتيح
               child: Padding(
-                padding: const EdgeInsets.all(16.0),
+                padding: EdgeInsets.only(
+                  left: 16.0,
+                  right: 16.0,
+                  top: 16.0,
+                  // هذه هي الحشوة التي سترفع الـ BottomSheet عند ظهور لوحة المفاتيح
+                  bottom: MediaQuery.of(context).viewInsets.bottom + 16.0,
+                ),
                 child: Column(
-                  mainAxisSize: MainAxisSize.min,
+                  mainAxisSize: MainAxisSize.min, // يجعل العمود يأخذ أقل مساحة ممكنة
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Center(
@@ -111,7 +144,7 @@ class RegisterController extends GetxController {
                     TextField(
                       controller: otpController,
                       keyboardType: TextInputType.number,
-                      maxLength: 4,
+                      maxLength: otp.toString().length,
                       decoration: const InputDecoration(
                         border: OutlineInputBorder(),
                         hintText: 'رمز التحقق',
@@ -120,15 +153,13 @@ class RegisterController extends GetxController {
                     ElevatedButton(
                       onPressed: () async {
                         if (otpController.text == otp.toString()) {
-                          Navigator.pop(context); // إغلاق البوتوم شيت
-              
-                          // ✅ إظهار لودينق قبل التسجيل
+                          Navigator.pop(context);
+
                           Get.dialog(
                             const Center(child: CircularProgressIndicator()),
                             barrierDismissible: false,
                           );
-              
-                          // 3. تنفيذ التسجيل
+
                           final response = await Dio().post(
                             'http://10.0.2.2:8000/api/register',
                             data: {
@@ -141,13 +172,12 @@ class RegisterController extends GetxController {
                               'password': passwordController.text,
                             },
                             options: Options(
-                              validateStatus: (status) => status! < 500, // يقبل 422 ولا يرمي Exception
+                              validateStatus: (status) => status! < 500,
                             ),
                           );
-              
-                          // ✅ إغلاق اللودينق
+
                           Get.back();
-              
+
                           if (response.statusCode == 200) {
                             LoginResponse loginResponse = LoginResponse.fromJson(response.data);
                             token.value = loginResponse.token;
@@ -157,18 +187,28 @@ class RegisterController extends GetxController {
                             if (token.isNotEmpty) {
                               Get.offNamedUntil("/bottomBar", (route) => false);
                             }
-              } else if (response.statusCode == 422) {
-              final errorData = response.data;
-              
-              if (errorData is List) {
-              for (var msg in errorData) {
-              Get.snackbar('خطأ', msg.toString());
-              }}
+                          } else if (response.statusCode == 422) {
+                            final errorData = response.data;
+                            if (errorData is List) {
+                              for (var msg in errorData) {
+                                Get.snackbar('خطأ', msg.toString(), backgroundColor: Colors.red,colorText: Colors.white);
+                              }
+                            } else if (errorData is Map && errorData['errors'] != null) {
+                              (errorData['errors'] as Map).forEach((key, value) {
+                                if (value is List) {
+                                  for (var msg in value) {
+                                    Get.snackbar('خطأ', msg.toString(), backgroundColor: Colors.red,colorText: Colors.white);
+                                  }
+                                }
+                              });
+                            } else {
+                              Get.snackbar('خطأ', 'فشل في التسجيل: ${response.statusCode}', backgroundColor: Colors.red,colorText: Colors.white);
+                            }
                           } else {
-                            Get.snackbar('خطأ', 'فشل في التسجيل: ${response.statusCode}');
+                            Get.snackbar('خطأ', 'فشل في التسجيل: ${response.statusCode}', backgroundColor: Colors.red,colorText: Colors.white);
                           }
                         } else {
-                          Get.snackbar('خطأ', 'رمز التحقق غير صحيح',backgroundColor: Colors.red);
+                          Get.snackbar('خطأ', 'رمز التحقق غير صحيح', backgroundColor: Colors.red,colorText: Colors.white);
                         }
                       },
                       child: Center(child: const Text("تأكيد")),
@@ -180,50 +220,43 @@ class RegisterController extends GetxController {
           },
         );
       } else {
-        Get.back(); // احتياطي، في حالة لم يتم إغلاق اللودينق
-        Get.snackbar('خطأ', 'فشل إرسال رمز التحقق، تأكد من صحة الرقم');
+        Get.snackbar(
+          'خطأ',
+          otpResponse.data['message'] ?? 'فشل إرسال رمز التحقق، تأكد من صحة الرقم',
+          backgroundColor: Colors.red,
+        );
       }
     } catch (e) {
-      Get.back(); // إغلاق اللودينق
+      Get.back();
 
       if (e is DioException) {
-        print("errrr ${e.response} ");
-        print("errrr ${e.error} ");
-        print("errrr ${e.message} ");
+        print("Dio Error: ${e.response?.data}");
+        print("Dio Error message: ${e.message}");
         final errorData = e.response?.data;
 
         if (errorData != null) {
-          // إذا كانت رسالة عامة
           if (errorData is Map && errorData['message'] != null) {
-            Get.snackbar('خطأ', errorData['message']);
-          }
-
-          // إذا كانت الأخطاء عبارة عن قائمة مثل ["هذا الرقم موجود بالفعل."]
-          else if (errorData is List) {
+            Get.snackbar('خطأ', errorData['message'].toString(), backgroundColor: Colors.red);
+          } else if (errorData is List) {
             for (var error in errorData) {
-              Get.snackbar('خطأ', error.toString());
+              Get.snackbar('خطأ', error.toString(), backgroundColor: Colors.red);
             }
-          }
-
-          // إذا كانت صيغة Laravel الافتراضية (errors داخلها map)
-          else if (errorData is Map && errorData['errors'] != null) {
+          } else if (errorData is Map && errorData['errors'] != null) {
             (errorData['errors'] as Map).forEach((key, value) {
               if (value is List) {
                 for (var msg in value) {
-                  Get.snackbar('خطأ', msg.toString());
+                  Get.snackbar('خطأ', msg.toString(), backgroundColor: Colors.red);
                 }
               }
             });
+          } else {
+            Get.snackbar('خطأ', 'حدث خطأ غير معروف من الخادم: $errorData', backgroundColor: Colors.red);
           }
-
-          // طباعة للديبغ
-          print("Error from backend: $errorData");
         } else {
-          Get.snackbar('خطأ', 'حدث خطأ أثناء الاتصال بالخادم.');
+          Get.snackbar('خطأ', 'حدث خطأ أثناء الاتصال بالخادم، لا توجد بيانات استجابة.', backgroundColor: Colors.red);
         }
       } else {
-        Get.snackbar('خطأ', 'حدث خطأ غير متوقع.');
-        print("Unexpected Error: $e");
+        Get.snackbar('خطأ', 'حدث خطأ غير متوقع: ${e.toString()}', backgroundColor: Colors.red);
       }
     }
   }
