@@ -57,6 +57,7 @@ class SelectSmsEmailScreen extends GetView<PasswordController> {
                   ),
                   const SizedBox(height: 20),
                   TextFormField(
+                    maxLength: 10,
                     controller: controller.smsController,
                     keyboardType: status ? TextInputType.phone : TextInputType.emailAddress,
                     validator: (value) => status

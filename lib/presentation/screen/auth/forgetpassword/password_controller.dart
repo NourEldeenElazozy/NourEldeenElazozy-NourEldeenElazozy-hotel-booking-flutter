@@ -27,11 +27,14 @@ class PasswordController extends GetxController {
   }
   String? mobileNumberValidation(String? value) {
     if (value == null || value.isEmpty) {
-      return "Mobile Number is required.";
-    } else if (value.length < 9) { // الأرقام الليبية عادة 9 بعد 09
-      return "Enter 9 Digit";
+      return "رقم الهاتف مطلوب";
+    } else if (value.length != 10) {
+      return "يجب ان يحتوي رقم الهاتف على 10 أرقام";
+    } else if (!value.startsWith('09')) {
+      return "يجب أن يبدأ رقم الهاتف ب 09";
+    } else if (!RegExp(r'^[0-9]+$').hasMatch(value)) {
+      return "يجب أن يحتوي رقم الهاتف على أرقام فقط";
     }
-    // يمكنك إضافة المزيد من التحقق مثل التأكد من أنها أرقام فقط
     return null;
   }
 
@@ -48,111 +51,78 @@ class PasswordController extends GetxController {
   // **** التعديل الرئيسي هنا: دالة selectSmsEmailSubmit ****
   Future<void> selectSmsEmailSubmit(BuildContext context) async {
     final isValid = smsEmailKey.currentState!.validate();
-    Get.focusScope!.unfocus(); // إخفاء لوحة المفاتيح
-    if (!isValid) {
-      return; // توقف إذا لم تكن المدخلات صحيحة
-    }
+    Get.focusScope!.unfocus();
+    if (!isValid) return;
 
-    // تحويل الرقم: إزالة الصفر الأول وإضافة 218
+    // تحويل الرقم إلى الصيغة الدولية (2189xxxxxxx)
     String rawPhone = smsController.text;
     String phone;
-    // للتأكد من أن الرقم يبدأ بـ '09' ثم تحويله لـ '2189'
-    // أو إذا كان يبدأ بـ '9' فقط، أضف '218'
+
     if (rawPhone.startsWith('09')) {
-      phone = '218${rawPhone.substring(1)}'; // إزالة الصفر الأول وإضافة 218
+      phone = '218${rawPhone.substring(1)}';
     } else if (rawPhone.startsWith('9')) {
-      phone = '218$rawPhone'; // إضافة 218 مباشرة إذا كان يبدأ بـ 9
+      phone = '218$rawPhone';
     } else {
-      Get.snackbar('خطأ', 'تنسيق رقم الهاتف غير صحيح. يجب أن يبدأ بـ 09 أو 9.',
-          backgroundColor: Colors.red);
-      return; // توقف التنفيذ
+      Get.snackbar('خطأ', 'يجب أن يبدأ رقم الهاتف بـ 09 أو 9');
+      return;
     }
 
-    // ✅ إظهار لودينق قبل إرسال OTP
+    // ✅ 1. تحقق من وجود المستخدم أولاً
     Get.dialog(
       const Center(child: CircularProgressIndicator()),
       barrierDismissible: false,
     );
 
     try {
-      // 1. إرسال OTP إلى الخادم الخاص بك (الذي يتصل بـ Textly.ly)
-      final otpResponse = await Dio().post(
-        'http://10.0.2.2:8000/api/send-otps', // تأكد من صحة هذا الرابط
-        data: {"target_number": phone},
+      // 🔹 أرسل طلبًا إلى API للتحقق من وجود المستخدم
+      final checkUserResponse = await Dio().post(
+        'http://10.0.2.2:8000/api/check-user-exists',
+        data: {"phone": phone},
       );
-      String? otpContent = "661266";
-      // ✅ إغلاق اللودينق بعد إرسال OTP
-      Get.back();
 
-      if (otpContent== "661266") {
-        Navigator.push(
-            context, MaterialPageRoute(builder: (context) => const OtpSendScreen()));
-        // *********** استخراج الـ OTP من استجابة الخادم ***********
-        //String? otpContent = otpResponse.data['response_data']['content'];
-        int? extractedOtp;
+      final bool userExists = checkUserResponse.data['user_exists'];
 
-
-
-        if (extractedOtp == null) {
-          Get.snackbar('خطأ', 'لم يتم استخراج رمز التحقق من الاستجابة.',
-              backgroundColor: Colors.red);
-          return;
-        }
-
-        // تخزين الـ OTP المستخرج في المتغير RxInt
-        receivedOtp.value = extractedOtp;
-        print("Received OTP from API: ${receivedOtp.value}"); // للتحقق في Debug Console
-
-        // الانتقال إلى شاشة إدخال OTP
-        // لا تستخدم Get.toNamed هنا إذا كنت تستخدم Navigator.push في selectSmsEmailSubmit
-        // لأن Navigator.push هو الأنسب عند تمرير 'context'
-        Navigator.push(
-            context, MaterialPageRoute(builder: (context) => const OtpSendScreen()));
-      } else {
-        // معالجة الأخطاء من استجابة الخادم (إذا كان 'success' false أو حالة HTTP غير 200)
+      if (!userExists) {
+        Get.back(); // أغلق الـ loading
         Get.snackbar(
           'خطأ',
-          otpResponse.data['message'] ?? 'فشل إرسال رمز التحقق، تأكد من صحة الرقم',
+          'هذا الرقم غير مسجل. يرجى التسجيل أولاً.',
+          backgroundColor: Colors.red,
+        );
+        return; // توقف إذا لم يكن المستخدم موجودًا
+      }
+
+      // ✅ 2. إذا كان المستخدم موجودًا، أرسل OTP
+      final otpResponse = await Dio().post(
+        'http://10.0.2.2:8000/api/send-otps',
+        data: {"target_number": phone},
+      );
+
+      Get.back(); // أغلق الـ loading بعد إرسال OTP
+
+      if (otpResponse.data['success'] == true) {
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => const OtpSendScreen()),
+        );
+      } else {
+        Get.snackbar(
+          'خطأ',
+          otpResponse.data['message'] ?? 'فشل إرسال رمز التحقق',
           backgroundColor: Colors.red,
         );
       }
     } on DioException catch (e) {
-      Get.back(); // إغلاق اللودينق في حالة حدوث خطأ من Dio
-      print("Dio Error: ${e.response?.data}");
-      print("Dio Error message: ${e.message}");
-      final errorData = e.response?.data;
-
-      if (errorData != null) {
-        if (errorData is Map && errorData['message'] != null) {
-          Get.snackbar('خطأ', errorData['message'].toString(),
-              backgroundColor: Colors.red);
-        } else if (errorData is List) {
-          for (var error in errorData) {
-            Get.snackbar('خطأ', error.toString(), backgroundColor: Colors.red);
-          }
-        } else if (errorData is Map && errorData['errors'] != null) {
-          (errorData['errors'] as Map).forEach((key, value) {
-            if (value is List) {
-              for (var msg in value) {
-                Get.snackbar('خطأ', msg.toString(), backgroundColor: Colors.red);
-              }
-            }
-          });
-        } else {
-          Get.snackbar('خطأ', 'حدث خطأ غير معروف من الخادم: $errorData',
-              backgroundColor: Colors.red);
-        }
-      } else {
-        Get.snackbar('خطأ', 'حدث خطأ أثناء الاتصال بالخادم، لا توجد بيانات استجابة.',
-            backgroundColor: Colors.red);
-      }
+      Get.back();
+      Get.snackbar(
+        'خطأ',
+        e.response?.data['message'] ?? 'حدث خطأ في الاتصال بالخادم',
+        backgroundColor: Colors.red,
+      );
     } catch (e) {
-      Get.back(); // إغلاق اللودينق لأي أخطاء أخرى
-      Get.snackbar('خطأ', 'حدث خطأ غير متوقع: ${e.toString()}',
-          backgroundColor: Colors.red);
-      print("Unexpected Error: $e");
+      Get.back();
+      Get.snackbar('خطأ', 'حدث خطأ غير متوقع: $e');
     }
-    smsEmailKey.currentState!.save();
   }
 
 //----------------------------------------- OtpSend_Screen -------------------------------------------

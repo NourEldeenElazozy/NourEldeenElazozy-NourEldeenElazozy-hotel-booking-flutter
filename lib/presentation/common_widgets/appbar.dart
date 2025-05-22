@@ -42,7 +42,9 @@ class CustomFullAppBar extends StatelessWidget implements PreferredSizeWidget {
       ),
       title: Text(
         title,
-        style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 18),
+        style: const TextStyle(   fontSize: 20,
+          fontWeight: FontWeight.bold,
+          fontFamily: 'Tajawal',),
       ),
       actions: action,
     );
