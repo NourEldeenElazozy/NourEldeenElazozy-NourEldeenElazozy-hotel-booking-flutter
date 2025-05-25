@@ -97,10 +97,12 @@ class _OtpSendScreenState extends State<OtpSendScreen> {
                   Obx(
                         () => Column(
                       children: [
+                        /*
                         Text(
                           "Resend code in ${controller._remainingSeconds.value} s",
                           style: const TextStyle(fontWeight: FontWeight.w400, fontSize: 16),
                         ),
+                         */
                         controller._remainingSeconds.value == 0
                             ? Button(
                             shadowColor: Colors.transparent,

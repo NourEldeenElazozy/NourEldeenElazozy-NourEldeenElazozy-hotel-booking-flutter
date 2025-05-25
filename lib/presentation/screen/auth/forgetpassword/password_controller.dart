@@ -9,7 +9,7 @@ class PasswordController extends GetxController {
 
   // هذا المتغير سيخزن الـ OTP الذي تم استقباله من الـ API
   // يجب أن يكون من نوع RxInt لكي يتم تحديث الواجهة إذا استخدمته في Obx
-  RxInt receivedOtp = 0.obs; // القيمة الافتراضية 0 أو أي قيمة مناسبة
+  RxString receivedOtp = "".obs; // القيمة الافتراضية 0 أو أي قيمة مناسبة
   @override
   void onInit() {
     super.onInit();
@@ -94,13 +94,16 @@ class PasswordController extends GetxController {
 
       // ✅ 2. إذا كان المستخدم موجودًا، أرسل OTP
       final otpResponse = await Dio().post(
-        'http://10.0.2.2:8000/api/send-otps',
+        'http://10.0.2.2:8000/api/send-otp',
         data: {"target_number": phone},
       );
 
       Get.back(); // أغلق الـ loading بعد إرسال OTP
 
       if (otpResponse.data['success'] == true) {
+        print("receivedOtp.values ${otpResponse.data['otp']}");
+        receivedOtp.value=otpResponse.data['otp'].toString();
+
         Navigator.push(
           context,
           MaterialPageRoute(builder: (context) => const OtpSendScreen()),
@@ -114,6 +117,9 @@ class PasswordController extends GetxController {
       }
     } on DioException catch (e) {
       Get.back();
+      print("errs ${ e.response?.data}");
+      print("phone ${ phone}");
+
       Get.snackbar(
         'خطأ',
         e.response?.data['message'] ?? 'حدث خطأ في الاتصال بالخادم',
@@ -121,6 +127,7 @@ class PasswordController extends GetxController {
       );
     } catch (e) {
       Get.back();
+      print( 'حدث خطأ غير متوقع: $e');
       Get.snackbar('خطأ', 'حدث خطأ غير متوقع: $e');
     }
   }
@@ -142,8 +149,11 @@ class PasswordController extends GetxController {
     } else {
       // مقارنة الـ OTP المدخل بالـ OTP الذي تم استقباله من الـ API
       if (otpController.text == receivedOtp.value.toString()) {
+
         Get.toNamed("/createNewPassword"); // أو يمكنك استخدام Navigator.push هنا
       } else {
+        print("otpController.text ${otpController.text}");
+        print("receivedOtp.value ${receivedOtp.value}");
         showErrorMsg(context: context, message: "Incorrect OTP");
       }
     }
@@ -176,9 +186,9 @@ class PasswordController extends GetxController {
 
   String? confirmPasswordValidation(String? value) {
     if (value == null || value.isEmpty) {
-      return "ConfirmPassword is required.";
+      return "تأكيد الرقم السري مطوب";
     } else if (value != newPassword.text) {
-      return "Not Match Password";
+      return "كلمة السر غير صحيحة";
     } else {
       return null;
     }
@@ -186,31 +196,115 @@ class PasswordController extends GetxController {
 
   // هذه الدالة تبدو وكأنها خاصة بإنشاء كلمة مرور جديدة بعد التحقق من الـ OTP
   // لم يتم تعديلها لأن التركيز كان على ربط الـ OTP.
-  void submit(BuildContext context) {
+  // دالة submit لتغيير كلمة المرور
+  void submit(BuildContext context) async { // ✅ جعل الدالة async
     final isValid = newPasswordKey.currentState!.validate();
-    Get.focusScope!.unfocus();
+    Get.focusScope!.unfocus(); // إخفاء لوحة المفاتيح
     if (!isValid) {
-      return;
-    } else {
-      showDialog(
-        context: context,
-        builder: (context) {
-          return CongratulationDialog(
-            title: MyString.congratulation,
-            subTitle: MyString.congratsDescription,
-            buttonName: MyString.homepage,
-            shadowColor: Colors.transparent,
-            status: false,
-            onpressed: () {
-              Get.offNamedUntil('/bottomBar', (route) => false);
-            },
-            onpressed2: () {}, // ربما هذه غير مستخدمة؟
-          );
+      return; // توقف إذا لم تكن المدخلات صحيحة
+    }
+
+    // ✅ عرض مؤشر التحميل
+    Get.dialog(
+      const Center(child: CircularProgressIndicator()),
+      barrierDismissible: false,
+    );
+
+    try {
+      // ✅ جلب رقم الهاتف من smsController (يجب أن يكون قد تم إدخاله في الشاشة الأولى)
+      String phoneNumber = smsController.text;
+
+      // تحويل رقم الهاتف ليتوافق مع API (إذا لزم الأمر)
+      // بناءً على منطقك السابق:
+      // if (phoneNumber.startsWith('09')) {
+      //   phoneNumber = '218${phoneNumber.substring(1)}';
+      // } else if (phoneNumber.startsWith('9')) {
+      //   phoneNumber = '218$phoneNumber';
+      // }
+
+      // ✅ إرسال طلب تغيير كلمة المرور إلى الخادم
+      final response = await Dio().post(
+        'http://10.0.2.2:8000/api/change-password', // ✅ نقطة نهاية الـ API لتغيير كلمة المرور
+        data: {
+          "phone": phoneNumber, // رقم الهاتف
+          "new_password": newPassword.text, // كلمة المرور الجديدة
+          "new_password_confirmation": confirmPassword.text, // تأكيد كلمة المرور
         },
       );
+
+      Get.back(); // إغلاق مؤشر التحميل
+
+      print(phoneNumber);
+      if (response.statusCode == 200) {
+        // ✅ نجاح تغيير كلمة المرور
+        showDialog(
+          context: context,
+          builder: (context) {
+            return CongratulationDialog(
+              title: MyString.congratulation,
+              subTitle: MyString.congratsDescription,
+              buttonName: MyString.homepage,
+              shadowColor: Colors.transparent,
+              status: false,
+              onpressed: () {
+                // ✅ الانتقال إلى الشاشة الرئيسية بعد النجاح
+                Get.offNamedUntil('/bottomBar', (route) => false);
+              },
+              onpressed2: () {}, // ربما هذه غير مستخدمة؟
+            );
+          },
+        );
+      } else {
+        // ✅ التعامل مع حالة النجاح ولكن رسالة خطأ (نادراً ما تحدث مع 200 OK)
+        Get.snackbar(
+          'خطأ',
+          response.data['message'] ?? 'حدث خطأ غير معروف عند تغيير كلمة المرور.',
+          backgroundColor: Colors.red,
+        );
+      }
+    } on DioException catch (e) {
+      Get.back(); // إغلاق مؤشر التحميل
+      print("Dio Error: ${e.response?.data}");
+      print("Dio Error message: ${e.message}");
+
+      String errorMessage = 'حدث خطأ أثناء تغيير كلمة المرور.';
+
+      if (e.response != null) {
+        if (e.response!.data is Map && e.response!.data.containsKey('message')) {
+          errorMessage = e.response!.data['message'];
+        } else if (e.response!.data is String) {
+          errorMessage = e.response!.data;
+        } else if (e.response!.data is Map && e.response!.data.containsKey('errors')) {
+          // التعامل مع أخطاء التحقق (validation errors) من Laravel
+          Map<String, dynamic> errors = e.response!.data['errors'];
+          List<String> errorMessages = [];
+          errors.forEach((key, value) {
+            if (value is List) {
+              errorMessages.addAll(value.map((e) => e.toString()));
+            }
+          });
+          if (errorMessages.isNotEmpty) {
+            errorMessage = errorMessages.join('\n');
+          }
+        }
+      } else if (e.type == DioExceptionType.connectionError) {
+        errorMessage = 'لا يوجد اتصال بالإنترنت. يرجى التحقق من اتصالك.';
+      }
+
+      Get.snackbar(
+        'خطأ',
+        errorMessage,
+        backgroundColor: Colors.red,
+      );
+    } catch (e) {
+      Get.back(); // إغلاق مؤشر التحميل
+      Get.snackbar('خطأ', 'حدث خطأ غير متوقع: ${e.toString()}',
+          backgroundColor: Colors.red);
+      print("Unexpected Error: $e");
     }
     newPasswordKey.currentState!.save();
   }
+
 }
 
 // نموذج استجابة تسجيل الدخول (LoginResponse) - تحتاج إلى التأكد من أنه موجود في مشروعك

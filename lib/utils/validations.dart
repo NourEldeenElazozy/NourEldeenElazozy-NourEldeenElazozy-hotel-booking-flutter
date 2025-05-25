@@ -61,7 +61,7 @@ class Validations {
 
   String? passwordValidation(String value) {
     if(value.isEmpty) {
-      return "Password is required";
+      return "الرقم السري مطلوب";
     }
     else if(value.length < 6) {
       return "أدخل الحد الأدنى 8 والحد الأقصى 30 حرفًا";
