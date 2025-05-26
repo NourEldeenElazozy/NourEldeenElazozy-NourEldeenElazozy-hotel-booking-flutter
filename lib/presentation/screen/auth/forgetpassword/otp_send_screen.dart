@@ -14,6 +14,7 @@ class _OtpSendScreenState extends State<OtpSendScreen> {
   void initState() {
     super.initState();
     controller = Get.find<PasswordController>();
+    controller.startTimer();
   }
 
   @override
@@ -56,18 +57,33 @@ class _OtpSendScreenState extends State<OtpSendScreen> {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      const Text(MyString.codeSend,
-                          style: TextStyle(fontWeight: FontWeight.w400, fontSize: 14)),
-                      Text(controller.smsController.text,
-                          style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 14)),
+                      Column(
+                        children: [
+                          Row(
+                            children: [
+                              const Text(MyString.codeSend,
+                                  style: TextStyle(fontWeight: FontWeight.w400, fontSize: 14)),
+                              Text(controller.smsController.text,
+                                  style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 14)),
+                            ],
+                          ),
+
+                        ],
+                      ),
+
                     ],
+
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Text("يرجي فحص صندوق الرسائل  الخاص بك",
+                        style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 14)),
                   ),
                   const SizedBox(height: 20),
                   PinCodeTextField(
                     obscureText: false,
                     autoDisposeControllers: false,
                     appContext: context,
-                    // ✅ ثبت الطول إلى 6 بدلاً من القيمة الديناميكية
                     length: 6,
                     controller: controller.otpController,
                     animationType: AnimationType.scale,
@@ -76,8 +92,7 @@ class _OtpSendScreenState extends State<OtpSendScreen> {
                         shape: PinCodeFieldShape.box,
                         borderRadius: BorderRadius.circular(10),
                         fieldHeight: 50,
-                        // ✅ تأكد أن fieldWidth مناسب لـ 6 حقول
-                        fieldWidth: 45, // قيمة مقترحة، قد تحتاج للتجربة (45, 40, 35)
+                        fieldWidth: 45,
                         inactiveBorderWidth: 0,
                         activeBorderWidth: 0,
                         selectedColor: controller.themeController.isDarkMode.value
@@ -97,23 +112,34 @@ class _OtpSendScreenState extends State<OtpSendScreen> {
                   Obx(
                         () => Column(
                       children: [
-                        /*
                         Text(
-                          "Resend code in ${controller._remainingSeconds.value} s",
+                          "إعادة ارسال الرمز خلال ${controller._remainingSeconds.value} ثانية",
                           style: const TextStyle(fontWeight: FontWeight.w400, fontSize: 16),
                         ),
-                         */
-                        controller._remainingSeconds.value == 0
-                            ? Button(
-                            shadowColor: Colors.transparent,
-                            onpressed: () async {
-                              controller.otpController.clear();
-                              controller._remainingSeconds.value = 10;
-                              controller.startTimer();
-                              await controller.selectSmsEmailSubmit(context);
-                            },
-                            text: "Resend")
-                            : const SizedBox()
+                        // زر "إعادة ارسال" معطل بصريًا وغير قابل للضغط عندما يكون العداد نشطًا
+                        Button(
+                          shadowColor: Colors.transparent,
+                          // ✅ التحكم في قابلية الضغط:
+                          // إذا كان العداد صفر، مرر الدالة التي تنفذ إعادة الإرسال.
+                          // وإلا، مرر دالة فارغة لا تفعل شيئًا عند الضغط.
+                          onpressed: controller._remainingSeconds.value == 0
+                              ? () {
+                            controller.otpController.clear();
+                            controller._remainingSeconds.value = 120;
+                            controller.startTimer();
+                            controller.selectSmsEmailSubmit(context);
+                          }
+                              : () {}, // ✅ دالة فارغة لتعطيل الضغط
+                          text: "إعادة ارسال",
+                          // ✅ التحكم في لون النص ليعكس حالة التعطيل
+                          textColor: controller._remainingSeconds.value == 0
+                              ? MyColors.white // لون عادي عند التفعيل
+                              : Colors.grey, // لون باهت عند التعطيل
+                          // ✅ التحكم في لون الزر ليعكس حالة التعطيل
+                          buttonColor: controller._remainingSeconds.value == 0
+                              ? Theme.of(context).primaryColor // لون عادي عند التفعيل
+                              : Colors.grey.withOpacity(0.5), // لون باهت للزر عند التعطيل
+                        )
                       ],
                     ),
                   )

@@ -13,10 +13,17 @@ class PasswordController extends GetxController {
   @override
   void onInit() {
     super.onInit();
+    startTimer();
     // يمكنك تهيئة المؤقت هنا بقيمة أولية إذا كنت ترغب في ذلك
     // لكن الأفضل هو تهيئته عند الحاجة في startTimer
   }
-
+  @override
+  void dispose() {
+    // هذا السطر مهم لضمان إلغاء المؤقت عند إغلاق الشاشة
+    // لكي لا يظل يعمل في الخلفية ويستهلك موارد
+  _timer?.cancel();
+    super.dispose();
+  }
   @override
   void onClose() {
     // ✅ التأكد من إلغاء المؤقت عند إغلاق المتحكم
@@ -91,7 +98,11 @@ class PasswordController extends GetxController {
         );
         return; // توقف إذا لم يكن المستخدم موجودًا
       }
-
+      // ✅ التغيير هنا: استخدام Get.off()
+      // هذا يزيل الشاشة الحالية (SelectSmsEmailScreen) من المكدس
+      // قبل دفع OtpSendScreen، مما يضمن وجود نسخة واحدة فقط من OtpSendScreen
+      // في شجرة الـ widgets في أي وقت.
+      Get.off(() => const OtpSendScreen());
       // ✅ 2. إذا كان المستخدم موجودًا، أرسل OTP
       final otpResponse = await Dio().post(
         'http://10.0.2.2:8000/api/send-otp',
@@ -104,10 +115,11 @@ class PasswordController extends GetxController {
         print("receivedOtp.values ${otpResponse.data['otp']}");
         receivedOtp.value=otpResponse.data['otp'].toString();
 
-        Navigator.push(
-          context,
-          MaterialPageRoute(builder: (context) => const OtpSendScreen()),
-        );
+        // ✅ التغيير هنا: استخدام Get.off()
+        // هذا يزيل الشاشة الحالية (SelectSmsEmailScreen) من المكدس
+        // قبل دفع OtpSendScreen، مما يضمن وجود نسخة واحدة فقط من OtpSendScreen
+        // في شجرة الـ widgets في أي وقت.
+        Get.off(() => const OtpSendScreen());
       } else {
         Get.snackbar(
           'خطأ',
@@ -124,6 +136,8 @@ class PasswordController extends GetxController {
         'خطأ',
         e.response?.data['message'] ?? 'حدث خطأ في الاتصال بالخادم',
         backgroundColor: Colors.red,
+        colorText: Colors.white,
+
       );
     } catch (e) {
       Get.back();
@@ -138,14 +152,14 @@ class PasswordController extends GetxController {
   final GlobalKey<FormState> otpFormKey = GlobalKey<FormState>();
 
   Timer? _timer;
-  final RxInt _remainingSeconds = 10.obs;
+  final RxInt _remainingSeconds = 120.obs;
 
   // **** التعديل هنا: دالة otpSend ****
   void otpSend(BuildContext context) {
     if (otpController.text.isEmpty) {
-      showErrorMsg(context: context, message: "Enter OTP");
+      showErrorMsg(context: context, message: " ادخل رمز التأكيد ");
     } else if (_remainingSeconds.value <= 0) {
-      showErrorMsg(context: context, message: "OTP Expired, Please Resend OTP");
+      showErrorMsg(context: context, message: "انتهت مهلة الرمز , قم بإعادة طلب الرمز");
     } else {
       // مقارنة الـ OTP المدخل بالـ OTP الذي تم استقباله من الـ API
       if (otpController.text == receivedOtp.value.toString()) {
@@ -154,12 +168,13 @@ class PasswordController extends GetxController {
       } else {
         print("otpController.text ${otpController.text}");
         print("receivedOtp.value ${receivedOtp.value}");
-        showErrorMsg(context: context, message: "Incorrect OTP");
+        showErrorMsg(context: context, message: "خطاء في رمز التأكيد");
       }
     }
   }
 
   void startTimer() {
+    print("startTimer");
     // ✅ إلغاء المؤقت السابق إذا كان نشطًا
     if (_timer?.isActive ?? false) {
       _timer?.cancel();
