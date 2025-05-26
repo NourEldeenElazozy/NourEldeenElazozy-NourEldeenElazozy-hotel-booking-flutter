@@ -6,7 +6,7 @@ class BookingController extends GetxController {
   RxInt selectedItem = 0.obs;
   RxBool isLoading = true.obs;
   RxString passingStatus = 'paid'.obs;
-
+  var token = ''.obs; // تعريف المتغير القابل للمراقبة
   List<RecentlyBook> myBooking = <RecentlyBook>[].obs;
   List<RecentlyBook> filterListView = <RecentlyBook>[].obs;
 
@@ -22,6 +22,17 @@ class BookingController extends GetxController {
 
 
  */
+  @override
+  void onInit() {
+    super.onInit();
+    getToken(); // استدعاء الدالة لجلب التوكن عند بدء التحكم
+  }
+
+  Future<void> getToken() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    token.value = prefs.getString('token') ?? ''; // تخزين التوكن
+    isLoading.value = false; // تحديث حالة التحميل
+  }
   Future<List<RecentlyBook>> getMyBooking() async {
     isLoading.value = true; // Set isLoading to true before loading data
     try {

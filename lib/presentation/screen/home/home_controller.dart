@@ -18,6 +18,7 @@ class HomeController extends GetxController {
    var selectedGeoArea = "وسط البلاد".obs; // قيمة افتراضية
    var recentlyBooked = [].obs;
    var recently = [].obs;
+   String? token;
    RxList<bool> selectedFacilities = List.generate(MyString.facilities.length, (index) => false).obs;
    var restAreas = [].obs; // تخزين البيانات هنا
     @override
@@ -140,7 +141,7 @@ class HomeController extends GetxController {
      try {
        isLoading.value = true;
        final SharedPreferences prefs = await SharedPreferences.getInstance();
-       String? token = prefs.getString('token');
+       token = prefs.getString('token');
        String? userType = prefs.getString('user_type');
        if(userType=="host"){
          isHost=true;
@@ -149,6 +150,7 @@ class HomeController extends GetxController {
 
 
 
+       print("tokenss ${token}");
        final response = await Dio().get(
          'http://10.0.2.2:8000/api/reservations',
 

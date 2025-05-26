@@ -248,7 +248,8 @@ class PasswordController extends GetxController {
               status: false,
               onpressed: () {
                 // ✅ الانتقال إلى الشاشة الرئيسية بعد النجاح
-                Get.offNamedUntil('/bottomBar', (route) => false);
+                Get.offNamedUntil('/loginScreen', (route) => false);
+
               },
               onpressed2: () {}, // ربما هذه غير مستخدمة؟
             );

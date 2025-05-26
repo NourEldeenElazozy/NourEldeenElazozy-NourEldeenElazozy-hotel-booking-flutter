@@ -433,8 +433,6 @@ class _HomeState extends State<Home> {
               ),
               const SizedBox(height: 15),
               Container(
-
-
                 child: Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 15),
                   child: Column(
@@ -442,27 +440,45 @@ class _HomeState extends State<Home> {
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          const Text(MyString.recentlyBooked, style: TextStyle(fontWeight: FontWeight.w700, fontSize: 16)),
+                          const Text(
+                            MyString.recentlyBooked,
+                            style: TextStyle(fontWeight: FontWeight.w700, fontSize: 16),
+                          ),
                           InkWell(
-                            onTap: () {
-
-                            },
-                            child: const Text(MyString.seeAll, style: TextStyle(fontWeight: FontWeight.w700, fontSize: 14)),
+                            onTap: () {},
+                            child: const Text(
+                              MyString.seeAll,
+                              style: TextStyle(fontWeight: FontWeight.w700, fontSize: 14),
+                            ),
                           ),
                         ],
                       ),
                       const SizedBox(height: 15),
-                      SizedBox(
+                      // إذا لم يكن هناك token، نعرض رسالة بديلة
+                      controller.token == null
+                          ? Column(
+                        children: [
+                          Text('سجّل الدخول لمشاهدة اخر حجوزاتك'),
+                          Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: ElevatedButton(
+                              onPressed: () {
+                                Get.offNamedUntil('/loginScreen', (route) => false);
+                              },
+                              child: Text('تسجيل الدخول', style: TextStyle(fontWeight: FontWeight.w700, fontSize: 14, fontFamily: 'Tajawal', ),),
+                            ),
+                          ),
+                        ],
+                      )
+                          : SizedBox(
                         child: ListView.builder(
                           physics: const NeverScrollableScrollPhysics(),
                           shrinkWrap: true,
                           itemCount: controller.recently.length,
                           itemBuilder: (context, index) {
                             return InkWell(
-                              onTap: () {
-
-                              },
-                                child: VerticalView(index: index),
+                              onTap: () {},
+                              child: VerticalView(index: index),
                             );
                           },
                         ),
