@@ -102,7 +102,7 @@ class PasswordController extends GetxController {
       // هذا يزيل الشاشة الحالية (SelectSmsEmailScreen) من المكدس
       // قبل دفع OtpSendScreen، مما يضمن وجود نسخة واحدة فقط من OtpSendScreen
       // في شجرة الـ widgets في أي وقت.
-      Get.off(() => const OtpSendScreen());
+      //Get.off(() => const OtpSendScreen());
       // ✅ 2. إذا كان المستخدم موجودًا، أرسل OTP
       final otpResponse = await Dio().post(
         'http://10.0.2.2:8000/api/send-otp',
@@ -125,6 +125,7 @@ class PasswordController extends GetxController {
           'خطأ',
           otpResponse.data['message'] ?? 'فشل إرسال رمز التحقق',
           backgroundColor: Colors.red,
+          colorText: Colors.white
         );
       }
     } on DioException catch (e) {
@@ -137,6 +138,7 @@ class PasswordController extends GetxController {
         e.response?.data['message'] ?? 'حدث خطأ في الاتصال بالخادم',
         backgroundColor: Colors.red,
         colorText: Colors.white,
+
 
       );
     } catch (e) {
