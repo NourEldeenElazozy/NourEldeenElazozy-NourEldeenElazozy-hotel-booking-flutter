@@ -86,7 +86,7 @@ class _DateTimeSelectState extends State<DateTimeSelect> {
       return Center(child: Text("Error: ${snapshot.error}"));
     } else if (!snapshot.hasData || snapshot.data == null) {
       // توجيه المستخدم إلى صفحة تسجيل الدخول إذا لم يوجد توكن
-      Future.microtask(() => Get.offNamed('/loginScreen'));
+      Future.microtask(() => Get.offNamed('/loginOptionScreen'));
       return Container();  // العودة بواجهة فارغة مؤقتاً
 
     }else{

@@ -57,7 +57,7 @@ class _BookingState extends State<Booking> with SingleTickerProviderStateMixin {
                   SizedBox(height: 20),
                   ElevatedButton(
                     onPressed: () {
-                      Get.offNamedUntil('/loginScreen', (route) => false);
+                      Get.offNamedUntil('/loginOptionScreen', (route) => false);
                     },
                     child: Text('تسجيل الدخول'),
                   ),

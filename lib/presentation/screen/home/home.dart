@@ -463,7 +463,7 @@ class _HomeState extends State<Home> {
                             padding: const EdgeInsets.all(8.0),
                             child: ElevatedButton(
                               onPressed: () {
-                                Get.offNamedUntil('/loginScreen', (route) => false);
+                                Get.offNamedUntil('/loginOptionScreen', (route) => false);
                               },
                               child: Text('تسجيل الدخول', style: TextStyle(fontWeight: FontWeight.w700, fontSize: 14, fontFamily: 'Tajawal', ),),
                             ),
