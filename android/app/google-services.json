@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "840101764193",
+    "project_id": "esteraha-289de",
+    "storage_bucket": "esteraha-289de.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:840101764193:android:7aa627a3d7c1a1c8201e20",
+        "android_client_info": {
+          "package_name": "com.example.esteraha"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC4RQOxPPfdh2HU3MwMMUrI0WCq-e4tHKw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
