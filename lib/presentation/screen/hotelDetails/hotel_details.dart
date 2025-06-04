@@ -20,7 +20,18 @@ class _HotelDetailState extends State<HotelDetail> {
   }
 
   BitmapDescriptor? _markerIcon;
+  final TextEditingController CommentController = TextEditingController();
+  RxDouble userRating = 0.0.obs;
+  void setUserRating(double rating) {
+    userRating.value = rating; // <--- هذا هو الجزء المهم!
+  }
+  void setUserComment(String comment) {
+    // ...
+  }
 
+  void submitReview() {
+    // ...
+  }
   @override
   Widget build(BuildContext context) {
     _createMarkerImageFromAsset(context);
@@ -637,7 +648,26 @@ print(controller.detail.detailsImages.length);
                               const Spacer(),
                               InkWell(
                                 onTap: () {
-                                  Get.toNamed("/review");
+                                  // افترض أن 'controller' هو الكنترولر الخاص بالصفحة الحالية
+                                  // وأن 'restAreaId' هو معرف الاستراحة التي تريد عرض تقييماتها
+                                  // يمكنك استبدال 'controller.detail.value.id' بالمتغير الفعلي لـ 'restAreaId' لديك
+                                  final int? currentRestAreaId = controller.detail.id; // أو من أي مصدر آخر
+
+                                  if (currentRestAreaId != null) {
+                                    Get.toNamed(
+                                      "/review",
+                                      arguments: {'restAreaId': currentRestAreaId}, // تمرير restAreaId كـ arguments
+                                    );
+                                  } else {
+                                    // يمكنك عرض رسالة خطأ إذا لم يكن الـ ID متاحًا
+                                    Get.snackbar(
+                                      "خطأ",
+                                      "معرف الاستراحة غير متاح.",
+                                      snackPosition: SnackPosition.BOTTOM,
+                                      backgroundColor: Colors.red,
+                                      colorText: Colors.white,
+                                    );
+                                  }
                                 },
                                 child: Container(
                                     padding: const EdgeInsets.symmetric(
@@ -652,9 +682,48 @@ print(controller.detail.detailsImages.length);
                               ),
                             ],
                           ),
-                          // const SizedBox(height: 15),
+                           const SizedBox(height: 15),
+
                           _review(
                               controller.isDarkMode, controller.detail.allReview),
+                          Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 15),
+                            child: Obx(
+                                  () => buildReviewInputWidget(
+                                context: context,
+                                currentRating: controller.userRating.value,
+                                onRatingTap: (rating) {
+                                  controller.setUserRating(rating);
+                                },
+                                commentController: controller.commentController,
+                                onCommentChanged: (comment) {
+                                  controller.setUserComment(comment);
+                                },
+                                // استدعي دالة submitReview في الكنترولر مع restAreaId
+                                onSubmit: () {
+                                  // تأكد أن controller.detail.id موجود ولديه قيمة صحيحة
+                                  if (controller.detail.id != null) { // إذا كان detail هو Rx<DetailModel>
+                                    controller.submitReview(restAreaId: controller.detail.id!);
+                                  } else {
+                                    Get.snackbar(
+                                      "خطأ",
+                                      "لا يمكن إرسال التقييم: معرف المكان غير موجود.",
+                                      snackPosition: SnackPosition.BOTTOM,
+                                      backgroundColor: Colors.red,
+                                      colorText: Colors.white,
+                                    );
+                                  }
+                                },
+                                isDarkMode: controller.isDarkMode, // أو controller.themeController.isDarkMode.value
+                                isLoading: controller.isLoading.value, // <--- تمرير حالة التحميل
+                              ),
+                            ),
+                          ),
+                          const SizedBox(height: 30),
+
+
+
+                          const SizedBox(height: 15),
                           SizedBox(
                             height: 50,
                             child: ElevatedButton(
@@ -831,5 +900,225 @@ _review(bool isDarkMode, List<AllReview> allReview) {
         ],
       );
     },
+  );
+}
+Widget _buildReviewItem(
+    BuildContext context,
+    bool isDarkMode,
+    String reviewerName,
+    double rating,
+    String comment,
+    String? imageUrl,
+    String reviewDate,
+    ) {
+  // ... (نفس الكود الذي قدمته لـ _buildReviewItem سابقًا) ...
+  return Container(
+    padding: const EdgeInsets.all(15),
+    margin: const EdgeInsets.only(bottom: 15),
+    decoration: BoxDecoration(
+      color: isDarkMode ? Colors.grey[850] : Colors.white,
+      borderRadius: BorderRadius.circular(15),
+      boxShadow: [
+        BoxShadow(
+          color: isDarkMode ? Colors.transparent : Colors.grey.withOpacity(0.2),
+          spreadRadius: 2,
+          blurRadius: 5,
+          offset: const Offset(0, 3),
+        ),
+      ],
+    ),
+    child: Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          children: [
+            imageUrl != null && imageUrl.isNotEmpty
+                ? CircleAvatar(
+              radius: 20,
+              backgroundImage: NetworkImage(imageUrl),
+              backgroundColor: Colors.grey[200],
+            )
+                : CircleAvatar(
+              radius: 20,
+              backgroundColor: isDarkMode ? MyColors.disabledColor : MyColors.profileListTileColor,
+              child: Icon(Icons.person, color: isDarkMode ? MyColors.white : MyColors.black),
+            ),
+            const SizedBox(width: 10),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    reviewerName,
+                    style: TextStyle(
+                      fontWeight: FontWeight.w700,
+                      fontSize: 16,
+                      color: isDarkMode ? MyColors.white : MyColors.black,
+                    ),
+                  ),
+                  Text(
+                    reviewDate,
+                    style: TextStyle(
+                      fontSize: 12,
+                      color: isDarkMode ? MyColors.searchTextFieldColor : MyColors.profileListTileColor,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            Row(
+              children: List.generate(5, (index) {
+                return SvgPicture.asset(
+                  MyImages.yellowStar,
+                  width: 16,
+                  colorFilter: ColorFilter.mode(
+                    index < rating.floor()
+                        ? Colors.amber
+                        : (index < rating && rating % 1 != 0)
+                        ? Colors.amber
+                        : Colors.grey[300]!,
+                    BlendMode.srcIn,
+                  ),
+                );
+              }),
+            ),
+            const SizedBox(width: 5),
+            Text(
+              rating.toStringAsFixed(1),
+              style: TextStyle(
+                fontWeight: FontWeight.w600,
+                fontSize: 14,
+                color: isDarkMode ? MyColors.white : MyColors.black,
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: 10),
+        Text(
+          comment,
+          style: TextStyle(
+            fontSize: 14,
+            height: 1.5,
+            color: isDarkMode ? MyColors.searchTextFieldColor : MyColors.profileListTileColor,
+          ),
+          maxLines: 4,
+          overflow: TextOverflow.ellipsis,
+        ),
+      ],
+    ),
+  );
+}
+Widget buildReviewInputWidget({
+  required BuildContext context, // نحتاج Context لعرض SnackBar
+  required double currentRating, // التقييم الحالي (يجب أن يأتي من State/Controller)
+  required ValueChanged<double> onRatingTap, // دالة لتحديث التقييم عند النقر على نجمة
+  required TextEditingController commentController, // متحكم النص للتعليق
+  required ValueChanged<String> onCommentChanged, // دالة عند تغيير التعليق
+  required VoidCallback onSubmit, // دالة عند الضغط على زر الإرسال
+  required bool isDarkMode, // لتمرير وضع الليل/النهار
+  required bool isLoading, // <--- متغير جديد لحالة التحميل
+}) {
+  return Container(
+    padding: const EdgeInsets.all(20),
+    decoration: BoxDecoration(
+      color: isDarkMode ? Colors.grey[850] : Colors.white,
+      borderRadius: BorderRadius.circular(15),
+
+    ),
+    child: Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          "ما هو تقييمك؟", // يمكنك استخدام MyString.yourRatingText هنا
+          style: TextStyle(
+            fontWeight: FontWeight.w700,
+            fontSize: 18,
+            color: isDarkMode ? MyColors.white : MyColors.black,
+          ),
+        ),
+        const SizedBox(height: 15),
+        // جزء اختيار النجوم
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: List.generate(5, (index) {
+            return GestureDetector(
+              onTap: () {
+                onRatingTap((index + 1).toDouble()); // استدعاء دالة الـ callback لتحديث التقييم
+              },
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 5),
+                child: SvgPicture.asset(
+                  MyImages.yellowStar, // استخدم أيقونة النجمة الخاصة بك
+                  width: 35, // حجم أكبر للنجمة
+                  colorFilter: ColorFilter.mode(
+                    index < currentRating ? Colors.amber : Colors.grey[300]!,
+                    BlendMode.srcIn,
+                  ),
+                ),
+              ),
+            );
+          }),
+        ),
+        const SizedBox(height: 20),
+        Text(
+          "أخبرنا بتعليقك", // يمكنك استخدام MyString.yourCommentText هنا
+          style: TextStyle(
+            fontWeight: FontWeight.w700,
+            fontSize: 18,
+            color: isDarkMode ? MyColors.white : MyColors.black,
+          ),
+        ),
+        const SizedBox(height: 10),
+        // حقل إدخال التعليق
+        TextField(
+          controller: commentController,
+          onChanged: onCommentChanged, // تمرير التعليق للوالد عند الكتابة
+          maxLines: 4,
+          style: TextStyle(color: isDarkMode ? MyColors.white : MyColors.black),
+          decoration: InputDecoration(
+            hintText: "اكتب تعليقك هنا...", // يمكنك استخدام MyString.writeYourComment here
+            hintStyle: TextStyle(color: isDarkMode ? MyColors.searchTextFieldColor : MyColors.profileListTileColor),
+            filled: true,
+            fillColor: isDarkMode ? MyColors.disabledColor.withOpacity(0.2) : Colors.grey[100],
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(10),
+              borderSide: BorderSide.none,
+            ),
+            focusedBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(10),
+              borderSide: BorderSide(color: MyColors.green, width: 1.5), // لون عند التركيز
+            ),
+          ),
+        ),
+        const SizedBox(height: 20),
+        // زر الإرسال
+        SizedBox(
+          width: double.infinity,
+          child: ElevatedButton(
+            onPressed: () {
+              if (currentRating > 0) { // تأكد أن المستخدم اختار تقييمًا
+                onSubmit(); // استدعاء دالة الإرسال
+              } else {
+                // أظهر رسالة للمستخدم لاختيار تقييم
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text("الرجاء اختيار تقييم بالنجوم.")),
+                );
+              }
+            },
+            style: ElevatedButton.styleFrom(
+
+              padding: const EdgeInsets.symmetric(vertical: 15),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(10),
+              ),
+            ),
+            child: Text(
+              "أرسل تقييمك", // يمكنك استخدام MyString.submitReview هنا
+              style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold,fontFamily: 'Tajawal',),
+            ),
+          ),
+        ),
+      ],
+    ),
   );
 }

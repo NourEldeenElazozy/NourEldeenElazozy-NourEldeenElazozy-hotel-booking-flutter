@@ -14,7 +14,8 @@ import 'package:hotel_booking/presentation/common_widgets/appbar.dart';
 import 'package:hotel_booking/presentation/common_widgets/custom_button.dart';
 import 'package:hotel_booking/presentation/screen/home/home_model.dart';
 import 'package:hotel_booking/presentation/screen/hotelDetails/Modelclass/review_model.dart';
-
+import 'package:dio/dio.dart';
+import 'package:shared_preferences/shared_preferences.dart'; // <--- استورد مكتبة Dio
 part 'google_map_screen.dart';
 part 'hotel_detail_controller.dart';
 part 'hotel_details.dart';

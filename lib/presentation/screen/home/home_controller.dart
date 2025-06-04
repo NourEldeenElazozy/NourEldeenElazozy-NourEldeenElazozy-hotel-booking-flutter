@@ -175,10 +175,10 @@ class HomeController extends GetxController {
          print( reservations.value);
 
        } else {
-         Get.snackbar('خطأ', 'فشل في جلب البيانات') ;
+         //Get.snackbar('خطأ', 'فشل في جلب البيانات') ;
        }
      } catch (e) {
-       Get.snackbar('خطأ', 'حدث خطأ أثناء جلب البياناتس: $e');
+       //Get.snackbar('خطأ', 'حدث خطأ أثناء جلب البياناتس: $e');
       print('حدث خطأ أثناء جلب البياناsت: $e');
      } finally {
        isLoading.value = false;

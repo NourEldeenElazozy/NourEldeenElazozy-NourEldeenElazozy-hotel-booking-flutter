@@ -1,4 +1,6 @@
 
+import 'package:get/get.dart';
+import 'package:hotel_booking/Model/AllReview.dart';
 import 'package:hotel_booking/presentation/screen/hotelDetails/Modelclass/review_model.dart';
 
 import '../hotelDetails/Modelclass/details_model.dart';
@@ -58,6 +60,9 @@ class Detail {
   List<Details> details = []; // تفاصيل إضافية
   List<Facility> facility = []; // المرافق
   List<AllReview> allReview = []; // المراجعات
+  final RxList<AllReviews> allReviews = <AllReviews>[].obs; // <--- هذا هو التغيير الرئيسي
+
+
 
   Detail.fromJson(Map<String, dynamic> json) {
     id = json['id'];
