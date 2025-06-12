@@ -375,6 +375,21 @@ class _BookingState extends State<Booking> with SingleTickerProviderStateMixin {
                       Expanded(
                         child: InkWell(
                           onTap: () {
+                            Hocontroller.selectedItem.value = 3;
+                            Hocontroller.filterList('confirmed');
+                          },
+                          child: customContainerButton(
+                            "مؤكدة",
+                            3,
+                            Hocontroller.selectedItem.value,
+                            controller.themeController.isDarkMode.value,
+                          ),
+                        ),
+                      ),
+                      const SizedBox(width: 8),
+                      Expanded(
+                        child: InkWell(
+                          onTap: () {
                             Hocontroller.selectedItem.value = 1;
                             Hocontroller.filterList('completed');
                           },
@@ -401,21 +416,7 @@ class _BookingState extends State<Booking> with SingleTickerProviderStateMixin {
                           ),
                         ),
                       ),
-                      const SizedBox(width: 8),
-                      Expanded(
-                        child: InkWell(
-                          onTap: () {
-                            Hocontroller.selectedItem.value = 3;
-                            Hocontroller.filterList('confirmed');
-                          },
-                          child: customContainerButton(
-                            "مؤكدة",
-                            3,
-                            Hocontroller.selectedItem.value,
-                            controller.themeController.isDarkMode.value,
-                          ),
-                        ),
-                      ),
+
                     ],
                   ),
                   // أزرار الفرز (تظهر فقط للمضيف)

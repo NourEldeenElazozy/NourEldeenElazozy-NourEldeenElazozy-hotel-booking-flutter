@@ -5,6 +5,7 @@ import 'package:hotel_booking/Model/RestAreas.dart';
 import 'package:hotel_booking/core/constants/my_colors.dart';
 import 'package:hotel_booking/presentation/screen/home/home_import.dart';
 import 'package:hotel_booking/presentation/screen/home/home_model.dart';
+import 'package:intl/intl.dart' as intl ;
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../../Model/RestArea.dart';
 
@@ -14,17 +15,13 @@ class MySotingScreen extends StatelessWidget {
 
   Future<int> _loadUserId() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
-
     print("prefs.getInt('user_id')");
     print(prefs.getInt('user_id'));
     return prefs.getInt('user_id') ?? 0;
-
   }
 
   @override
   Widget build(BuildContext context) {
-
-
     return Directionality(
       textDirection: TextDirection.rtl,
       child: Scaffold(
@@ -75,9 +72,10 @@ class MySotingScreen extends StatelessWidget {
                           physics: const AlwaysScrollableScrollPhysics(),
                           itemCount: controller.restAreas.length,
                           itemBuilder: (context, index) {
-                            final restArea = controller.restAreas[index];
-                            final isPaid = controller.paymentStatusMap[restArea["id"]] ?? true;
-                            final isNotPaid = controller.paymentStatusMap[restArea["id"]] ?? true;
+                            final restArea = controller.restAreas[index]; 
+                            // تأكد أن 'price' موجود وتتعامل معه
+                            final double restAreaPrice = (double.parse(restArea["price"]))?.toDouble() ?? 0.0; // افتراضي 0.0 إذا null
+                            final bool isPaid = controller.paymentStatusMap[restArea["id"]] ?? false; // الافتراضي يكون false إذا غير مدفوع
 
                             return Opacity(
                               opacity: isPaid ? 1.0 : 0.4,
@@ -94,10 +92,10 @@ class MySotingScreen extends StatelessWidget {
                                       Get.snackbar("تنبيه", "هذه الاستراحة غير مفعلة بسبب عدم الدفع");
                                       return;
                                     }
-                        
+
                                     Detail detail = Detail.fromJson(restArea);
                                     controller.homeDetails.add(detail);
-                        
+
                                     Get.toNamed("/hotelDetail", arguments: {'data': restArea});
                                   },
                                   child: Container(
@@ -134,31 +132,81 @@ class MySotingScreen extends StatelessWidget {
                                                   fontFamily: 'Tajawal',
                                                 ),
                                               ),
-                                              IconButton(
-                                                icon: const Icon(Icons.edit, color: Colors.blue),
-                                                onPressed: () {
-                                                  Get.toNamed("/AddRestAreaScreen", arguments: {
-                                                    'isEdit': true,
-                                                    'restAreaData': restArea,
-                                                  });
-                                                },
-                                                tooltip: 'تعديل',
-                                              ),
-                                              IconButton(
-                                                icon: Icon(
-                                                  restArea["is_active"] == true
-                                                      ? Icons.toggle_on
-                                                      : Icons.toggle_off,
-                                                  color: restArea["is_active"] == true
-                                                      ? MyColors.tealColor
-                                                      : Colors.grey,
-                                                  size: 32,
+                                              const SizedBox(height: 5), // مسافة بين الاسم والأزرار
+                                              // هذا هو الجزء الذي سنقوم بتعديله
+                                              Align(
+                                                alignment: Alignment.centerLeft,
+                                                child: OutlinedButton.icon(
+                                                  onPressed: () {
+                                                    Get.toNamed("/AddRestAreaScreen", arguments: {
+                                                      'isEdit': true,
+                                                      'restAreaData': restArea,
+                                                    });
+                                                  },
+                                                  icon: const Icon(Icons.edit, size: 20),
+                                                  label: const Text('تعديل', style: TextStyle(fontSize: 12, fontFamily: 'Tajawal')),
+                                                  style: OutlinedButton.styleFrom(
+                                                    foregroundColor: Colors.blue, // لون الأيقونة والنص
+                                                    side: const BorderSide(color: Colors.blue), // حدود الزر
+                                                    padding: const EdgeInsets.symmetric(horizontal: 50, vertical: 8), // زيادة المساحة الأفقية قليلاً
+                                                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                                                  ),
                                                 ),
-                                                onPressed: () {
-                                                  controller.toggleRestAreaActiveStatus(restArea["id"]);
-                                                },
                                               ),
-                                              const SizedBox(height: 4),
+                                              const SizedBox(height: 8), // مسافة بين الأزرار
+                                              if (isPaid)
+                                              Align(
+                                                alignment: Alignment.centerLeft,
+                                                child: OutlinedButton.icon(
+                                                  onPressed: () {
+                                                    controller.toggleRestAreaActiveStatus(restArea["id"]);
+                                                  },
+                                                  icon: Icon(
+                                                    restArea["is_active"] == true ? Icons.toggle_on : Icons.toggle_off,
+                                                    size: 20,
+                                                  ),
+                                                  label: Text(
+                                                    restArea["is_active"] == true ? 'مفعل' : 'معطل',
+                                                    style: const TextStyle(fontSize: 12, fontFamily: 'Tajawal'),
+                                                  ),
+                                                  style: OutlinedButton.styleFrom(
+                                                    foregroundColor: restArea["is_active"] == true ? MyColors.tealColor : Colors.grey,
+                                                    side: BorderSide(color: restArea["is_active"] == true ? MyColors.tealColor : Colors.grey),
+                                                    padding: const EdgeInsets.symmetric(horizontal: 50, vertical: 8),
+                                                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                                                  ),
+                                                ),
+                                              ),
+                                              const SizedBox(height: 8),
+                                              if (isPaid)
+                                                Align(
+                                                  alignment: Alignment.centerLeft,
+                                                  child: ElevatedButton.icon(
+                                                    onPressed: () {
+                                                      _showOfflineBookingDialog(
+                                                          context,
+                                                          restArea["id"] as int,
+                                                          restArea["name"].toString()
+                                                      );
+                                                    },
+                                                    icon: const Icon(Icons.add_task, color: Colors.white, size: 20),
+                                                    label: const Text(
+                                                      'حجز خارجي',
+                                                      style: TextStyle(
+                                                        color: Colors.white,
+                                                        fontSize: 12,
+                                                        fontFamily: 'Tajawal',
+                                                      ),
+                                                    ),
+                                                    style: ElevatedButton.styleFrom(
+
+                                                      padding: const EdgeInsets.symmetric(horizontal: 50, vertical: 8),
+                                                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                                                    ),
+                                                  ),
+                                                ),
+                                              const SizedBox(height: 10), // مسافة بعد الأزرار
+                                             /*
                                               Text(
                                                 restArea["description"].toString(),
                                                 maxLines: 2,
@@ -169,6 +217,7 @@ class MySotingScreen extends StatelessWidget {
                                                   color: Colors.black54,
                                                 ),
                                               ),
+                                              */
                                               if (!isPaid)
                                                 const Text(
                                                   "غير مدفوعة",
@@ -178,6 +227,22 @@ class MySotingScreen extends StatelessWidget {
                                                     fontFamily: 'Tajawal',
                                                   ),
                                                 ),
+
+
+                                              const SizedBox(height: 8), // مسافة بعد الأزرار
+                                          /*
+                                              Text(
+                                                restArea["description"].toString(),
+                                                maxLines: 2,
+                                                overflow: TextOverflow.ellipsis,
+                                                style: const TextStyle(
+                                                  fontSize: 14,
+                                                  fontFamily: 'Tajawal',
+                                                  color: Colors.black54,
+                                                ),
+                                              ),
+                                           */
+
                                             ],
                                           ),
                                         ),
@@ -200,23 +265,23 @@ class MySotingScreen extends StatelessWidget {
                                 return controller.paymentStatusMap[id] == false;
                               }).toList();
 
-                              // إنشاء قائمة تحتوي على Map لكل استراحة (id و price)
                               final unpaidData = unpaidRestAreas.map((restArea) {
                                 return {
                                   "id": restArea["id"],
-                                  "price": restArea["price"]
+                                  "price": restArea["price"] // تأكد أن price موجود هنا
                                 };
                               }).toList();
 
                               print('Unpaid Rest Areas with prices: $unpaidData');
 
-                              // تمريرها إلى صفحة الباقات
                               Get.toNamed('/PackageCard', arguments: {'unpaidData': unpaidData});
                             },
                             style: ElevatedButton.styleFrom(
-                              textStyle: TextStyle(    fontSize: 15,
+                              textStyle: const TextStyle(
+                                fontSize: 15,
                                 fontWeight: FontWeight.bold,
-                                fontFamily: 'Tajawal',),
+                                fontFamily: 'Tajawal',
+                              ),
                               backgroundColor: MyColors.primaryColor,
                               padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 12),
                               shape: RoundedRectangleBorder(
@@ -226,16 +291,13 @@ class MySotingScreen extends StatelessWidget {
                             child: const Text('إتمام عملية الدفع'),
                           ),
                         ),
-
                     ],
                   );
                 });
               },
             );
-
           },
         ),
-
         floatingActionButton: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.end,
@@ -262,6 +324,157 @@ class MySotingScreen extends StatelessWidget {
               tooltip: "تحديث القائمة",
             ),
           ],
+        ),
+      ),
+    );
+  }
+
+// داخل MySotingScreen.dart - دالة _showOfflineBookingDialog
+
+  // **مهم:** يجب تعريف هذا الـ RxBool خارج الدالة مباشرة ليكون ملاحظاً بواسطة Obx.
+  final RxBool _isConfirmingOfflineBooking = false.obs; // <--- متغير جديد للتحكم في مؤشر التحميل لزر التأكيد
+
+  void _showOfflineBookingDialog(BuildContext context, int restAreaId, String restAreaName) {
+    DateTime? checkInDate;
+    DateTime? checkOutDate;
+    TextEditingController checkInController = TextEditingController();
+    TextEditingController checkOutController = TextEditingController();
+
+    // Reset loading state when dialog opens, in case it was left true from a previous attempt
+    _isConfirmingOfflineBooking.value = false; // <--- إعادة تعيين حالة التحميل
+
+    final HomeController controller = Get.find<HomeController>();
+
+    Get.defaultDialog(
+      title: "إدراج حجز خارج التطبيق",
+      titleStyle: const TextStyle(fontFamily: 'Tajawal', fontWeight: FontWeight.bold),
+      contentPadding: const EdgeInsets.all(20),
+      content: Directionality(
+        textDirection: TextDirection.rtl,
+        child: Column(
+          mainAxisSize: MainAxisSize.min, // مهم للحفاظ على حجم الـ Dialog مناسبًا للمحتوى
+          children: [
+            Text('استراحة: $restAreaName', style: const TextStyle(fontSize: 16, fontFamily: 'Tajawal')),
+            const SizedBox(height: 20),
+            TextFormField(
+              controller: checkInController,
+              readOnly: true,
+              decoration: InputDecoration(
+                labelText: 'تاريخ الدخول',
+                labelStyle: const TextStyle(fontFamily: 'Tajawal'),
+                suffixIcon: const Icon(Icons.calendar_today),
+                border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
+              ),
+              onTap: () async {
+                DateTime? picked = await showDatePicker(
+                  context: context,
+                  initialDate: DateTime.now(),
+                  firstDate: DateTime.now(),
+                  lastDate: DateTime.now().add(const Duration(days: 365 * 5)), // 5 سنوات للأمام
+                );
+                if (picked != null) {
+                  checkInDate = picked;
+                  checkInController.text = intl.DateFormat('yyyy-MM-dd').format(picked);
+                }
+              },
+            ),
+            const SizedBox(height: 15),
+            TextFormField(
+              controller: checkOutController,
+              readOnly: true,
+              decoration: InputDecoration(
+                labelText: 'تاريخ الخروج',
+                labelStyle: const TextStyle(fontFamily: 'Tajawal'),
+                suffixIcon: const Icon(Icons.calendar_today),
+                border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
+              ),
+              onTap: () async {
+                DateTime initialCheckoutDate = checkInDate?.add(const Duration(days: 1)) ?? DateTime.now().add(const Duration(days: 1));
+                DateTime firstSelectableDate = initialCheckoutDate;
+                DateTime? picked = await showDatePicker(
+                  context: context,
+                  initialDate: initialCheckoutDate,
+                  firstDate: firstSelectableDate,
+                  lastDate: DateTime.now().add(const Duration(days: 365 * 5)),
+                );
+                if (picked != null) {
+                  checkOutDate = picked;
+                  checkOutController.text = intl.DateFormat('yyyy-MM-dd').format(picked);
+                }
+              },
+            ),
+          ],
+        ),
+      ),
+      // لا تستخدم textConfirm: '...'
+      // استخدم confirm: Widget(...) لإنشاء الزر وتضمين مؤشر التحميل
+      confirm: Obx(() => ElevatedButton( // <--- زر التأكيد، ملفوف بـ Obx للمراقبة _isConfirmingOfflineBooking
+        onPressed: _isConfirmingOfflineBooking.value ? null : () async { // <--- تعطيل الزر أثناء التحميل
+          if (checkInDate == null || checkOutDate == null) {
+            Get.snackbar("خطأ", "الرجاء إدخال تاريخي الدخول والخروج",
+                backgroundColor: Colors.red, colorText: Colors.white);
+            return;
+          }
+          if (checkOutDate!.isBefore(checkInDate!)) {
+            Get.snackbar("خطأ", "تاريخ الخروج يجب أن يكون بعد تاريخ الدخول",
+                backgroundColor: Colors.red, colorText: Colors.white);
+            return;
+          }
+
+          _isConfirmingOfflineBooking.value = true; // <--- بدء مؤشر التحميل
+
+          Map<String, dynamic> result = await controller.addOfflineBooking(
+            restAreaId: restAreaId,
+            checkIn: intl.DateFormat('yyyy-MM-dd').format(checkInDate!),
+            checkOut: intl.DateFormat('yyyy-MM-dd').format(checkOutDate!),
+          );
+
+          _isConfirmingOfflineBooking.value = false; // <--- إيقاف مؤشر التحميل
+
+          // **عرض Snackbar بناءً على نتيجة عملية الـ API**
+          if (result['success']) {
+            Get.snackbar("نجاح", result['message'], backgroundColor: MyColors.successColor, colorText: Colors.white);
+            Get.back(); // إغلاق الـ Dialog فقط عند النجاح
+          } else {
+            Get.snackbar("خطأ", result['message'], backgroundColor: Colors.red, colorText: Colors.white);
+            // يبقى الـ Dialog مفتوحاً للسماح للمستخدم بتصحيح البيانات عند الفشل
+          }
+        },
+        style: ElevatedButton.styleFrom(
+          backgroundColor: MyColors.primaryColor,
+          foregroundColor: Colors.white, // لون النص والأيقونة
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+        ),
+        child: _isConfirmingOfflineBooking.value // <--- عرض مؤشر التحميل أو النص
+            ? const SizedBox(
+          width: 24, // حجم مؤشر التحميل الدائري
+          height: 24,
+          child: CircularProgressIndicator(
+            color: Colors.white,
+            strokeWidth: 2.5,
+          ),
+        )
+            : const Text(
+          'تأكيد الحجز',
+          style: TextStyle(fontFamily: 'Tajawal', fontWeight: FontWeight.bold),
+        ),
+      )),
+      // لا تستخدم textCancel: '...'
+      // استخدم cancel: Widget(...) لإنشاء زر الإلغاء
+      cancel: ElevatedButton(
+        onPressed: () {
+          Get.back(); // إغلاق الـ Dialog عند الإلغاء
+        },
+        style: ElevatedButton.styleFrom(
+          backgroundColor: Colors.grey.shade300,
+          foregroundColor: Colors.black, // لون النص والأيقونة
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+        ),
+        child: const Text(
+          'إلغاء',
+          style: TextStyle(fontFamily: 'Tajawal', fontWeight: FontWeight.bold),
         ),
       ),
     );

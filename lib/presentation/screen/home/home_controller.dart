@@ -54,6 +54,98 @@ class HomeController extends GetxController {
      "بئر": "well",
      "مولد كهربائي": "power_generator",
    };
+   Future<Map<String, dynamic>> addOfflineBooking({
+     required int restAreaId,
+     required String checkIn,
+     required String checkOut,
+   }) async {
+     try {
+       // **لا نُغير isLoading.value هنا لأننا سنتحكم في مؤشر التحميل من الواجهة الأمامية (الـ Dialog)**
+       final SharedPreferences prefs = await SharedPreferences.getInstance(); // <--- تم استعادة هذا السطر
+       token = prefs.getString('token'); // <--- تم استعادة هذا السطر
+       String? userType = prefs.getString('user_type'); // <--- تم استعادة هذا السطر
+
+       // التحقق المسبق: هل المستخدم مسجل دخول وهل هو مضيف؟
+       if (token == null || token!.isEmpty) {
+         Get.snackbar("خطأ", "الرجاء تسجيل الدخول أولاً لإضافة حجز.",
+             backgroundColor: Colors.red, colorText: Colors.white); // <--- Snackbar هنا
+         return {'success': false, 'message': "الرجاء تسجيل الدخول أولاً لإضافة حجز."};
+       }
+       if (userType != 'host') {
+         Get.snackbar("خطأ", "ليس لديك الصلاحية لإضافة حجوزات خارجية.",
+             backgroundColor: Colors.red, colorText: Colors.white); // <--- Snackbar هنا
+         return {'success': false, 'message': "ليس لديك الصلاحية لإضافة حجوزات خارجية."};
+       }
+
+       final response = await Dio().post(
+         'http://10.0.2.2:8000/api/reservations/offline',
+         options: Options(
+           headers: {
+             'Authorization': 'Bearer $token',
+             'Accept': 'application/json',
+           },
+         ),
+         data: {
+           'rest_area_id': restAreaId,
+           'check_in': checkIn,
+           'check_out': checkOut,
+           // يمكن إضافة حقول أخرى هنا إذا كان الـ API يتطلبها
+           // 'adults_count': 1, 'children_count': 0, 'deposit_amount': 0,
+         },
+       );
+
+       if (response.statusCode == 200 || response.statusCode == 201) {
+         print("success ${response.data} ");
+         // تحديث قائمة الحجوزات بعد النجاح
+         getReservations(isHost: true);
+         Get.snackbar("نجاح", "تم إدراج الحجز خارج التطبيق بنجاح!",
+             backgroundColor: MyColors.successColor, colorText: Colors.white); // <--- Snackbar هنا
+         return {'success': true, 'message': "تم إدراج الحجز خارج التطبيق بنجاح!"};
+       } else {
+         // هذا الجزء لن يتم الوصول إليه عادةً إذا كان Dio يرمي DioException لغير 2xx
+         Get.snackbar("خطأ", response.data['message'] ?? 'خطأ غير معروف',
+             backgroundColor: Colors.red, colorText: Colors.white); // <--- Snackbar هنا
+         return {'success': false, 'message': response.data['message'] ?? 'خطأ غير معروف'};
+       }
+     } on DioException catch (e) {
+       String errorMessage = "حدث خطأ غير متوقع.";
+       if (e.response != null) {
+         print("API Error Status: ${e.response!.statusCode}");
+         print("API Error Data: ${e.response!.data}");
+
+         if (e.response!.statusCode == 401) {
+           errorMessage = "جلسة المستخدم منتهية الصلاحية. الرجاء تسجيل الدخول مرة أخرى.";
+         } else if (e.response!.statusCode == 403) {
+           errorMessage = "ليس لديك الصلاحية لإجراء هذا الإجراء.";
+         } else if (e.response!.statusCode == 400 || e.response!.statusCode == 422) { // 400 Bad Request, 422 Unprocessable Entity (Validation)
+           errorMessage = e.response!.data['message'] ?? e.response!.statusMessage ?? "خطأ في البيانات المدخلة.";
+           if (e.response!.data['errors'] != null) {
+             // عرض أخطاء التحقق من الصحة المفصلة
+             e.response!.data['errors'].forEach((key, value) {
+               errorMessage += "\n- ${value.join(', ')}";
+             });
+           }
+         } else if (e.response!.statusCode == 409) { // Conflict (مثلاً تداخل في التواريخ)
+           errorMessage = e.response!.data['message'] ?? "الفترة المختارة محجوزة بالفعل.";
+         } else {
+           errorMessage = e.response!.data['message'] ?? e.response!.statusMessage ?? errorMessage;
+         }
+       } else {
+         errorMessage = e.message ?? "تأكد من اتصالك بالإنترنت.";
+       }
+       Get.snackbar("خطأ", errorMessage,
+           backgroundColor: Colors.red, colorText: Colors.white); // <--- Snackbar هنا
+       return {'success': false, 'message': errorMessage};
+     } catch (e) {
+       Get.snackbar("خطأ", "حدث خطأ: ${e.toString()}",
+           backgroundColor: Colors.red, colorText: Colors.white); // <--- Snackbar هنا
+       return {'success': false, 'message': "حدث خطأ: ${e.toString()}"};
+     } finally {
+       // **مهم:** لا نُغير isLoading.value = false; هنا أيضًا لأنها للتحكم في مؤشر اللودينغ العام للشاشة.
+       // مؤشر التحميل الخاص بزر التأكيد يتم التحكم فيه في الـ UI
+     }
+   }
+
    void oldfilterList(String status) {
      filteredReservations.value = reservations.where((element) {
        return element['status'].toString().toLowerCase() == status.toLowerCase();
