@@ -12,7 +12,12 @@ class HomeController extends GetxController {
    RxBool isLoading = true.obs;
    var passingStatus = ''.obs; // لتخزين الفلتر الحالي
    var reservations = [].obs; // متغير لتخزين الحجوزات
-   var filteredReservations = [].obs;
+   //var filteredReservations = [].obs;
+   List<dynamic> _allReservations = []; // استخدم underscore لجعلها خاصة بالكنترولر
+   RxList<dynamic> hostRestAreas = <dynamic>[].obs; // قائمة استراحات المضيف
+   Rxn<int> selectedRestAreaIdFilter = Rxn<int>(null); // لتخزين ID الاستراحة المختارة للفرز
+   RxString selectedDateSortOrder = 'newest'.obs; // 'newest' (الأقرب) أو 'oldest' (الأقدم)
+   RxList<dynamic> filteredReservations = <dynamic>[].obs;
    RxList<Detail> homeDetails = <Detail>[].obs;
    var filterListView = [].obs; // القائمة التي ستُعرض في واجهة المستخدم
    var selectedGeoArea = "وسط البلاد".obs; // قيمة افتراضية
@@ -49,11 +54,43 @@ class HomeController extends GetxController {
      "بئر": "well",
      "مولد كهربائي": "power_generator",
    };
-   void filterList(String status) {
+   void oldfilterList(String status) {
      filteredReservations.value = reservations.where((element) {
        return element['status'].toString().toLowerCase() == status.toLowerCase();
      }).toList();
    }
+   void filterList(String status) {
+     List<dynamic> tempFilteredList = _allReservations.where((reservation) {
+       bool matchesStatus = reservation['status'].toString().toLowerCase() == status.toLowerCase();
+       bool matchesRestArea = true;
+
+       if (selectedRestAreaIdFilter.value != null && selectedRestAreaIdFilter.value != -1) {
+         // تأكد من أن rest_area و id موجودين
+         matchesRestArea = reservation['rest_area']?['id'] == selectedRestAreaIdFilter.value;
+       }
+       return matchesStatus && matchesRestArea;
+     }).toList();
+
+     // تطبيق فرز التاريخ بعد الفلترة حسب الحالة والاستراحة
+     if (selectedDateSortOrder.value == 'oldest') {
+       tempFilteredList.sort((a, b) {
+         // استخدم 'created_at' أو 'booking_date' حسب الحقل الصحيح في الـ API
+         DateTime dateA = DateTime.tryParse(a['created_at'] ?? '') ?? DateTime(1900);
+         DateTime dateB = DateTime.tryParse(b['created_at'] ?? '') ?? DateTime(1900);
+         return dateA.compareTo(dateB); // الأقدم أولاً
+       });
+     } else if (selectedDateSortOrder.value == 'newest') {
+       tempFilteredList.sort((a, b) {
+         DateTime dateA = DateTime.tryParse(a['created_at'] ?? '') ?? DateTime(1900);
+         DateTime dateB = DateTime.tryParse(b['created_at'] ?? '') ?? DateTime(1900);
+         return dateB.compareTo(dateA); // الأحدث أولاً
+       });
+     }
+
+     filteredReservations.value = tempFilteredList;
+     print("Filtered list updated for status: $status, count: ${filteredReservations.length}");
+   }
+
 
 
 
@@ -137,23 +174,21 @@ class HomeController extends GetxController {
       return recentlyBooked;
    }
    */
-   Future<void> getReservations({bool isHost=false}) async {
+   Future<void> getReservations({bool isHost = false}) async {
      try {
        isLoading.value = true;
        final SharedPreferences prefs = await SharedPreferences.getInstance();
        token = prefs.getString('token');
        String? userType = prefs.getString('user_type');
-       if(userType=="host"){
-         isHost=true;
+
+       if (userType == "host") {
+         isHost = true;
          print("isHost $userType");
        }
 
-
-
-       print("tokenss ${token}");
+       print("tokenss $token");
        final response = await Dio().get(
          'http://10.0.2.2:8000/api/reservations',
-
          options: Options(
            headers: {
              'Authorization': 'Bearer $token',
@@ -161,29 +196,46 @@ class HomeController extends GetxController {
            },
          ),
          data: {
-           'type': isHost ? 'host' : 'user', // استخدم هذا حسب الحالة
+           'type': isHost ? 'host' : 'user',
          },
        );
+
        if (response.statusCode == 200) {
          print("response.data5");
          print(response.data);
-         reservations.value = response.data['reservations']; // تخزين البيانات في المتغير
-         filteredReservations.value = List.from(reservations); // مبدئياً نعرض الكل
-         filterList('pending'); // أول فلتر افتراضي
-         print(" reservations.value");
-         print(response.statusCode);
-         print( reservations.value);
+         _allReservations = response.data['reservations']; // تخزين في القائمة الأصلية
 
+         // **الجزء المعدل: استخراج الاستراحات الفريدة من الحجوزات باستخدام Map**
+         if (isHost) {
+           Map<int, Map<String, dynamic>> uniqueRestAreasMap = {}; // استخدم Map لضمان التفرد بالـ ID
+           for (var reservation in _allReservations) {
+             if (reservation['rest_area'] != null && reservation['rest_area']['id'] != null) {
+               int restAreaId = reservation['rest_area']['id'];
+               String restAreaName = reservation['rest_area']['name'] ?? 'اسم غير معروف';
+               // إضافة الاستراحة إلى الـ Map باستخدام ID كـ key. إذا كان الـ ID موجودًا، فلن يتم استبداله.
+               uniqueRestAreasMap[restAreaId] = {
+                 'id': restAreaId,
+                 'name': restAreaName,
+               };
+             }
+           }
+           hostRestAreas.value = uniqueRestAreasMap.values.toList(); // تحويل القيم إلى قائمة
+           print("Host rest areas (from reservations): ${hostRestAreas.value}");
+         }
+
+         print("All reservations fetched: ${_allReservations.length} items");
+         filterList('pending'); // فلترة أولية بعد الجلب على القائمة الأصلية
+         print("filteredReservations after initial filter: ${filteredReservations.length} items");
        } else {
-         //Get.snackbar('خطأ', 'فشل في جلب البيانات') ;
+         print('فشل في جلب البيانات: ${response.statusCode}');
        }
      } catch (e) {
-       //Get.snackbar('خطأ', 'حدث خطأ أثناء جلب البياناتس: $e');
-      print('حدث خطأ أثناء جلب البياناsت: $e');
+       print('حدث خطأ أثناء جلب البيانات: $e');
      } finally {
        isLoading.value = false;
      }
    }
+
 
 
 
