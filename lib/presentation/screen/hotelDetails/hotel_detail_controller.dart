@@ -1,9 +1,11 @@
 part of 'hotel_detail_import.dart';
 
 class HomeDetailController extends GetxController {
+  var reservedDates = <DateTime>[].obs;
   final ThemeController themeController = Get.put(ThemeController());
   late bool isDarkMode;
   late Detail detail;
+  var isLoading2 = true.obs; // **أضف هذا المتغير الجديد**
   RxInt sliderIndex = 0.obs;
   late String firstHalf;
   late String secondHalf;
@@ -36,6 +38,100 @@ class HomeDetailController extends GetxController {
     userRating.value = rating;
   }
 
+  Future<void> fetchReservedDates(int restAreaId) async {
+    try {
+      isLoading2.value = true; // **ابدأ التحميل**
+      final response = await _dio.get('http://10.0.2.2:8000/api/reservations/$restAreaId/reserved-dates');
+
+      if (response.statusCode == 200 && response.data != null && response.data['success'] == true) {
+        // تحويل التواريخ المستلمة من JSON إلى قائمة من DateTime
+        print("Fetching reserved dates for restAreaId: $restAreaId");
+        reservedDates.value = List<DateTime>.from(
+            (response.data['reserved_dates'] as List).map((dateString) => DateTime.parse(dateString))
+        );
+        print("Reserved dates fetched: ${reservedDates.value}");
+
+      } else {
+        Get.snackbar(
+          'خطأ',
+          'لم يتم العثور على تواريخ محجوزة أو خطأ في الاستجابة.',
+          snackPosition: SnackPosition.BOTTOM,
+          backgroundColor: Colors.red,
+          colorText: Colors.white,
+        );
+      }
+    } catch (e) {
+      print("Errors fetching reserved dates: ${e.toString()}");
+      Get.snackbar(
+        'خطأ في الاتصال',
+        'حدث خطأ أثناء جلب التواريخ: ${e.toString()}',
+        snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
+      );
+
+  } finally {
+  isLoading2.value = false; // **أوقف التحميل دائمًا في النهاية**
+  }
+  }
+  // **هذه هي الدالة التي يجب أن تكون في الكنترولر وتستخدم في التقويم:**
+  bool isDayReserved(DateTime day) {
+    // قارن اليوم فقط (دون الوقت) لضمان الدقة
+    return reservedDates.any((reservedDay) =>
+    reservedDay.year == day.year &&
+        reservedDay.month == day.month &&
+        reservedDay.day == day.day);
+  }
+  // ... (بقية الدوال المتعلقة بالتقويم مثل focusedDay, selectedDay, rangeStart, rangeEnd, onDaySelected, onRangeSelected, onFormatChanged, onPageChanged) ...
+  // تأكد أن هذه المتغيرات والدوال هي أيضًا داخل HomeController
+  var focusedDay = DateTime.now().obs;
+  var selectedDay = Rx<DateTime?>(null);
+  var rangeStart = Rx<DateTime?>(null);
+  var rangeEnd = Rx<DateTime?>(null);
+  var calendarFormat = CalendarFormat.month.obs;
+
+  void onDaySelected(DateTime selectedDay, DateTime focusedDay) {
+    this.selectedDay.value = selectedDay;
+    this.focusedDay.value = focusedDay;
+    rangeStart.value = null;
+    rangeEnd.value = null;
+    print("Selected day: $selectedDay");
+  }
+
+  void onRangeSelected(DateTime? start, DateTime? end, DateTime focusedDay) {
+    selectedDay.value = null;
+    this.focusedDay.value = focusedDay;
+    rangeStart.value = start;
+    rangeEnd.value = end;
+
+    if (start != null && end != null) {
+      for (DateTime day = start; day.isBefore(end.add(const Duration(days: 1))); day = day.add(const Duration(days: 1))) {
+        if (isDayReserved(day)) {
+          Get.snackbar(
+            'تنبيه',
+            'الفترة المختارة تتضمن تواريخ محجوزة. يرجى اختيار فترة أخرى.',
+            snackPosition: SnackPosition.BOTTOM,
+            backgroundColor: Colors.orange,
+            colorText: Colors.white,
+          );
+          rangeStart.value = null;
+          rangeEnd.value = null;
+          break;
+        }
+      }
+    }
+  }
+
+// داخل HomeController
+  void onFormatChanged(CalendarFormat format) {
+    if (calendarFormat.value != format) {
+      calendarFormat.value = format; // هذا هو السطر الذي يسبب تغيير الحجم
+    }
+  }
+
+  void onPageChanged(DateTime focusedDay) {
+    this.focusedDay.value = focusedDay;
+  }
 
   void setUserComment(String comment) {
     // يمكنك حفظ التعليق هنا إذا أردت تتبعه بشكل مباشر

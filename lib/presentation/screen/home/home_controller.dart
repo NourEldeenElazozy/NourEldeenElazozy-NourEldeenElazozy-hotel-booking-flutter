@@ -39,7 +39,7 @@ class HomeController extends GetxController {
      "مطبخ متاح": "kitchen_available",
      "حمام خارجي": "outdoor_bathroom",
      "مساحة خارجية": "outdoor_space",
-     "مساحة عشب": "grass_space",
+     "مساحة عشب": "grass_space", 
      "تدفئة للمسبح": "pool_heating",
      "فلتر للمسبح": "pool_filter",
      "أماكن جلوس خارجية": "outdoor_seating",
