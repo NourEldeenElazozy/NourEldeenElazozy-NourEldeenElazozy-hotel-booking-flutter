@@ -23,6 +23,291 @@ class _BookingState extends State<Booking> with SingleTickerProviderStateMixin {
     Hocontroller.filterList('pending');
     _loaduserType();
   }
+
+
+
+// دالة لعرض bottom sheet لفلترة الاستراحات
+  void _showRestAreaFilterBottomSheet(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true, // لتكون قابلة للتمرير إذا كانت المحتويات طويلة
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder: (BuildContext bc) {
+        return Obx(() => Directionality( // إضافة Directionality هنا
+          textDirection: TextDirection.rtl, // تحديد الاتجاه من اليمين لليسار
+          child: Container(
+            padding: const EdgeInsets.all(20),
+            decoration: BoxDecoration(
+              color: controller.themeController.isDarkMode.value
+                  ? MyColors.scaffoldDarkColor // لون خلفية للـ sheet
+                  : MyColors.white,
+              borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
+            ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start, // يبدأ من اليمين في RTL
+              children: <Widget>[
+                // مقبض السحب
+                Center(
+                  child: Container(
+                    width: 40,
+                    height: 4,
+                    margin: const EdgeInsets.only(bottom: 15),
+                    decoration: BoxDecoration(
+                      color: Colors.grey.shade400,
+                      borderRadius: BorderRadius.circular(2),
+                    ),
+                  ),
+                ),
+                Text(
+                  "فرز حسب الاستراحة",
+                  style: TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                    color: controller.themeController.isDarkMode.value ? MyColors.white : Colors.black,
+                  ),
+                ),
+                const SizedBox(height: 15),
+                Divider(color: Colors.grey.shade300), // فاصل جميل
+                ListTile(
+                  title: Text(
+                    'جميع الاستراحات',
+                    style: TextStyle(
+                      color: controller.themeController.isDarkMode.value ? MyColors.white : Colors.black,
+                    ),
+                  ),
+                  trailing: Radio<int>( // استخدام trailing ليكون الراديو على اليسار في RTL
+                    value: -1, // قيمة خاصة لـ "الكل"
+                    groupValue: Hocontroller.selectedRestAreaIdFilter.value,
+                    onChanged: (int? value) {
+                      // **الأهم: قم بتحديث المتغير الملاحظ داخل Obx أو دالة GetX**
+                      Hocontroller.selectedRestAreaIdFilter.value = null; // إعادة تعيين الفلتر
+                      String currentStatus = '';
+                      if (Hocontroller.selectedItem.value == 0) {
+                        currentStatus = 'pending';
+                      } else if (Hocontroller.selectedItem.value == 1) {
+                        currentStatus = 'completed';
+                      } else if (Hocontroller.selectedItem.value == 2) {
+                        currentStatus = 'canceled';
+                      } else if (Hocontroller.selectedItem.value == 3) {
+                        currentStatus = 'confirmed';
+                      }
+                      Hocontroller.filterList(currentStatus);
+                      Get.back(); // إغلاق الـ BottomSheet
+                    },
+                    activeColor: MyColors.primaryColor, // لون التحديد
+                  ),
+                  onTap: () { // للسماح بالنقر على أي جزء من ListTile للتحديد
+                    Hocontroller.selectedRestAreaIdFilter.value = null;
+                    String currentStatus = '';
+                    if (Hocontroller.selectedItem.value == 0) {
+                      currentStatus = 'pending';
+                    } else if (Hocontroller.selectedItem.value == 1) {
+                      currentStatus = 'completed';
+                    } else if (Hocontroller.selectedItem.value == 2) {
+                      currentStatus = 'canceled';
+                    } else if (Hocontroller.selectedItem.value == 3) {
+                      currentStatus = 'confirmed';
+                    }
+                    Hocontroller.filterList(currentStatus);
+                    Get.back();
+                  },
+                ),
+                ...Hocontroller.hostRestAreas.map((restArea) {
+                  return ListTile(
+                    title: Text(
+                      restArea['name'] ?? 'غير معروف',
+                      style: TextStyle(
+                        color: controller.themeController.isDarkMode.value ? MyColors.white : Colors.black,
+                      ),
+                    ),
+                    trailing: Radio<int>( // استخدام trailing
+                      value: restArea['id'],
+                      groupValue: Hocontroller.selectedRestAreaIdFilter.value,
+                      onChanged: (int? value) {
+                        Hocontroller.selectedRestAreaIdFilter.value = value;
+                        String currentStatus = '';
+                        if (Hocontroller.selectedItem.value == 0) {
+                          currentStatus = 'pending';
+                        } else if (Hocontroller.selectedItem.value == 1) {
+                          currentStatus = 'completed';
+                        } else if (Hocontroller.selectedItem.value == 2) {
+                          currentStatus = 'canceled';
+                        } else if (Hocontroller.selectedItem.value == 3) {
+                          currentStatus = 'confirmed';
+                        }
+                        Hocontroller.filterList(currentStatus);
+                        Get.back();
+                      },
+                      activeColor: MyColors.primaryColor,
+                    ),
+                    onTap: () { // للسماح بالنقر على أي جزء من ListTile للتحديد
+                      Hocontroller.selectedRestAreaIdFilter.value = restArea['id'];
+                      String currentStatus = '';
+                      if (Hocontroller.selectedItem.value == 0) {
+                        currentStatus = 'pending';
+                      } else if (Hocontroller.selectedItem.value == 1) {
+                        currentStatus = 'completed';
+                      } else if (Hocontroller.selectedItem.value == 2) {
+                        currentStatus = 'canceled';
+                      } else if (Hocontroller.selectedItem.value == 3) {
+                        currentStatus = 'confirmed';
+                      }
+                      Hocontroller.filterList(currentStatus);
+                      Get.back();
+                    },
+                  );
+                }).toList(),
+              ],
+            ),
+          ),
+        ));
+      },
+    );
+  }
+
+// دالة لعرض bottom sheet لفرز التاريخ
+  void _showDateSortBottomSheet(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder: (BuildContext bc) {
+        return Obx(() => Directionality( // إضافة Directionality هنا
+            textDirection: TextDirection.rtl, // تحديد الاتجاه من اليمين لليسار
+            child: Container(
+              padding: const EdgeInsets.all(20),
+              decoration: BoxDecoration(
+                color: controller.themeController.isDarkMode.value
+                    ? MyColors.scaffoldDarkColor
+                    : MyColors.white,
+                borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
+              ),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  // مقبض السحب
+                  Center(
+                    child: Container(
+                      width: 40,
+                      height: 4,
+                      margin: const EdgeInsets.only(bottom: 15),
+                      decoration: BoxDecoration(
+                        color: Colors.grey.shade400,
+                        borderRadius: BorderRadius.circular(2),
+                      ),
+                    ),
+                  ),
+                  Text(
+                    "فرز حسب التاريخ",
+                    style: TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                      color: controller.themeController.isDarkMode.value ? MyColors.white : Colors.black,
+                    ),
+                  ),
+                  const SizedBox(height: 15),
+                  Divider(color: Colors.grey.shade300),
+                  ListTile(
+                    title: Text(
+                      'الأقرب أولاً',
+                      style: TextStyle(
+                        color: controller.themeController.isDarkMode.value ? MyColors.white : Colors.black,
+                      ),
+                    ),
+                    trailing: Radio<String>( // استخدام trailing
+                      value: 'newest',
+                      groupValue: Hocontroller.selectedDateSortOrder.value,
+                      onChanged: (String? value) {
+                        Hocontroller.selectedDateSortOrder.value = value!;
+                        String currentStatus = '';
+                        if (Hocontroller.selectedItem.value == 0) {
+                          currentStatus = 'pending';
+                        } else if (Hocontroller.selectedItem.value == 1) {
+                          currentStatus = 'completed';
+                        } else if (Hocontroller.selectedItem.value == 2) {
+                          currentStatus = 'canceled';
+                        } else if (Hocontroller.selectedItem.value == 3) {
+                          currentStatus = 'confirmed';
+                        }
+                        Hocontroller.filterList(currentStatus);
+                        Get.back();
+                      },
+                      activeColor: MyColors.primaryColor,
+                    ),
+                    onTap: () { // للسماح بالنقر على أي جزء من ListTile للتحديد
+                      Hocontroller.selectedDateSortOrder.value = 'newest';
+                      String currentStatus = '';
+                      if (Hocontroller.selectedItem.value == 0) {
+                        currentStatus = 'pending';
+                      } else if (Hocontroller.selectedItem.value == 1) {
+                        currentStatus = 'completed';
+                      } else if (Hocontroller.selectedItem.value == 2) {
+                        currentStatus = 'canceled';
+                      } else if (Hocontroller.selectedItem.value == 3) {
+                        currentStatus = 'confirmed';
+                      }
+                      Hocontroller.filterList(currentStatus);
+                      Get.back();
+                    },
+                  ),
+                  ListTile(
+                    title: Text(
+                      'الأقدم أولاً',
+                      style: TextStyle(
+                        color: controller.themeController.isDarkMode.value ? MyColors.white : Colors.black,
+                      ),
+                    ),
+                    trailing: Radio<String>( // استخدام trailing
+                      value: 'oldest',
+                      groupValue: Hocontroller.selectedDateSortOrder.value,
+                      onChanged: (String? value) {
+                        Hocontroller.selectedDateSortOrder.value = value!;
+                        String currentStatus = '';
+                        if (Hocontroller.selectedItem.value == 0) {
+                          currentStatus = 'pending';
+                        } else if (Hocontroller.selectedItem.value == 1) {
+                          currentStatus = 'completed';
+                        } else if (Hocontroller.selectedItem.value == 2) {
+                          currentStatus = 'canceled';
+                        } else if (Hocontroller.selectedItem.value == 3) {
+                          currentStatus = 'confirmed';
+                        }
+                        Hocontroller.filterList(currentStatus);
+                        Get.back();
+                      },
+                      activeColor: MyColors.primaryColor,
+                    ),
+                    onTap: () { // للسماح بالنقر على أي جزء من ListTile للتحديد
+                      Hocontroller.selectedDateSortOrder.value = 'oldest';
+                      String currentStatus = '';
+                      if (Hocontroller.selectedItem.value == 0) {
+                        currentStatus = 'pending';
+                      } else if (Hocontroller.selectedItem.value == 1) {
+                        currentStatus = 'completed';
+                      } else if (Hocontroller.selectedItem.value == 2) {
+                        currentStatus = 'canceled';
+                      } else if (Hocontroller.selectedItem.value == 3) {
+                        currentStatus = 'confirmed';
+                      }
+                      Hocontroller.filterList(currentStatus);
+                      Get.back();
+                    },
+                  ),
+                ],
+              ),
+            ),
+        )
+        );
+        },
+    );
+  }
+
   Future<void> _loaduserType() async {
 
     final SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -90,6 +375,21 @@ class _BookingState extends State<Booking> with SingleTickerProviderStateMixin {
                       Expanded(
                         child: InkWell(
                           onTap: () {
+                            Hocontroller.selectedItem.value = 3;
+                            Hocontroller.filterList('confirmed');
+                          },
+                          child: customContainerButton(
+                            "مؤكدة",
+                            3,
+                            Hocontroller.selectedItem.value,
+                            controller.themeController.isDarkMode.value,
+                          ),
+                        ),
+                      ),
+                      const SizedBox(width: 8),
+                      Expanded(
+                        child: InkWell(
+                          onTap: () {
                             Hocontroller.selectedItem.value = 1;
                             Hocontroller.filterList('completed');
                           },
@@ -116,8 +416,49 @@ class _BookingState extends State<Booking> with SingleTickerProviderStateMixin {
                           ),
                         ),
                       ),
+
                     ],
                   ),
+                  // أزرار الفرز (تظهر فقط للمضيف)
+                  if (userType.value == 'host')
+                    Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 10.0),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Expanded(
+                            child: InkWell(
+                              onTap: () {
+                                _showRestAreaFilterBottomSheet(context);
+                              },
+                              child: _buildSortButton(
+                                text: "فرز حسب الاستراحة",
+                                icon: Icons.filter_list,
+                                isDarkMode: controller.themeController.isDarkMode.value,
+                                // يمكنك إضافة حالة تحديد الزر هنا إذا أردت إظهار لون مختلف له
+                                // مثلاً إذا كان هناك فلتر استراحة مطبق
+                                isSelected: Hocontroller.selectedRestAreaIdFilter.value != null,
+                              ),
+                            ),
+                          ),
+                          const SizedBox(width: 10),
+                          Expanded(
+                            child: InkWell(
+                              onTap: () {
+                                _showDateSortBottomSheet(context);
+                              },
+                              child: _buildSortButton(
+                                text: "فرز حسب التاريخ",
+                                icon: Icons.sort,
+                                isDarkMode: controller.themeController.isDarkMode.value,
+                                // مثلاً إذا كان هناك فلتر تاريخ مطبق
+                                isSelected: Hocontroller.selectedDateSortOrder.value != 'newest', // إذا كان ليس الافتراضي
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
                   const SizedBox(height: 20),
                   Expanded(
                     child: controller.isLoading.value
@@ -494,3 +835,73 @@ class _BookingState extends State<Booking> with SingleTickerProviderStateMixin {
   //   );
   // }
 }}
+// **أضف هذه الدالة المساعدة داخل _BookingState**
+Widget _buildSortButton({
+  required String text,
+  required IconData icon,
+  required bool isDarkMode,
+  bool isSelected = false, // لتحديد ما إذا كان الزر في حالة "محدد"
+}) {
+  return Container(
+    padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 5),
+    alignment: Alignment.center,
+    decoration: BoxDecoration(
+      color: isSelected
+          ? isDarkMode
+          ? MyColors.successColor // لون عندما يكون محدد وفي الوضع الداكن
+          : MyColors.primaryColor // لون عندما يكون محدد وفي الوضع الفاتح
+          : isDarkMode
+          ? MyColors.scaffoldDarkColor // لون عادي في الوضع الداكن
+          : MyColors.white, // لون عادي في الوضع الفاتح
+      borderRadius: BorderRadius.circular(20),
+      border: Border.all(
+        color: isSelected
+            ? isDarkMode
+            ? MyColors.successColor
+            : MyColors.primaryColor
+            : isDarkMode
+            ? Colors.grey.shade700 // حدود أقل وضوحًا في الداكن
+            : Colors.grey.shade300, // حدود خفيفة في الفاتح
+      ),
+      boxShadow: isSelected
+          ? [
+        BoxShadow(
+          color: isDarkMode ? Colors.transparent : Colors.grey.shade300,
+          blurRadius: 5,
+          offset: const Offset(0, 3),
+        )
+      ]
+          : [], // لا يوجد ظل إذا لم يكن محدداً
+    ),
+    child: Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        Icon(
+          icon,
+          color: isSelected
+              ? MyColors.white
+              : isDarkMode
+              ? MyColors.white
+              : MyColors.primaryColor,
+          size: 18,
+        ),
+        const SizedBox(width: 5),
+        Flexible( // استخدم Flexible لتجنب تجاوز النص للحدود
+          child: Text(
+            text,
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              color: isSelected
+                  ? MyColors.white
+                  : isDarkMode
+                  ? MyColors.white
+                  : MyColors.primaryColor,
+              fontWeight: FontWeight.w600,
+              fontSize: 12, // حجم خط أصغر ليتناسب مع الزر
+            ),
+          ),
+        ),
+      ],
+    ),
+  );
+}

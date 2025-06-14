@@ -1,4 +1,6 @@
 
+import 'package:get/get.dart';
+import 'package:hotel_booking/Model/AllReview.dart';
 import 'package:hotel_booking/presentation/screen/hotelDetails/Modelclass/review_model.dart';
 
 import '../hotelDetails/Modelclass/details_model.dart';
@@ -9,6 +11,7 @@ class Detail {
   int? id;
   String? hotelName;
   String? location;
+  String?cityname;
   String? description;
   String? mainImage;
   double rating = 0.0;
@@ -51,6 +54,12 @@ class Detail {
   bool? well; // هل يوجد بئر
   bool? powerGenerator; // هل يوجد مولد كهربائي
   bool?OutdoorBathroom;
+  String? otherSpecs;
+  double? holidayPrice;
+  double? price;
+  String? idProofType;
+  double? eidDaysPrice;
+  String?virtual_tour_link;
   // الصور
  // List<String> detailsImages = []; // صور التفاصيل
   List<String> detailsImages = []; // صور إضافية
@@ -58,11 +67,15 @@ class Detail {
   List<Details> details = []; // تفاصيل إضافية
   List<Facility> facility = []; // المرافق
   List<AllReview> allReview = []; // المراجعات
+  final RxList<AllReviews> allReviews = <AllReviews>[].obs; // <--- هذا هو التغيير الرئيسي
+
+
 
   Detail.fromJson(Map<String, dynamic> json) {
     id = json['id'];
     hotelName = json['name'];
     location = json['location'];
+    cityname = json['city_name'];
     description = json['description'];
     mainImage = json['main_image'];
     rating = json['rating']?.toDouble() ?? 0.0;
@@ -112,6 +125,15 @@ class Detail {
       }).toList();
 
       detailsImages = imagesList;
+      holidayPrice = _parseDouble(json['holiday_price']);
+      idProofType = json['id_proof_type'];
+      eidDaysPrice = _parseDouble(json['eid_days_price']);
+      otherSpecs = json['other_specs'];
+      price = _parseDouble(json['price']);
+
+
+
+
     }
 
 
@@ -149,6 +171,7 @@ class Detail {
       well: well,
       powerGenerator: powerGenerator,
       OutdoorBathroom: OutdoorBathroom,
+
     ));
   }
 }
@@ -207,4 +230,11 @@ class RecentlyBook {
     data['image'] = image;
     return data;
   }
+}
+double? _parseDouble(dynamic value) {
+  if (value == null) return null;
+  if (value is double) return value;
+  if (value is int) return value.toDouble();
+  if (value is String) return double.tryParse(value);
+  return null;
 }

@@ -1,4 +1,4 @@
-package com.example.esteraha
+package com.rest.esteraha
 
 import io.flutter.embedding.android.FlutterActivity
 

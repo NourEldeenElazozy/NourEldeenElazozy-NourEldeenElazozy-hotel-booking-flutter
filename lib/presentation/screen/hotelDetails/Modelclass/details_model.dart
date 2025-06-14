@@ -31,6 +31,11 @@ class Details {
   bool? well;
   bool? powerGenerator;
   bool?OutdoorBathroom;
+  String? otherSpecs;
+  double? holidayPrice;
+  double? price;
+  String? idProofType;
+  double? eidDaysPrice;
   Details({
     this.areaType,
     this.totalSpace,
@@ -64,6 +69,10 @@ class Details {
     this.well,
     this.powerGenerator,
     this.OutdoorBathroom,
-
+    this.otherSpecs,
+    this.holidayPrice,
+    this.price,
+    this.idProofType,
+    this.eidDaysPrice,
   });
 }

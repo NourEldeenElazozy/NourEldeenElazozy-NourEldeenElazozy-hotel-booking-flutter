@@ -91,17 +91,17 @@ PreferredSizeWidget homeAppBar(String title, bool status, bool isDarkMode, {bool
                 )
               else
                 Container( // Original app icon container if no back button
-                  width: 32,
-                  margin: const EdgeInsets.only(left: 15),
-                  height: 32,
+                  width: 50,
+                  //margin: const EdgeInsets.only(left: 15),
+
+                  height: 50,
                   padding: const EdgeInsets.all(8),
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(10),
                   ),
                   child: Image.asset(
                     MyImages.appIcon,
-                    width: 20,
-                    height: 20,
+
                   ),
                 ),
               const SizedBox(width: 10),
