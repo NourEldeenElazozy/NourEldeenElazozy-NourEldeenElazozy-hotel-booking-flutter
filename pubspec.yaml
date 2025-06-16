@@ -65,6 +65,7 @@ dependencies:
   sms_autofill: ^2.4.1
   flutter_local_notifications: ^17.1.2
   firebase_messaging: ^14.9.4
+
   # location
   location: ^5.0.3
   google_maps_flutter: ^2.5.3

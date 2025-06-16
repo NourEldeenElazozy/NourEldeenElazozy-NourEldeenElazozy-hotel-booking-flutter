@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="background_channel_id">high_importance_channel</string>
+    <!-- هذا يجب أن يتطابق مع معرف القناة الذي أنشأته في كود Flutter -->
+</resources>
