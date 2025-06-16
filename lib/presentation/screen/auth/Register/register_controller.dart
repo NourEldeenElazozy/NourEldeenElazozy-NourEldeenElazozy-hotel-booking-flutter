@@ -61,7 +61,6 @@ class RegisterController extends GetxController {
       print(gender.value);
       print(useType);
 
-      // تحويل الرقم: إزالة الصفر الأول وإضافة 218
       String rawPhone = phoneController.text;
       String phone;
       if (rawPhone.startsWith('09')) {
@@ -73,92 +72,73 @@ class RegisterController extends GetxController {
         return;
       }
 
-      // ✅ إظهار لودينق قبل إرسال OTP
-      Get.dialog(
-        const Center(child: CircularProgressIndicator()),
-        barrierDismissible: false,
-      );
+      Get.dialog(const Center(child: CircularProgressIndicator()), barrierDismissible: false);
 
-      // 1. إرسال OTP
       final otpResponse = await Dio().post(
         'http://10.0.2.2:8000/api/send-otp',
         data: {"target_number": phone},
       );
 
-      // ✅ إغلاق اللودينق بعد إرسال OTP
       Get.back();
 
-      if (otpResponse.statusCode == 200 && otpResponse.data['success'] == true) {
-        String? otpContent = otpResponse.data['response_data']['content'];
-        int? otp;
-
-        if (otpContent != null) {
-          RegExp regExp = RegExp(r'\d+$');
-          Iterable<RegExpMatch> matches = regExp.allMatches(otpContent);
-          if (matches.isNotEmpty) {
-            otp = int.tryParse(matches.first.group(0)!);
-          }
+      Map<String, dynamic> parsedData;
+      if (otpResponse.data is String) {
+        try {
+          parsedData = jsonDecode(otpResponse.data);
+        } catch (e) {
+          Get.snackbar('خطأ', 'استجابة غير صالحة من الخادم (تنسيق JSON خاطئ)', backgroundColor: Colors.red);
+          print('JSON Decode Error: $e');
+          return;
         }
+      } else if (otpResponse.data is Map<String, dynamic>) {
+        parsedData = otpResponse.data;
+      } else {
+        Get.snackbar('خطأ', 'نوع استجابة غير متوقع من الخادم', backgroundColor: Colors.red);
+        return;
+      }
 
-        if (otp == null) {
-          Get.snackbar('خطأ', 'لم يتم استخراج رمز التحقق من الاستجابة.', backgroundColor: Colors.red);
+      if (parsedData['status'] == 'success') {
+        final content = parsedData['content'];
+        final otpMatch = RegExp(r'\d{6}').firstMatch(content ?? '');
+
+        if (otpMatch == null) {
+          Get.snackbar('خطأ', 'تعذر استخراج رمز التحقق', backgroundColor: Colors.red);
           return;
         }
 
-        print("Received OTP: $otp");
+        final otp = otpMatch.group(0)!;
 
-        // *********** التغييرات هنا لحل مشكلة لوحة المفاتيح ***********
         showModalBottomSheet(
           context: context,
-          isScrollControlled: true, // مهم: يجعل الـ BottomSheet يأخذ كامل الارتفاع المتاح
+          isScrollControlled: true,
           builder: (_) {
             TextEditingController otpController = TextEditingController();
-
             return Directionality(
               textDirection: TextDirection.rtl,
-              // استخدام MediaQuery.of(context).viewInsets.bottom لتعديل الحشوة
-              // بحيث ترتفع الـ BottomSheet مع لوحة المفاتيح
               child: Padding(
                 padding: EdgeInsets.only(
                   left: 16.0,
                   right: 16.0,
                   top: 16.0,
-                  // هذه هي الحشوة التي سترفع الـ BottomSheet عند ظهور لوحة المفاتيح
                   bottom: MediaQuery.of(context).viewInsets.bottom + 16.0,
                 ),
                 child: Column(
-                  mainAxisSize: MainAxisSize.min, // يجعل العمود يأخذ أقل مساحة ممكنة
+                  mainAxisSize: MainAxisSize.min,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Center(
-                      child: Text(
-                        "أدخل رمز التحقق المرسل إلى رقمك",
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 20,
-                          color: Colors.black87,
-                        ),
-                      ),
-                    ),
+                    Center(child: Text("أدخل رمز التحقق المرسل إلى رقمك", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20))),
                     const SizedBox(height: 10),
                     TextField(
                       controller: otpController,
                       keyboardType: TextInputType.number,
-                      maxLength: otp.toString().length,
-                      decoration: const InputDecoration(
-                        border: OutlineInputBorder(),
-                        hintText: 'رمز التحقق',
-                      ),
+                      maxLength: 6,
+                      decoration: const InputDecoration(border: OutlineInputBorder(), hintText: 'رمز التحقق'),
                     ),
                     ElevatedButton(
                       onPressed: () async {
-                        if (otpController.text == otp.toString()) {
+                        if (otpController.text == otp) {
                           Navigator.pop(context);
-
-                          Get.dialog(
-                            const Center(child: CircularProgressIndicator()),
-                            barrierDismissible: false,
-                          );
+                          Get.dialog(const Center(child: CircularProgressIndicator()), barrierDismissible: false);
 
                           final response = await Dio().post(
                             'http://10.0.2.2:8000/api/register',
@@ -171,47 +151,26 @@ class RegisterController extends GetxController {
                               'user_type': useType,
                               'password': passwordController.text,
                             },
-                            options: Options(
-                              validateStatus: (status) => status! < 500,
-                            ),
+                            options: Options(validateStatus: (status) => status! < 500),
                           );
 
                           Get.back();
 
                           if (response.statusCode == 200) {
-                            LoginResponse loginResponse = LoginResponse.fromJson(response.data);
+                            final loginResponse = LoginResponse.fromJson(response.data);
                             token.value = loginResponse.token;
                             user.value = loginResponse.user;
                             await _storeData(loginResponse.token, loginResponse.user);
                             Get.snackbar('نجاح', 'تم تسجيل المستخدم بنجاح!', backgroundColor: Colors.green);
-                            if (token.isNotEmpty) {
-                              Get.offNamedUntil("/bottomBar", (route) => false);
-                            }
-                          } else if (response.statusCode == 422) {
-                            final errorData = response.data;
-                            if (errorData is List) {
-                              for (var msg in errorData) {
-                                Get.snackbar('خطأ', msg.toString(), backgroundColor: Colors.red,colorText: Colors.white);
-                              }
-                            } else if (errorData is Map && errorData['errors'] != null) {
-                              (errorData['errors'] as Map).forEach((key, value) {
-                                if (value is List) {
-                                  for (var msg in value) {
-                                    Get.snackbar('خطأ', msg.toString(), backgroundColor: Colors.red,colorText: Colors.white);
-                                  }
-                                }
-                              });
-                            } else {
-                              Get.snackbar('خطأ', 'فشل في التسجيل: ${response.statusCode}', backgroundColor: Colors.red,colorText: Colors.white);
-                            }
+                            Get.offNamedUntil("/bottomBar", (route) => false);
                           } else {
-                            Get.snackbar('خطأ', 'فشل في التسجيل: ${response.statusCode}', backgroundColor: Colors.red,colorText: Colors.white);
+                            Get.snackbar('خطأ', 'فشل في التسجيل: ${response.statusCode}', backgroundColor: Colors.red);
                           }
                         } else {
-                          Get.snackbar('خطأ', 'رمز التحقق غير صحيح', backgroundColor: Colors.red,colorText: Colors.white);
+                          Get.snackbar('خطأ', 'رمز التحقق غير صحيح', backgroundColor: Colors.red);
                         }
                       },
-                      child: Center(child: const Text("تأكيد")),
+                      child: const Center(child: Text("تأكيد")),
                     ),
                   ],
                 ),
@@ -220,68 +179,57 @@ class RegisterController extends GetxController {
           },
         );
       } else {
-        Get.snackbar(
-          'خطأ',
-          otpResponse.data['message'] ?? 'فشل إرسال رمز التحقق، تأكد من صحة الرقم',
-          backgroundColor: Colors.red,
-        );
+        Get.snackbar('خطأ', parsedData['message'] ?? 'فشل إرسال رمز التحقق', backgroundColor: Colors.red);
       }
     } catch (e) {
       Get.back();
-
-      if (e is DioException) {
-        print("Dio Error: ${e.response?.data}");
-        print("Dio Error message: ${e.message}");
-        final errorData = e.response?.data;
-
-        if (errorData != null) {
-          if (errorData is Map && errorData['message'] != null) {
-            Get.snackbar('خطأ', errorData['message'].toString(), backgroundColor: Colors.red);
-          } else if (errorData is List) {
-            for (var error in errorData) {
-              Get.snackbar('خطأ', error.toString(), backgroundColor: Colors.red);
-            }
-          } else if (errorData is Map && errorData['errors'] != null) {
-            (errorData['errors'] as Map).forEach((key, value) {
-              if (value is List) {
-                for (var msg in value) {
-                  Get.snackbar('خطأ', msg.toString(), backgroundColor: Colors.red);
-                }
-              }
-            });
-          } else {
-            Get.snackbar('خطأ', 'حدث خطأ غير معروف من الخادم: $errorData', backgroundColor: Colors.red);
-          }
-        } else {
-          Get.snackbar('خطأ', 'حدث خطأ أثناء الاتصال بالخادم، لا توجد بيانات استجابة.', backgroundColor: Colors.red);
-        }
-      } else {
-        Get.snackbar('خطأ', 'حدث خطأ غير متوقع: ${e.toString()}', backgroundColor: Colors.red);
-      }
+      Get.snackbar('خطأ', 'حدث خطأ غير متوقع: ${e.toString()}', backgroundColor: Colors.red);
     }
   }
 
+
   Future<void> sendOtp(String phoneNumber) async {
     try {
-      // حذف الصفر الأول وإضافة 218
-      String normalizedPhone = phoneNumber.startsWith('0')
+      String phone = phoneNumber.startsWith('09')
           ? '218${phoneNumber.substring(1)}'
+          : phoneNumber.startsWith('9')
+          ? '218$phoneNumber'
           : phoneNumber;
+
       final response = await Dio().post(
-        'http://10.0.2.2:8000//api/send-otp',
-        data: {
-          "phonenumber": normalizedPhone,
-        },
+        'http://10.0.2.2:8000/api/send-otp',
+        data: {"target_number": phone},
       );
 
-      if (response.statusCode == 200 && response.data['success'] == true) {
-        generatedOtp.value = response.data['otp'].toString(); // خزن OTP للمقارنة لاحقاً
-        //showOtpBottomSheet(phoneNumber);
+      Map<String, dynamic> parsedData;
+      if (response.data is String) {
+        try {
+          parsedData = jsonDecode(response.data);
+        } catch (e) {
+          Get.snackbar('خطأ', 'استجابة غير صالحة من الخادم (تنسيق JSON خاطئ)', backgroundColor: Colors.red);
+          return;
+        }
+      } else if (response.data is Map<String, dynamic>) {
+        parsedData = response.data;
       } else {
-        Get.snackbar('خطأ', 'فشل في إرسال رمز التحقق');
+        Get.snackbar('خطأ', 'نوع استجابة غير متوقع من الخادم', backgroundColor: Colors.red);
+        return;
+      }
+
+      if (parsedData['status'] == 'success') {
+        final content = parsedData['content'];
+        final otpMatch = RegExp(r'\d{6}').firstMatch(content ?? '');
+        if (otpMatch != null) {
+          generatedOtp.value = otpMatch.group(0)!;
+          // يمكنك الآن استخدام generatedOtp في أي مكان آخر
+        } else {
+          Get.snackbar('خطأ', 'تعذر استخراج رمز التحقق من الرسالة', backgroundColor: Colors.red);
+        }
+      } else {
+        Get.snackbar('خطأ', parsedData['message'] ?? 'فشل إرسال رمز التحقق', backgroundColor: Colors.red);
       }
     } catch (e) {
-      Get.snackbar('خطأ', 'حدث خطأ أثناء إرسال رمز التحقق');
+      Get.snackbar('خطأ', 'حدث خطأ أثناء إرسال رمز التحقق: ${e.toString()}', backgroundColor: Colors.red);
     }
   }
 
