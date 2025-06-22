@@ -408,6 +408,7 @@ class HomeController extends GetxController {
        // طباعة المعاملات
        print("Query Parameters: $queryParameters");
 
+
        // إجراء الطلب
        final response = await Dio().get(
          'http://10.0.2.2:8000/api/rest-areas/filter',
@@ -417,6 +418,8 @@ class HomeController extends GetxController {
        if (response.statusCode == 200) {
          restAreas.value = response.data; // تخزين البيانات في المتغير
          print(restAreas.value);
+         print("Query all: ${restAreas.value}");
+         print("Query all: ${restAreas[0]['google_maps_location']}");
        } else {
          restAreas.clear();
 

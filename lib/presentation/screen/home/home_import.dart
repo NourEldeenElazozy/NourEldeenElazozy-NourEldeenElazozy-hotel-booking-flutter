@@ -8,6 +8,7 @@ import 'package:hotel_booking/core/constants/my_colors.dart';
 import 'package:hotel_booking/core/constants/my_images.dart';
 import 'package:hotel_booking/core/constants/my_strings.dart';
 import 'package:hotel_booking/core/themes/themes_controller.dart';
+import 'package:hotel_booking/presentation/MyGoogleMapWidget.dart';
 import 'package:hotel_booking/presentation/common_widgets/appbar.dart';
 import 'package:hotel_booking/presentation/common_widgets/bottomsheet.dart';
 import 'package:hotel_booking/presentation/common_widgets/hotel_display_view.dart';

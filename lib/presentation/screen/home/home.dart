@@ -432,6 +432,23 @@ class _HomeState extends State<Home> {
                 ),
               ),
               const SizedBox(height: 15),
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: ElevatedButton(
+                  onPressed: () {
+                    // للتنقل إلى صفحة الخريطة
+                    // لو تستخدم GetX:
+                    Get.to(() =>  MapPickerScreen(restAreas: controller.restAreas,));
+
+                    // أو لو تستخدم Navigator:
+                    // Navigator.push(
+                    //   context,
+                    //   MaterialPageRoute(builder: (context) => NearbyRestAreasPage()),
+                    // );
+                  },
+                  child: Text(' عرض الاستراحات القريبة منك',style: TextStyle(fontWeight: FontWeight.w700, fontSize: 16,fontFamily:'Tajawal'  ),),
+                ),
+              ),
               Container(
                 child: Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 15),
