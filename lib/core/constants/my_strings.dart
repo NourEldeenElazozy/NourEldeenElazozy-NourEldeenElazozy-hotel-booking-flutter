@@ -305,12 +305,12 @@ class MyString {
   static const String notifications = "الإشعارات";
   static const String darkTheme = "الوضع الداكن";
   static const String language = "اللغة";
-  static const String helpCentre = "مركز المساعدة";
-  static const String privacy = "الخصوصية";
+  static const String helpCentre = "اتصل بنا";
+  static const String privacy = "الشروط و الاحكام";
   static const String rateBooKNest = "قيّم إستراحة";
   static const String logout = "تسجيل الخروج";
   static const String submit = "إرسال";
-  static const String rateTitle = "قيّم Learn Ease!";
+  static const String rateTitle = "قيّم تطبيقنا";
   static const String rateSubTitle = "اضغط على نجمة لتقييمك. شكرًا!";
 
 //----------------------------------- ProfileNotification_Screen ------------------------------
