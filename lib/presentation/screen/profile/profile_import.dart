@@ -18,6 +18,7 @@ import 'package:hotel_booking/presentation/screen/auth/Register/register_import.
 import 'package:hotel_booking/utils/validations.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:dio/dio.dart';
 
 import '../../common_widgets/bottomsheet.dart';
 

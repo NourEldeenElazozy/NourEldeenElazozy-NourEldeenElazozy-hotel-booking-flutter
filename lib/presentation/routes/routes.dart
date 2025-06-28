@@ -337,6 +337,13 @@ class Routes {
 
       transitionDuration: const Duration(milliseconds: 600),
     ),
+    GetPage(
+      name: "/request360Page",
+      page: () =>  Request360Page(),
+
+      transitionDuration: const Duration(milliseconds: 600),
+    ),
+
 
     GetPage(
       name: "/PrivacyPolicy",

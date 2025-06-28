@@ -19,6 +19,7 @@ import 'package:hotel_booking/presentation/screen/home/home_import.dart';
 import 'package:hotel_booking/presentation/screen/notification/notification_import.dart';
 import 'package:hotel_booking/presentation/screen/paymentInfo/payment_info_import.dart';
 import 'package:hotel_booking/presentation/screen/paymentMethod/payment_import.dart';
+import 'package:hotel_booking/presentation/screen/profile/Request360Page.dart';
 import 'package:hotel_booking/presentation/screen/profile/profile_import.dart';
 import 'package:hotel_booking/presentation/screen/reservation/reservation_import.dart';
 import 'package:hotel_booking/presentation/screen/search/search_import.dart';

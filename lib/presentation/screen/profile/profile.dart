@@ -220,6 +220,7 @@ class _ProfileState extends State<Profile> {
                 child: commonListTile(MyImages.myHost,
                     MyString.myHost, controller.isDarkMode.value),
               ),
+
               if(userType.value=="host")
                 InkWell(
                   onTap: () {
@@ -289,6 +290,13 @@ class _ProfileState extends State<Profile> {
                 child: commonListTile(MyImages.mobile,
                     MyString.helpCentre, controller.isDarkMode.value),
               ),
+              if(userType.value=="host")
+                InkWell(
+                  onTap: () {
+                    Get.toNamed('/request360Page');
+                  },
+                  child: commonListTile(MyImages.congratulation, "طلب تصوير 360", controller.isDarkMode.value),
+                ),
               InkWell(
                 onTap: () {
                   Get.toNamed('/PrivacyPolicy');
