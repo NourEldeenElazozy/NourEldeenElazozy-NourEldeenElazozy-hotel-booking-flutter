@@ -8,7 +8,7 @@ class Reservation extends StatefulWidget {
 }
 
 class _ReservationState extends State<Reservation> {
-
+  late HomeController Hocontroller = Get.put(HomeController());
   late ReservationController controller;
 
   @override
@@ -258,23 +258,98 @@ class _ReservationState extends State<Reservation> {
                 child: FloatingActionButton.extended(
                   heroTag: 'approve_fab', // Unique tag for each FAB
                   onPressed: () {
-                    // Implement approval logic here
-                    Get.defaultDialog(
-                      title: "تأكيد الموافقة",
-                      middleText: "هل أنت متأكد من الموافقة على الحجز؟",
-                      textConfirm: "نعم",
-                      textCancel: "لا",
-                      confirmTextColor: Colors.white,
-                      buttonColor: Colors.green,
-                      cancelTextColor: Colors.black,
-                      onConfirm: () {
-                        Get.back(); // Close dialog
-                        // Call your controller method to approve the reservation
-                        // controller.approveReservation(reservation['id']);
-                        Get.snackbar('تم', 'تم تأكيد الحجز بنجاح!');
-                      },
-                      onCancel: () {},
-                    );
+                    // اجلب تواريخ الحجز الحالي
+                    final String currentCheckIn = reservation['check_in'];
+                    final String currentCheckOut = reservation['check_out'];
+                    final int currentId = reservation['id'];
+
+                    // ابحث عن حجوزات أخرى بنفس التاريخ (عدا هذا الحجز)
+                    final overlapping = Hocontroller.filteredReservations.where((res) {
+                      return res['id'] != currentId &&
+                          res['check_in'] == currentCheckIn &&
+                          res['check_out'] == currentCheckOut &&
+                          res['status'] == 'pending';
+                    }).toList();
+
+                    if (overlapping.isNotEmpty) {
+                      // يوجد حجز آخر بنفس التوقيت
+                      Get.defaultDialog(
+                        title: "تنبيه",
+                        middleText:
+                        "يوجد حجز آخر في نفس التوقيت لهذه الاستراحة. سيتم إلغاؤه تلقائيًا إذا قمت بتأكيد هذا الحجز. ماذا تريد أن تفعل؟",
+                        contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                        confirm: const SizedBox(), // لمنع استخدام الزر الافتراضي
+                        cancel: const SizedBox(),  // لمنع استخدام الزر الافتراضي
+                        actions: [
+                          // زر متابعة
+                          ElevatedButton(
+                            onPressed: () async {
+                              Get.back(); // إغلاق هذا التنبيه
+
+                              //await Hocontroller.confirmReservation(reservationId);
+
+                              for (var res in overlapping) {
+                                // await Hocontroller.cancelReservation(res['id']);
+                              }
+
+                              await Hocontroller.fetchRecentlyBooked();
+                            },
+                            style: ElevatedButton.styleFrom(backgroundColor: Colors.green),
+                            child: const Text("نعم، متابعة", style: TextStyle(color: Colors.white, fontFamily: 'Tajawal', )),
+                          ),
+                          // زر عرض الحجوزات
+                          OutlinedButton(
+                            onPressed: () {
+                              Get.back(); // إغلاق التنبيه
+
+                              // فتح صفحة الحجوزات لنفس اليوم
+                              Get.dialog(
+                                AlertDialog(
+                                  title: const Text("الحجوزات في هذا اليوم"),
+                                  content: SizedBox(
+                                      height: 300,
+                                      width: double.maxFinite,
+                                      child: SameDayReservationsPage(reservations: overlapping)
+                                  ),
+                                  actions: [
+                                    TextButton(
+                                      onPressed: () => Get.back(),
+                                      child: const Text("إغلاق"),
+                                    )
+                                  ],
+                                ),
+                              );
+                            },
+                            style: ElevatedButton.styleFrom(backgroundColor: Colors.orange),
+                            child: const Text("عرض الحجوزات لنفس اليوم",style: TextStyle(color: Colors.white)),
+                          ),
+                          // زر الإلغاء
+                          TextButton(
+                            onPressed: () {
+                              Get.back(); // إغلاق التنبيه
+                            },
+                            child: const Text("إلغاء", style: TextStyle(color: Colors.black)),
+                          ),
+                        ],
+                      );
+                    } else {
+                      // لا يوجد تعارض
+                      Get.defaultDialog(
+                        title: "تأكيد الموافقة",
+                        middleText: "هل أنت متأكد من الموافقة على الحجز؟",
+                        textConfirm: "نعم",
+                        textCancel: "لا",
+                        confirmTextColor: Colors.white,
+                        buttonColor: Colors.green,
+                        cancelTextColor: Colors.black,
+                        onConfirm: () {
+                          Get.back();
+                          //controller.approveReservation(currentId);
+                          Get.snackbar('تم', 'تم تأكيد الحجز.');
+                        },
+                        onCancel: () {},
+                      );
+                    }
                   },
                   label: const Text('موافقة', style: TextStyle(color: Colors.white)),
                   icon: const Icon(Icons.check, color: Colors.white),

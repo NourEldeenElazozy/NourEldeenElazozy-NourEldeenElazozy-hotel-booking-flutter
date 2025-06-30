@@ -1,4 +1,8 @@
-part of 'notification_import.dart';
+import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:hotel_booking/presentation/common_widgets/appbar.dart';
+import 'package:hotel_booking/presentation/screen/notification/notification_controller.dart';
+import 'package:intl/intl.dart' as intl ;
 
 class NotificationScreen extends StatefulWidget {
   const NotificationScreen({super.key});
@@ -8,7 +12,6 @@ class NotificationScreen extends StatefulWidget {
 }
 
 class _NotificationScreenState extends State<NotificationScreen> {
-
   late NotificationController controller;
 
   @override
@@ -19,68 +22,81 @@ class _NotificationScreenState extends State<NotificationScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: const CustomFullAppBar(
-        title: MyString.notification
-      ),
-      body: Obx(() => SingleChildScrollView(
-        child: Padding(
-          padding: const EdgeInsets.all(15),
-            child: ListView.builder(
-              physics: const NeverScrollableScrollPhysics(),
-              shrinkWrap: true,
-              itemCount: controller.allNotification.length,
-              itemBuilder: (context, mainIndex) {
-                final data = controller.allNotification[mainIndex].data;
-                return Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(DateFormat('MMMM dd, yyyy').format(controller.allNotification[mainIndex].date).toString(), style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 18),),
-                    const SizedBox(height: 15),
-                    ListView.builder(
-                      physics: const NeverScrollableScrollPhysics(),
-                      shrinkWrap: true,
-                      itemCount: data.length,
-                      itemBuilder: (context, index) {
-                        return Column(
-                          children: [
-                            Container(
-                              padding: const EdgeInsets.all(15),
-                              decoration: BoxDecoration(
-                                color: controller.themeController.isDarkMode.value ? MyColors.darkSearchTextFieldColor : Colors.white,
-                                borderRadius: BorderRadius.circular(15),
-                                boxShadow: [
-                                  BoxShadow(color: controller.themeController.isDarkMode.value ? Colors.transparent : Colors.grey.shade200, blurRadius: 10)
-                                ],
-                              ),
-                              child: Row(
-                                children: [
-                                  SvgPicture.asset(data[index].image, width: 70,),
-                                  const SizedBox(width: 12),
-                                  Expanded(
-                                    child: Column(
-                                      crossAxisAlignment: CrossAxisAlignment.start,
-                                      children: [
-                                        Text(data[index].heading, style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 18),),
-                                        const SizedBox(height: 3),
-                                        Text(data[index].description, style: const TextStyle(fontWeight: FontWeight.w500, fontSize: 14)),
-                                      ],
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                            const SizedBox(height: 15),
-                          ],
-                        );
-                      },
+    return Directionality(
+      textDirection: TextDirection.rtl, // <-- RTL دعم اللغة العربية
+      child: Scaffold(
+        appBar: const CustomFullAppBar(title: "الإشعارات",),
+        body: Obx(
+              () => controller.notifications.isEmpty
+              ? const Center(child: Text('لا توجد إشعارات حالياً'))
+              : ListView.builder(
+            padding: const EdgeInsets.all(16),
+            itemCount: controller.notifications.length,
+            itemBuilder: (context, index) {
+              final item = controller.notifications[index];
+              return Container(
+                margin: const EdgeInsets.only(bottom: 12),
+                padding: const EdgeInsets.all(16),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(12),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.grey.withOpacity(0.1),
+                      blurRadius: 8,
+                      offset: const Offset(0, 2),
                     ),
                   ],
-                );
-              },
-            ),
+                ),
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.all(10),
+                      decoration: BoxDecoration(
+                        color: Colors.blue.shade100,
+                        shape: BoxShape.circle,
+                      ),
+                      child: const Icon(Icons.notifications, color: Colors.blue),
+                    ),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            item.title,
+                            style: const TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          const SizedBox(height: 8),
+                          Text(
+                            item.body,
+                            style: const TextStyle(
+                              fontSize: 14,
+                              color: Colors.black87,
+                            ),
+                          ),
+                          const SizedBox(height: 8),
+                          Text(
+                            intl.DateFormat('yyyy/MM/dd  hh:mm a', 'ar')
+                                .format(item.createdAt),
+                            style: const TextStyle(
+                              fontSize: 12,
+                              color: Colors.grey,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              );
+            },
           ),
-      ),
+        ),
       ),
     );
   }

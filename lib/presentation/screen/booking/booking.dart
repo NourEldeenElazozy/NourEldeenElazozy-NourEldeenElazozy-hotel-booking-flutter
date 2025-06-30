@@ -647,9 +647,99 @@ class _BookingState extends State<Booking> with SingleTickerProviderStateMixin {
                                                               confirmTextColor: Colors.white,
                                                               buttonColor: Colors.green,
                                                               cancelTextColor: Colors.black,
-                                                              onConfirm: () {
+                                                              onConfirm: () async {
+
                                                                 Get.back(); // Close dialog
+
                                                                 // Hocontroller.confirmReservation(Hocontroller.filteredReservations[index]['id']);
+                                                                final currentReservation = Hocontroller.filteredReservations[index];
+
+                                                                final DateTime currentStartDate = DateTime.parse(currentReservation['check_in']);
+
+                                                                final restHouseId = currentReservation['rest_area']['id'];
+
+                                                                final reservationId = currentReservation['id'];
+                                                                // ابحث عن أي حجز آخر بنفس التاريخ ونفس الاستراحة
+
+                                                                final overlapping = Hocontroller.filteredReservations.where((res) {
+
+                                                                  final sameResthouse = res['rest_area']['id'] == restHouseId;
+
+                                                                  final sameDate = DateTime.parse(res['check_in']) == currentStartDate;
+                                                                  final notSame = res['id'] != reservationId;
+                                                                  final isPending = res['status'] == 'pending';
+                                                                  return sameResthouse && sameDate && notSame && isPending;
+                                                                }).toList();
+
+                                                                if (overlapping.isNotEmpty) {
+
+                                                                  // يوجد حجز آخر بنفس التوقيت
+                                                                  Get.defaultDialog(
+                                                                    title: "تنبيه",
+                                                                    middleText:
+                                                                    "يوجد حجز آخر في نفس التوقيت لهذه الاستراحة. سيتم إلغاؤه تلقائيًا إذا قمت بتأكيد هذا الحجز. ماذا تريد أن تفعل؟",
+                                                                    contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                                                                    confirm: const SizedBox(), // لمنع استخدام الزر الافتراضي
+                                                                    cancel: const SizedBox(),  // لمنع استخدام الزر الافتراضي
+                                                                    actions: [
+                                                                      // زر متابعة
+                                                                      ElevatedButton(
+                                                                        onPressed: () async {
+                                                                          Get.back(); // إغلاق هذا التنبيه
+
+                                                                          //await Hocontroller.confirmReservation(reservationId);
+
+                                                                          for (var res in overlapping) {
+                                                                           // await Hocontroller.cancelReservation(res['id']);
+                                                                          }
+
+                                                                          await Hocontroller.fetchRecentlyBooked();
+                                                                        },
+                                                                        style: ElevatedButton.styleFrom(backgroundColor: Colors.green),
+                                                                        child: const Text("نعم، متابعة", style: TextStyle(color: Colors.white, fontFamily: 'Tajawal', )),
+                                                                      ),
+                                                                      // زر عرض الحجوزات
+                                                                      OutlinedButton(
+                                                                        onPressed: () {
+                                                                          Get.back(); // إغلاق التنبيه
+
+                                                                          // فتح صفحة الحجوزات لنفس اليوم
+                                                                          Get.dialog(
+                                                                            AlertDialog(
+                                                                              title: const Text("الحجوزات في هذا اليوم"),
+                                                                              content: SizedBox(
+                                                                                height: 300,
+                                                                                width: double.maxFinite,
+                                                                                child: SameDayReservationsPage(reservations: overlapping)
+                                                                              ),
+                                                                              actions: [
+                                                                                TextButton(
+                                                                                  onPressed: () => Get.back(),
+                                                                                  child: const Text("إغلاق"),
+                                                                                )
+                                                                              ],
+                                                                            ),
+                                                                          );
+                                                                        },
+                                                                        style: ElevatedButton.styleFrom(backgroundColor: Colors.orange),
+                                                                        child: const Text("عرض الحجوزات لنفس اليوم",style: TextStyle(color: Colors.white)),
+                                                                      ),
+                                                                      // زر الإلغاء
+                                                                      TextButton(
+                                                                        onPressed: () {
+                                                                          Get.back(); // إغلاق التنبيه
+                                                                        },
+                                                                        child: const Text("إلغاء", style: TextStyle(color: Colors.black)),
+                                                                      ),
+                                                                    ],
+                                                                  );
+
+                                                                } else {
+                                                                  // لا يوجد تضارب
+                                                                  //await Hocontroller.confirmReservation(reservationId);
+                                                                  await Hocontroller.fetchRecentlyBooked();
+                                                                }
+
                                                               },
                                                               onCancel: () {},
                                                             );
@@ -923,4 +1013,39 @@ Widget _buildSortButton({
       ],
     ),
   );
+}
+class SameDayReservationsPage extends StatelessWidget {
+  final List<dynamic> reservations;
+
+  const SameDayReservationsPage({super.key, required this.reservations});
+
+  @override
+  Widget build(BuildContext context) {
+    return Directionality(
+      textDirection: TextDirection.rtl,
+      child: Scaffold(
+
+        body: ListView.builder(
+          itemCount: reservations.length,
+          itemBuilder: (context, index) {
+            final res = reservations[index];
+            return Card(
+              margin: const EdgeInsets.all(10),
+              child: ListTile(
+                title: Text(res['rest_area']['name'] ?? '---'),
+                subtitle: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text('من: ${res['check_in'] ?? '---'}'),
+                    Text('إلى: ${res['check_out'] ?? '---'}'),
+                    Text('الحالة: ${res['status'] ?? '---'}'),
+                  ],
+                ),
+              ),
+            );
+          },
+        ),
+      ),
+    );
+  }
 }

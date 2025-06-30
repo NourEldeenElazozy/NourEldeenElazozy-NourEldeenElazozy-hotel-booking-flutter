@@ -107,6 +107,14 @@ class _DateTimeSelectState extends State<DateTimeSelect> {
                     : Button(
 
                   onpressed: () async {
+
+
+                    controller.isSubmitted.value = true;
+                    print("Ssss");
+                    if (controller.selectedType.value.isEmpty) {
+                      Get.snackbar("خطأ", "يرجى اختيار نوع الإقامة", backgroundColor: Colors.red, colorText: Colors.white);
+                      return;
+                    }
                     if (controller.dateTimeKey.currentState!.validate()) {
                       if(controller.adult.value==0){
                         Get.snackbar("خطأ", "لايمكن ان يكون عدد البالغين صفر",backgroundColor: Colors.red);
@@ -121,7 +129,8 @@ class _DateTimeSelectState extends State<DateTimeSelect> {
                         DateTime date = intl.DateFormat("dd MMM yyyy").parse(dateText);
                         String formattedDate = intl.DateFormat("dd/MM/yyyy").format(date);
 
-                        print(formattedDate); // سيظهر 27/03/2025
+
+
 
                         // تنفيذ التحقق من التاريخ
                         //controller.dateTimeValidation(context);
@@ -146,6 +155,7 @@ class _DateTimeSelectState extends State<DateTimeSelect> {
                 ),
                 ),
               ),
+
               body: SingleChildScrollView(
                 child: Obx(() => Padding(
                     padding: const EdgeInsets.all(15),
@@ -155,11 +165,12 @@ class _DateTimeSelectState extends State<DateTimeSelect> {
                         children: [
                           Container(
                             padding: const EdgeInsets.all(10),
+                            /*
                             decoration: BoxDecoration(
                               color: controller.themeController.isDarkMode.value ? MyColors.darkTextFieldColor : Colors.green.shade50,
                               borderRadius: BorderRadius.circular(15),
                             ),
-                            /*
+
                         child: TableCalendar(
                           focusedDay: _focusedDay,
                           firstDay: DateTime.utc(1950),
@@ -314,6 +325,8 @@ class _DateTimeSelectState extends State<DateTimeSelect> {
                             ],
                           ),
                           const SizedBox(height: 20),
+
+
                         /*
                           Row(
                             children: [
@@ -515,6 +528,67 @@ class _DateTimeSelectState extends State<DateTimeSelect> {
                               )
                             ],
                           ),
+                          const SizedBox(height: 20),
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              const Text("نوع الإقامة", style: TextStyle(fontWeight: FontWeight.w700)),
+
+                              Obx(() => Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Row(
+                                    children: [
+                                      Expanded(
+                                        child: RadioListTile<String>(
+                                          title: const Text("عائلات"),
+                                          value: "عائلات",
+                                          groupValue: controller.selectedType.value,
+                                          onChanged: (value) {
+                                            controller.selectedType.value = value!;
+                                          },
+                                          contentPadding: EdgeInsets.zero,
+                                        ),
+                                      ),
+                                      Expanded(
+                                        child: RadioListTile<String>(
+                                          title: const Text("شباب"),
+                                          value: "شباب",
+                                          groupValue: controller.selectedType.value,
+                                          onChanged: (value) {
+                                            controller.selectedType.value = value!;
+                                          },
+                                          contentPadding: EdgeInsets.zero,
+                                        ),
+                                      ),
+                                      Expanded(
+                                        child: RadioListTile<String>(
+                                          title: const Text("مناسبة"),
+                                          value: "مناسبة",
+                                          groupValue: controller.selectedType.value,
+                                          onChanged: (value) {
+                                            controller.selectedType.value = value!;
+                                          },
+                                          contentPadding: EdgeInsets.zero,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+
+                                  // شرط الفلديشن: عرض رسالة إذا لم يتم اختيار نوع الإقامة
+                                  if (controller.isSubmitted.value && controller.selectedType.value.isEmpty)
+                                    const Padding(
+                                      padding: EdgeInsets.only(right: 12.0, top: 4),
+                                      child: Text(
+                                        "يرجى اختيار نوع الإقامة",
+                                        style: TextStyle(color: Colors.red, fontSize: 12),
+                                      ),
+                                    ),
+                                ],
+                              )),
+                            ],
+                          ),
+
                         ],
                       ),
                     )

@@ -3,6 +3,7 @@ part of 'date_time_select_import.dart';
 class DateTimeSelectController extends GetxController {
   ThemeController themeController = Get.put(ThemeController());
   var isLoading = false.obs; // حالة التحميل
+  RxBool isSubmitted = false.obs;
   final GlobalKey<FormState> dateTimeKey = GlobalKey<FormState>();
   var reservedDates = <DateTime>[].obs;
   Rx<TextEditingController> checkInDateController = TextEditingController().obs;
@@ -10,7 +11,7 @@ class DateTimeSelectController extends GetxController {
 
   /*DateTime selectCheckInDate = DateTime.now();
   DateTime selectCheckOutDate = DateTime.now();*/
-
+  RxString selectedType = 'عوائل'.obs;
 
   Rx<DateTime> fromDate = DateTime.now().obs;
   Rx<DateTime> toDate = DateTime.now().obs;
