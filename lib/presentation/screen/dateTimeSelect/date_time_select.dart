@@ -107,46 +107,42 @@ class _DateTimeSelectState extends State<DateTimeSelect> {
                     : Button(
 
                   onpressed: () async {
-
-
                     controller.isSubmitted.value = true;
-                    print("Ssss");
-                    if (controller.selectedType.value.isEmpty) {
-                      Get.snackbar("خطأ", "يرجى اختيار نوع الإقامة", backgroundColor: Colors.red, colorText: Colors.white);
+                    print(controller.selectedType.value);
+
+                    if (controller.selectedType.value.isEmpty || controller.selectedType.value == '') {
+                      _showErrorSnackBar(context, "يرجى اختيار نوع الإقامة");
                       return;
                     }
+
                     if (controller.dateTimeKey.currentState!.validate()) {
-                      if(controller.adult.value==0){
-                        Get.snackbar("خطأ", "لايمكن ان يكون عدد البالغين صفر",backgroundColor: Colors.red);
-                      }else{
-                        // استدعاء دالة التحميل
-                        print(controller.adult.value);
-                        print(controller.children.value);
-                        //controller.loading();
-                        controller.makeReservation(restId);
-                        // معالجة التاريخ
-                        String dateText = controller.checkInDateController.value.text; // "27 Mar 2025"
-                        DateTime date = intl.DateFormat("dd MMM yyyy").parse(dateText);
-                        String formattedDate = intl.DateFormat("dd/MM/yyyy").format(date);
+                      bool isTypeAllowZero = (controller.selectedType.value == "مناسبات");
 
-
-
-
-                        // تنفيذ التحقق من التاريخ
-                        //controller.dateTimeValidation(context);
-
-                        // إغلاق التحميل بعد الانتهاء من العملية
-                        //controller.dismissLoading();
-
-                        // يمكنك الانتقال إلى صفحة أخرى إذا كان ذلك مطلوبًا
-                        // Get.toNamed("/dateTimeSelect");
+                      if (!isTypeAllowZero && controller.adult.value == 0) {
+                        _showErrorSnackBar(context, "لا يمكن أن يكون عدد البالغين صفر");
+                        return;
                       }
 
-                    } else {
-                      // ❌ أحد التواريخ غير موجود
-                      Get.snackbar("خطأ", "يرجى ملء جميع الحقول المطلوبة",backgroundColor: Colors.red);
-                    }
+                      // لو النوع لا يسمح بصفر أطفال، نجبر الأطفال على 0
+                      if (!isTypeAllowZero && controller.children.value > 0) {
+                        controller.children.value = 0;
+                      }
 
+                      // استدعاء دالة الحجز
+                      print(controller.adult.value);
+                      print(controller.children.value);
+
+
+                      // معالجة التاريخ
+                      String dateText = controller.checkInDateController.value.text;
+                      DateTime date = intl.DateFormat("yyyy-MM-dd").parse(dateText);
+                      String formattedDate = intl.DateFormat("dd/MM/yyyy").format(date);
+                      print("Formatted Date: $formattedDate");
+                      controller.makeReservation(restId);
+
+                    } else {
+                      _showErrorSnackBar(context, "يرجى ملء جميع الحقول المطلوبة");
+                    }
                   },
                   text: MyString.continueButton,
                   textSize: 16,
@@ -563,8 +559,8 @@ class _DateTimeSelectState extends State<DateTimeSelect> {
                                       ),
                                       Expanded(
                                         child: RadioListTile<String>(
-                                          title: const Text("مناسبة"),
-                                          value: "مناسبة",
+                                          title: const Text("مناسبات"),
+                                          value: "مناسبات",
                                           groupValue: controller.selectedType.value,
                                           onChanged: (value) {
                                             controller.selectedType.value = value!;
@@ -601,4 +597,16 @@ class _DateTimeSelectState extends State<DateTimeSelect> {
 
     );
   }
+}
+void _showErrorSnackBar(BuildContext context, String message) {
+  ScaffoldMessenger.of(context).showSnackBar(
+    SnackBar(
+      content: Text(message, style: const TextStyle(color: Colors.white)),
+      backgroundColor: Colors.red,
+      duration: const Duration(seconds: 3),
+      behavior: SnackBarBehavior.floating,
+      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+    ),
+  );
 }

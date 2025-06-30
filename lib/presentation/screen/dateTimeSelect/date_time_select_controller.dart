@@ -1,6 +1,7 @@
 part of 'date_time_select_import.dart';
 
 class DateTimeSelectController extends GetxController {
+
   ThemeController themeController = Get.put(ThemeController());
   var isLoading = false.obs; // حالة التحميل
   RxBool isSubmitted = false.obs;
@@ -11,7 +12,7 @@ class DateTimeSelectController extends GetxController {
 
   /*DateTime selectCheckInDate = DateTime.now();
   DateTime selectCheckOutDate = DateTime.now();*/
-  RxString selectedType = 'عوائل'.obs;
+  RxString selectedType = ''.obs;
 
   Rx<DateTime> fromDate = DateTime.now().obs;
   Rx<DateTime> toDate = DateTime.now().obs;
@@ -68,6 +69,7 @@ class DateTimeSelectController extends GetxController {
           'check_out': checkOutDateController.value.text,
           'adults_count': adult.value,
           'children_count': children.value,
+          "accommodation_type":selectedType.value
         },
       );
       print("response.data");
@@ -76,15 +78,30 @@ class DateTimeSelectController extends GetxController {
       Get.snackbar("نجاح", "تم الحجز بنجاح", backgroundColor: Colors.green);
       Get.offAllNamed("/bottomBar"); // أو Get.toNamed إذا كانت الصفحة غير موجودة مسبقاً
     } catch (e) {
-      print("response.data");
-      print(restAreaId);
-
-      print(checkOutDateController.value.text);
-      print(adult.value);
-      print(children.value);
       dismissLoading();
+
+      if (e is Dio.DioError) {
+        // خطأ من Dio (شبكة، استجابة، timeout، إلخ)
+        if (e.response != null) {
+          print('Dio Error Response Data: ${e.response?.data}');
+          print('Dio Error Response Status Code: ${e.response?.statusCode}');
+          print('Dio Error Response Headers: ${e.response?.headers}');
+        } else {
+          print('Dio Error without response: ${e.message}');
+        }
+      } else {
+        // أي خطأ آخر غير DioError
+        print('Unexpected error: $e');
+      }
+
+      // طباعة بيانات الحجز لمراجعتها
+      print("RestAreaId: $restAreaId");
+      print("CheckIn: ${checkInDateController.value.text}");
+      print("CheckOut: ${checkOutDateController.value.text}");
+      print("Adults: ${adult.value}");
+      print("Children: ${children.value}");
+
       Get.snackbar("خطأ", "فشل في إرسال الحجز", backgroundColor: Colors.red);
-      print(e);
     }
   }
   void setFromDate(DateTime date) {
