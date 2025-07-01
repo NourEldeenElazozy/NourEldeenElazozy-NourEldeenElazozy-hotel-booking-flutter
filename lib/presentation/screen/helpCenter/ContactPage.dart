@@ -25,6 +25,7 @@ class ContactPage extends StatelessWidget {
       textDirection: TextDirection.rtl,
       child: Scaffold(
         appBar: homeAppBar(
+            context,
             MyString.helpCentre, false, false, showBackButton: true),
         body: SingleChildScrollView(
           child: Column(

@@ -128,18 +128,21 @@ class _LoginScreenState extends State<LoginScreen> {
                           ),
                         ),
                         const SizedBox(height: 30),
-                        SizedBox(
+                        Obx(() => SizedBox(
                           height: 55,
                           width: MediaQuery.of(context).size.width,
-                          child: Button(
-          
+                          child: controller.isLoading.value
+                              ? const Center(child: CircularProgressIndicator(color: Colors.orange,)) // ← أثناء التحميل
+                              : Button(
                             onpressed: () {
-                              return controller.submit();
+                              controller.submit();
                             },
                             text: MyString.signIn,
-                            shadowColor: controller.themeController.isDarkMode.value ? Colors.transparent : MyColors.buttonShadowColor,
+                            shadowColor: controller.themeController.isDarkMode.value
+                                ? Colors.transparent
+                                : MyColors.buttonShadowColor,
                           ),
-                        ),
+                        )),
                         const SizedBox(height: 30),
                         InkWell(
                             onTap: () {

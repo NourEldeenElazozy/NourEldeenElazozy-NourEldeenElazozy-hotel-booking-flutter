@@ -27,7 +27,7 @@ class CustomFullAppBar extends StatelessWidget implements PreferredSizeWidget {
           const SizedBox(width: 15),
           InkWell(
             onTap: () {
-              return Get.back();
+              Navigator.pop(context);
             },
             child: SvgPicture.asset(
               MyImages.backArrow,
@@ -51,7 +51,7 @@ class CustomFullAppBar extends StatelessWidget implements PreferredSizeWidget {
   }
 }
 
-PreferredSizeWidget homeAppBar(String title, bool status, bool isDarkMode, {bool showBackButton = false}) {
+PreferredSizeWidget homeAppBar(BuildContext context,String title, bool status, bool isDarkMode, {bool showBackButton = false}) {
   return PreferredSize(
     preferredSize: const Size.fromHeight(kToolbarHeight),
     child: SizedBox(
@@ -69,7 +69,7 @@ PreferredSizeWidget homeAppBar(String title, bool status, bool isDarkMode, {bool
                     color: isDarkMode ? MyColors.white : MyColors.black,
                   ),
                   onPressed: () {
-                    Get.back(); // Use Get.back() to navigate back
+                    Navigator.pop(context);
                   },
                 )
               else
@@ -110,6 +110,7 @@ PreferredSizeWidget homeAppBar(String title, bool status, bool isDarkMode, {bool
                       ),
                     ),
                     const SizedBox(width: 5),
+               /*
                     InkWell(
                       onTap: () {
                         Get.toNamed("/bookMark");
@@ -123,6 +124,7 @@ PreferredSizeWidget homeAppBar(String title, bool status, bool isDarkMode, {bool
                             width: 25),
                       ),
                     ),
+                */
                   ],
                 ),
               const SizedBox(width: 15), // Padding on the right

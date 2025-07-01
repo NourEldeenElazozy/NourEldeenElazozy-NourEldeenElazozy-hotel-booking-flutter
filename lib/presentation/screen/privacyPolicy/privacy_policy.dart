@@ -19,21 +19,24 @@ class _PrivacyPolicyScreenState extends State<PrivacyPolicyScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: const CustomFullAppBar(title: MyString.privacy),
-      body: FutureBuilder(
-        future: controller.initWebView(),
-        builder: (context, snapshot) {
-          if(snapshot.connectionState == ConnectionState.waiting) {
-            return Center(
-              child: CircularProgressIndicator(color: controller.themeController.isDarkMode.value ? Colors.white : Colors.black),
-            );
-          } else if(snapshot.hasError) {
-            return Text('Error : ${snapshot.error}');
-          } else {
-            return WebViewWidget(controller: controller.webViewController);
-          }
-        },
+    return Directionality(
+      textDirection: TextDirection.rtl,
+      child: Scaffold(
+        appBar: const CustomFullAppBar(title: MyString.privacy),
+        body: FutureBuilder(
+          future: controller.initWebView(),
+          builder: (context, snapshot) {
+            if(snapshot.connectionState == ConnectionState.waiting) {
+              return Center(
+                child: CircularProgressIndicator(color: controller.themeController.isDarkMode.value ? Colors.white : Colors.black),
+              );
+            } else if(snapshot.hasError) {
+              return Text('Error : ${snapshot.error}');
+            } else {
+              return WebViewWidget(controller: controller.webViewController);
+            }
+          },
+        ),
       ),
     );
   }

@@ -205,7 +205,7 @@ class MyString {
   static const String location = "الموقع";
   static const String review = "التقييم";
   static const String more = "المزيد";
-  static const String bookNow = "احجز الآن";
+  static const String bookNow = "أرسل الطلب";
 
 //-----------------------------------Review_Screen------------------------------
   static List reviewRate = [

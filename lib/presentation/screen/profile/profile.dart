@@ -164,6 +164,7 @@ class _ProfileState extends State<Profile> {
     _loadusermobile();
     return Scaffold(
       appBar: homeAppBar(
+          context,
           MyString.profile, false, controller.themeController.isDarkMode.value),
       body: SafeArea(
         child: SingleChildScrollView(

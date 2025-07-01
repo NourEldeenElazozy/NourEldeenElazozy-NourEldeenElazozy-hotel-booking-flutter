@@ -10,11 +10,19 @@ class Reservation extends StatefulWidget {
 class _ReservationState extends State<Reservation> {
   late HomeController Hocontroller = Get.put(HomeController());
   late ReservationController controller;
+  var userType = ''.obs; // استخدام Rx لتحديث الواجهة عند تغيير القيمة
+  Future<void> _loaduserType() async {
 
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    userType.value = prefs.getString('user_type') ?? '';
+
+
+  }
   @override
   void initState() {
     controller = Get.put(ReservationController());
     super.initState();
+    _loaduserType();
   }
 
   @override
@@ -48,6 +56,7 @@ class _ReservationState extends State<Reservation> {
       textDirection: TextDirection.rtl,
       child: Scaffold(
         appBar: homeAppBar(
+            context,
           showBackButton: true,
             "تفاصيل الحجز", false, controller.themeController.isDarkMode.value),
         body: SingleChildScrollView(
@@ -108,6 +117,16 @@ class _ReservationState extends State<Reservation> {
                         label: 'السعر اليومي',
                         value: '${restArea['price']} دينار',
                       ),
+                      _buildDetailRow(
+                        icon: Icons.monetization_on,
+                        label: 'سعر العطل الرسمية',
+                        value: '${restArea['holiday_price']} دينار',
+                      ),
+                      _buildDetailRow(
+                        icon: Icons.monetization_on,
+                        label: 'سعر ايام العيد',
+                        value: '${restArea['eid_days_price']} دينار',
+                      ),
                     ],
                   ),
                 ),
@@ -152,10 +171,16 @@ class _ReservationState extends State<Reservation> {
                         label: 'عدد البالغين',
                         value: '${reservation['adults_count']}',
                       ),
+
                       _buildDetailRow(
                         icon: Icons.child_care,
                         label: 'عدد الأطفال',
                         value: '${reservation['children_count']}',
+                      ),
+                      _buildDetailRow(
+                        icon: Icons.apartment ,
+                        label: 'نوع اللإقامة',
+                        value: '${reservation['accommodation_type']}',
                       ),
                       const SizedBox(height: 10),
                       Row(
@@ -220,6 +245,7 @@ class _ReservationState extends State<Reservation> {
                         value: user['name'],
                       ),
                       _buildDetailRow(
+                        iswatss: true,
                         icon: Icons.phone,
                         label: 'رقم الهاتف',
                         value: user['phone'],
@@ -254,7 +280,8 @@ class _ReservationState extends State<Reservation> {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
-              Expanded(
+              if (userType.value == "host")
+                Expanded(
                 child: FloatingActionButton.extended(
                   heroTag: 'approve_fab', // Unique tag for each FAB
                   onPressed: () {
@@ -358,6 +385,11 @@ class _ReservationState extends State<Reservation> {
                 ),
               ),
               const SizedBox(width: 15), // Space between buttons
+
+          if (userType.value == "host")
+
+
+
               Expanded(
                 child: FloatingActionButton.extended(
                   heroTag: 'reject_fab', // Unique tag for each FAB
@@ -394,7 +426,12 @@ class _ReservationState extends State<Reservation> {
     );
   }
 
-  Widget _buildDetailRow({required IconData icon, required String label, required String value}) {
+  Widget _buildDetailRow({
+    required IconData icon,
+    required String label,
+    required String value,
+    bool iswatss = false, // ← القيمة الافتراضية false
+  }) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8.0),
       child: Row(
@@ -415,7 +452,47 @@ class _ReservationState extends State<Reservation> {
                   ),
                 ),
                 const SizedBox(height: 4),
-                Text(
+
+                // إذا كان الرقم هاتف، اجعله قابل للنقر
+
+                iswatss
+                    ? GestureDetector(
+                  onTap: () async {
+                    final rawPhone = value.replaceAll(RegExp(r'\s+'), '');
+                    final fullPhone = rawPhone.startsWith('218')
+                        ? rawPhone
+                        : '218${rawPhone.replaceFirst('0', '')}';
+                    final url = Uri.parse("https://wa.me/$fullPhone");
+
+                    if (await canLaunchUrl(url)) {
+                      await launchUrl(
+                        url,
+                        mode: LaunchMode.externalApplication,
+                      );
+                    } else {
+                      Get.snackbar(
+                        "خطأ",
+                        "تعذر فتح واتساب أو الرابط",
+                        backgroundColor: Colors.red,
+                      );
+                    }
+                  },
+                  child: Row(
+                    children: [
+                      Text(
+                        value,
+                        style: TextStyle(
+                          fontSize: 16,
+                          color: Colors.green[700],
+                          decoration: TextDecoration.underline,
+                        ),
+                      ),
+                      const SizedBox(width: 8),
+                      Icon(Icons.chat, color: Colors.green, size: 20),
+                    ],
+                  ),
+                )
+                    : Text(
                   value,
                   style: TextStyle(
                     fontSize: 16,

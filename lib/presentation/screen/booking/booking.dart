@@ -336,7 +336,7 @@ class _BookingState extends State<Booking> with SingleTickerProviderStateMixin {
                 ],
               )
               : null,
-          appBar: homeAppBar(MyString.myBooking, false,
+          appBar: homeAppBar( context,MyString.myBooking, false,
               controller.themeController.isDarkMode.value),
           body: Obx(() {
             //controller.getToken();

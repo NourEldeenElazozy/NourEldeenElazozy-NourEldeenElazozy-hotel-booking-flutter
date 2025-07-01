@@ -50,7 +50,7 @@ class _Request360PageState extends State<Request360Page> {
     return Directionality(
       textDirection: TextDirection.rtl,
       child: Scaffold(
-        appBar: homeAppBar('طلب تصوير استراحة 360', false, false,
+        appBar: homeAppBar( context,'طلب تصوير استراحة 360', false, false,
             showBackButton: true),
         body: isLoading
             ? const Center(child: CircularProgressIndicator()) // جاري التحميل
