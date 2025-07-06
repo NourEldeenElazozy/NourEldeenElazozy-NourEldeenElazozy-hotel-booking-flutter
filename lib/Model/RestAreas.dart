@@ -1,4 +1,5 @@
 class RestAreas {
+  int id;
   String name;
   String location;
   List<String> areaType;
@@ -8,7 +9,7 @@ class RestAreas {
   int maxGuests;
   int numDoubleBeds;
   int numSingleBeds;
-  int numHalls;
+
   int numBedrooms;
   int numFloors;
   int numBathroomsIndoor;
@@ -56,6 +57,7 @@ class RestAreas {
   double eidDaysPrice;
 
   RestAreas({
+    required this.id,
     required this.name,
     required this.location,
     required this.areaType,
@@ -65,7 +67,7 @@ class RestAreas {
     required this.maxGuests,
     required this.numDoubleBeds,
     required this.numSingleBeds,
-    required this.numHalls,
+
     required this.numBedrooms,
     required this.numFloors,
     required this.numBathroomsIndoor,
@@ -129,6 +131,7 @@ class RestAreas {
 
   Map<String, dynamic> toJson() {
     return {
+      'id': id,
       'name': name,
       'location': location,
       'area_type': areaType.join(','), // تحويل القائمة إلى سلسلة
@@ -138,7 +141,6 @@ class RestAreas {
       'max_guests': maxGuests,
       'num_double_beds': numDoubleBeds,
       'num_single_beds': numSingleBeds,
-      'num_halls': numHalls,
       'num_bedrooms': numBedrooms,
       'num_floors': numFloors,
       'num_bathrooms_indoor': numBathroomsIndoor,

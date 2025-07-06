@@ -232,7 +232,7 @@ class MyString {
   static const String hotelLocation = "موقع الفندق";
 
 //----------------------------------- DateTimeSelect ------------------------------
-  static const String selectDate = "اختر التاريخ";
+  static const String selectDate = "ارسال طلب الحجز";
   static const String checkInDate = "تاريخ تسجيل الدخول";
   static const String checkOutDate = "تاريخ تسجيل الخروج";
   static const String checkInTime = "وقت تسجيل الدخول";

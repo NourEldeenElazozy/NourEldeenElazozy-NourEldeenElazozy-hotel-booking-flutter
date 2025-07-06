@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:hotel_booking/Model/RestAreas.dart';
 import 'package:hotel_booking/core/constants/my_colors.dart';
@@ -15,15 +17,15 @@ class AddRestAreaScreen extends StatefulWidget {
 
 class _AddRestAreaScreenState extends State<AddRestAreaScreen> {
   final _formKey = GlobalKey<FormState>();
-  bool _isLoading = false; // أضف هذا فوق في State
   RxInt userId = 0.obs;
+  bool _isEditMode = false; // 🔴 متغير لتحديد وضع التعديل
   Future<void> loadUserId() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     userId.value = prefs.getInt('user_id') ?? 0;
   }
   final _restArea = RestAreas(
-
-    areaType: [''],
+    id: 0,
+    areaType: [], // 🔴 تم التعديل هنا من [''] إلى []
     name: "Rest Area Name",
     location: "123 Main St, City, Country",
     gamesdetails: "",
@@ -33,17 +35,16 @@ class _AddRestAreaScreenState extends State<AddRestAreaScreen> {
     maxGuests: 0,
     numDoubleBeds: 0,
     numSingleBeds: 0,
-    numHalls: 0,
     numBedrooms: 0,
     numFloors: 0,
     numBathroomsIndoor: 0,
     numBathroomsOutdoor: 0,
     kitchenAvailable: false,
-    kitchenContents: ["Utensils", "Fridge", "Microwave"],
+    kitchenContents: [""],
     hasAcHeating: true,
     tvScreens: true,
     freeWifi: true,
-    entertainmentGames: ["Board Games", "Video Games"],
+    entertainmentGames: [""],
     outdoorSpace: false,
     grassSpace: false,
     poolType: "Infinity",
@@ -59,12 +60,12 @@ class _AddRestAreaScreenState extends State<AddRestAreaScreen> {
     well: true,
     powerGenerator: true,
     outdoorBathroom: false,
-    otherSpecs: "Near the lake",
+    otherSpecs: "",
 
     mainImage: "",
     detailsImages: [],
     rating: 0,
-    description: "A beautiful rest area with all amenities.",
+    description: "",
     geoArea: "Geo Area Description",
 
     cityId: 9,
@@ -82,6 +83,9 @@ class _AddRestAreaScreenState extends State<AddRestAreaScreen> {
 
   XFile? _mainImage;
   List<XFile> _detailsImages = [];
+  // 🔴🔴🔴 متغيرات جديدة لتخزين روابط الصور المحملة من قاعدة البيانات 🔴🔴🔴
+  String? _initialMainImageUrl;
+  List<String> _initialDetailsImageUrls = [];
   int _currentStep = 0;
   late RestAreaController controller;
   late TextEditingController nameController;
@@ -92,16 +96,31 @@ class _AddRestAreaScreenState extends State<AddRestAreaScreen> {
   late TextEditingController internalSpaceController;
   late TextEditingController maxGuestsController;
   late TextEditingController checkInTimeController;
+  late TextEditingController otherSpecsController;
+  late TextEditingController entertainmentGamesController;
+
   late TextEditingController checkOutTimeController;
   late TextEditingController googleMapsLocationController;
   late TextEditingController holidayPriceController;
   late TextEditingController eidDaysPriceController;
   late TextEditingController depositValueController;
+  late TextEditingController numFloorsController; // 🔴 إضافة كنترولر لعدد الطوابق
+  late TextEditingController numBedroomsController; // 🔴 إضافة كنترولر لعدد غرف النوم
+  late TextEditingController numDoubleBedsController; // 🔴 إضافة كنترولر لعدد الأسرة المزدوجة
+  late TextEditingController numSingleBedsController; // 🔴 إضافة كنترولر لعدد الأسرة المفردة
+  late TextEditingController numBathroomsIndoorController; // 🔴 إضافة كنترولر لدورات المياه الداخلية
+  late TextEditingController numBathroomsOutdoorController; // 🔴 إضافة كنترولر لدورات المياه الخارجية
+  late TextEditingController kitchenContentsController; // 🔴 إضافة كنترولر لمحتويات المطبخ
+  late TextEditingController poolSpaceController; // 🔴 إضافة كنترولر لمساحة المسبح
+  late TextEditingController poolDepthController; // 🔴 إضافة كنترولر لعمق المسبح
+  late TextEditingController poolTypeController; // 🔴 إضافة كنترولر لنوع المسبح
+  late TextEditingController gamesdetailsController; // 🔴 إضافة كنترولر لتفاصيل الألعاب
+
 @override
 void initState() {
 loadUserId();
 super.initState();
-final args = Get.arguments;
+
 nameController = TextEditingController();
 locationController = TextEditingController();
 descriptionController = TextEditingController();
@@ -112,33 +131,115 @@ maxGuestsController = TextEditingController();
 checkInTimeController = TextEditingController();
 checkOutTimeController = TextEditingController();
 googleMapsLocationController = TextEditingController();
+
 holidayPriceController = TextEditingController();
 eidDaysPriceController = TextEditingController();
 depositValueController = TextEditingController();
-if (args != null && args['isEdit'] == true && args['restAreaData'] != null) {
 
+entertainmentGamesController= TextEditingController();
+numFloorsController = TextEditingController(); // 🔴 تهيئة كنترولر
+numBedroomsController = TextEditingController(); // 🔴 تهيئة كنترولر
+numDoubleBedsController = TextEditingController(); // 🔴 تهيئة كنترولر
+numSingleBedsController = TextEditingController(); // 🔴 تهيئة كنترولر
+numBathroomsIndoorController = TextEditingController(); // 🔴 تهيئة كنترولر
+numBathroomsOutdoorController = TextEditingController(); // 🔴 تهيئة كنترولر
+kitchenContentsController = TextEditingController(); // 🔴 تهيئة كنترولر
+poolSpaceController = TextEditingController(); // 🔴 تهيئة كنترولر
+poolDepthController = TextEditingController(); // 🔴 تهيئة كنترولر
+poolTypeController = TextEditingController(); // 🔴 تهيئة كنترولر
+gamesdetailsController = TextEditingController(); // 🔴 تهيئة كنترولر
+otherSpecsController = TextEditingController(); // 🔴 تهيئة كنترولر
+// جلب الوسائط (arguments) لتحديد ما إذا كانت عملية تعديل
+final args = Get.arguments;
+if (args != null && args['isEdit'] == true && args['restAreaData'] != null) {
+  _isEditMode = true; // 🔴 تحديد وضع التعديل
   final data = args['restAreaData'] as Map<String, dynamic>;
 
-
   // مِلء كائن الاستراحة الحالي بالقيم القادمة
-  _restArea.name = data["name"];
-  _restArea.location = data["location"];
-  _restArea.description = data["description"];
+  _restArea.name = data["name"] ?? "";
+  _restArea.location = data["location"] ?? "";
+  _restArea.description = data["description"] ?? "";
   _restArea.price = double.tryParse(data["price"].toString()) ?? 0.0;
-  _restArea.totalSpace = data["total_space"];
-  _restArea.internalSpace = data["internal_space"];
-  _restArea.maxGuests = data["max_guests"];
+  _restArea.totalSpace = data["total_space"] ?? 0;
+  _restArea.internalSpace = data["internal_space"] ?? 0;
+  _restArea.maxGuests = data["max_guests"] ?? 0;
 
-  _restArea.cityId = data["city_id"];
-  _restArea.checkInTime = data["check_in_time"];
-  _restArea.checkOutTime = data["check_out_time"];
-  _restArea.googleMapsLocation = data["google_maps_location"];
-  _restArea.idProofType = data["id_proof_type"];
+  // 🔴🔴🔴 إضافة طباعة تصحيح هنا 🔴�🔴
+  debugPrint('DEBUG: Data from args["restAreaData"] for num_bedrooms: ${data["num_bedrooms"]}');
+  debugPrint('DEBUG: Data from args["restAreaData"] for num_double_beds: ${data["num_double_beds"]}');
+  debugPrint('DEBUG: Data from args["restAreaData"] for num_single_beds: ${data["num_single_beds"]}');
+  debugPrint('DEBUG: Data from args["restAreaData"] for num_bathrooms_indoor: ${data["num_bathrooms_indoor"]}');
+  debugPrint('DEBUG: Data from args["restAreaData"] for num_bathrooms_outdoor: ${data["num_bathrooms_outdoor"]}');
+
+
+  // تحديث حالة الـ boolean من القيم النصية أو الرقمية
+  _restArea.kitchenAvailable = _parseBool(data["kitchen_available"]);
+  _restArea.hasAcHeating = _parseBool(data["has_ac_heating"]);
+  _restArea.tvScreens = _parseBool(data["tv_screens"]);
+  _restArea.freeWifi = _parseBool(data["free_wifi"]);
+  _restArea.outdoorSpace = _parseBool(data["outdoor_space"]);
+  _restArea.grassSpace = _parseBool(data["grass_space"]);
+  _restArea.poolHeating = _parseBool(data["pool_heating"]);
+  _restArea.poolFilter = _parseBool(data["pool_filter"]);
+  _restArea.garage = _parseBool(data["garage"]);
+  _restArea.outdoorSeating = _parseBool(data["outdoor_seating"]);
+  _restArea.childrenGames = _parseBool(data["children_games"]);
+  _restArea.outdoorKitchen = _parseBool(data["outdoor_kitchen"]);
+  _restArea.slaughterPlace = _parseBool(data["slaughter_place"]);
+  _restArea.well = _parseBool(data["well"]);
+  _restArea.powerGenerator = _parseBool(data["power_generator"]);
+  _restArea.outdoorBathroom = _parseBool(data["outdoor_bathroom"]);
+  _restArea.jumpAvailable = _parseBool(data["jump_available"]);
+  _restArea.boardPitAvailable = _parseBool(data["board_pit_available"]);
+  _restArea.fishingAvailable = _parseBool(data["fishing_available"]);
+
+  // تحديث حالة _hasPool بناءً على وجود بيانات المسبح
+  if (data["pool_type"] != null && data["pool_type"].isNotEmpty && data["pool_type"] != "null") {
+    _hasPool = true;
+    _restArea.poolType = data["pool_type"];
+    //_restArea.poolSpace = double.tryParse(data["pool_space"].toString()) ?? 0.0;
+    _restArea.poolDepth = double.tryParse(data["pool_depth"].toString()) ?? 0.0;
+  } else {
+    _hasPool = false;
+  }
+
+  _restArea.numDoubleBeds = data["num_double_beds"] ?? 0;
+  _restArea.numSingleBeds = data["num_single_beds"] ?? 0;
+  _restArea.numBedrooms = data["num_bedrooms"] ?? 0;
+  _restArea.numFloors = data["num_floors"] ?? 0;
+  _restArea.numBathroomsIndoor = data["num_bathrooms_indoor"] ?? 0;
+  _restArea.numBathroomsOutdoor = data["num_bathrooms_outdoor"] ?? 0;
+
+  // 🔴🔴🔴 إضافة طباعة تصحيح هنا بعد تعيين القيم لـ _restArea 🔴🔴🔴
+  debugPrint('DEBUG: _restArea.numBedrooms after assignment: ${_restArea.numBedrooms}');
+  debugPrint('DEBUG: _restArea.numDoubleBeds after assignment: ${_restArea.numDoubleBeds}');
+  debugPrint('DEBUG: _restArea.numSingleBeds after assignment: ${_restArea.numSingleBeds}');
+  debugPrint('DEBUG: _restArea.numBathroomsIndoor after assignment: ${_restArea.numBathroomsIndoor}');
+  debugPrint('DEBUG: _restArea.numBathroomsOutdoor after assignment: ${_restArea.numBathroomsOutdoor}');
+
+  _restArea.id = data["id"] ?? 0; // تأكد من أن city_id هو int
+  _restArea.kitchenContents = _parseStringList(data["kitchen_contents"]);
+  _restArea.entertainmentGames = _parseStringList(data["entertainment_games"]);
+  _restArea.otherSpecs = data["other_specs"] ?? "";
+  _restArea.gamesdetails = data["gamesdetails"] ?? "";
+
+  _restArea.cityId = data["city_id"] ?? 0; // تأكد من أن city_id هو int
+  _restArea.checkInTime = data["check_in_time"] ?? "00:00";
+  _restArea.checkOutTime = data["check_out_time"] ?? "00:00";
+  _restArea.googleMapsLocation = data["google_maps_location"] ?? "";
+  _restArea.idProofType = data["id_proof_type"] ?? "لا يشترط";
   _restArea.holidayPrice = double.tryParse(data["holiday_price"].toString()) ?? 0.0;
   _restArea.eidDaysPrice = double.tryParse(data["eid_days_price"].toString()) ?? 0.0;
   _restArea.depositValue = double.tryParse(data["deposit_value"].toString()) ?? 0.0;
+  _restArea.geoArea = data["geo_area"] ?? "";
+  _restArea.areaType = _parseStringList(data["area_type"]);
 
-// تعبئة الكنترولات
+  _restArea.cleanAreaTypes(); // 🔴 تنظيف قائمة areaType بعد التحميل
+
+  // 🔴🔴🔴 تعيين روابط الصور المحملة من قاعدة البيانات 🔴🔴🔴
+  _initialMainImageUrl = data["main_image"] ?? "";
+  _initialDetailsImageUrls = _parseStringList(data["details_images"]);
+  // تعبئة الكنترولات
   nameController.text = _restArea.name;
   locationController.text = _restArea.location;
   descriptionController.text = _restArea.description;
@@ -152,12 +253,69 @@ if (args != null && args['isEdit'] == true && args['restAreaData'] != null) {
   holidayPriceController.text = _restArea.holidayPrice.toString();
   eidDaysPriceController.text = _restArea.eidDaysPrice.toString();
   depositValueController.text = _restArea.depositValue.toString();
-  setState(() {}); // لتحديث واجهة المستخدم
+  numFloorsController.text = _restArea.numFloors.toString(); // 🔴 تعبئة كنترولر
+  numBedroomsController.text = _restArea.numBedrooms.toString(); // 🔴 تعبئة كنترولر
+  numDoubleBedsController.text = _restArea.numDoubleBeds.toString(); // 🔴 تعبئة كنترولر
+  numSingleBedsController.text = _restArea.numSingleBeds.toString(); // 🔴 تعبئة كنترولر
+  numBathroomsIndoorController.text = _restArea.numBathroomsIndoor.toString(); // 🔴 تعبئة كنترولر
+  numBathroomsOutdoorController.text = _restArea.numBathroomsOutdoor.toString(); // 🔴 تعبئة كنترولر
+  kitchenContentsController.text = _restArea.kitchenContents.join(', '); // 🔴 تعبئة كنترولر
+  poolSpaceController.text = _restArea.poolSpace.toString(); // 🔴 تعبئة كنترولر
+  poolDepthController.text = _restArea.poolDepth.toString(); // 🔴 تعبئة كنترولر
+  poolTypeController.text = _restArea.poolType; // 🔴 تعبئة كنترولر
+  gamesdetailsController.text = _restArea.gamesdetails; // 🔴 تعبئة كنترولر
+  otherSpecsController.text = _restArea.otherSpecs; // 🔴 تعبئة كنترولر
+
+
+  // إذا كانت هناك صور موجودة، قم بتحميلها (هذا يتطلب منطقًا إضافيًا لتحميل الصور من URL إلى XFile)
+  // حاليًا، هذا الجزء غير مدعوم بشكل مباشر في هذا الكود، ستحتاج إلى تنفيذه
+   //_mainImage = XFile(data["main_image"]);
+// _detailsImages = (data["details_images"] as List).map((url) => XFile(url)).toList();
+
+  setState(() {}); // لتحديث واجهة المستخدم بعد ملء البيانات
 }
 controller = Get.put(RestAreaController());
 }
+  // دالة مساعدة لتحويل القيم إلى List<String>
+  // دالة مساعدة لتحويل القيم إلى bool
+  bool _parseBool(dynamic value) {
+    if (value == null) return false;
+    if (value is bool) return value;
+    if (value is int) return value == 1;
+    if (value is String) return value.toLowerCase() == 'true' || value == '1';
+    return false;
+  }
+
+  // دالة مساعدة لتحويل القيم إلى List<String>
+  // دالة مساعدة لتحويل القيم إلى List<String>
+  List<String> _parseStringList(dynamic value) {
+    if (value == null) return [];
+    if (value is List) {
+      return value.map((e) => e.toString()).toList();
+    }
+    if (value is String) {
+      // إذا كانت مخزنة كسلسلة JSON
+      try {
+        final decoded = jsonDecode(value);
+        if (decoded is List) {
+          return decoded.map((e) => e.toString()).toList();
+        }
+      } catch (e) {
+        // 🔴🔴🔴 التعديل هنا: تقسيم السلسلة بواسطة الفاصلة (,) وتنظيف المسافات 🔴🔴🔴
+        return value.split(',').map((e) => e.trim()).where((e) => e.isNotEmpty).toList();
+      }
+    }
+    return [];
+  }
+
   @override
   Widget build(BuildContext context) {
+    print("_initialMainImageUrls $_initialMainImageUrl");
+    print("_mainImagefinal $_mainImage");
+    List<String> parsedAreaType = _parseStringList(_restArea.areaType);
+    print("Parsed Area Type: ${_restArea.checkInTime}"); // سيطبع: [للعائلات, للشباب]
+    print("Parsed Area Type: ${_restArea.checkOutTime}"); // سيطبع: [للعائلات, للشباب]
+
     //_isLoading = false;
     return Obx(() {
       if (userId.value == 0) {
@@ -171,7 +329,8 @@ controller = Get.put(RestAreaController());
         textDirection: TextDirection.rtl,
         child: Scaffold(
           appBar: AppBar(
-            title: Text('إضافة استراحة جديدة',
+            title: Text(
+                _isEditMode ? 'تعديل الاستراحة' : 'إضافة استراحة جديدة', // 🔴 تغيير العنوان هنا
                 style: TextStyle(
                   fontSize: 16,
                   color: Colors.white,
@@ -194,7 +353,7 @@ controller = Get.put(RestAreaController());
                 final isLastStep = _currentStep == 3;
                 if (_formKey.currentState!.validate()) {
                   _formKey.currentState!.save();
-      
+
                   if (isLastStep) {
                     //_submitForm();
                   } else {
@@ -243,75 +402,76 @@ controller = Get.put(RestAreaController());
                                 fontFamily: 'Tajawal',
                               )),
                         ),
-      
-      
-                ElevatedButton(
-                onPressed: () async {
-                if (_currentStep == 3) {
-                if (_formKey.currentState!.validate()) {
-                setState(() {
-                _isLoading = true; // تشغيل اللودنق
-                });
-      
-                _restArea.cleanAreaTypes();
 
 
-                _formKey.currentState!.save(); // <--- أول شيء تحفظ البيانات
+                // 🔴🔴🔴 هذا هو الجزء الذي تم تعديله 🔴🔴🔴
+                      Obx(() => ElevatedButton(
+                        onPressed: controller.isLoading.value // تعطيل الزر أثناء التحميل
+                            ? null
+                            : () async {
+                          if (_currentStep == 3) { // إذا كانت هذه هي الخطوة الأخيرة (خطوة الصور)
+                            if (_formKey.currentState!.validate()) {
+                              _formKey.currentState!.save(); // حفظ البيانات من النموذج
 
-                setState(() {
-                  _isLoading = true; // بدء اللودنق قبل الإرسال
-                });
+                              // 🔴 لا حاجة لـ setState(_isLoading = true/false) هنا
+                              // لأن controller.isLoading سيتولى إدارة حالة التحميل
 
-                controller?.saveRestArea(_restArea, _mainImage, _detailsImages).then((value) {
-                  setState(() {
-                    _isLoading = false; // إيقاف اللودنق بعد انتهاء العملية
-                  });
-                  Get.toNamed("/myHosting"); // التنقل بعد النجاح
-                });
+                              try {
+                                print("_isEditMode $_isEditMode");
+                                // 🔴 استدعاء دالة saveRestArea من الكنترولر
+                                if (_isEditMode==false){
+                                  await controller.saveRestArea(_restArea, _mainImage, _detailsImages);
+                                }else{
+                                  print("_isEditMode $_isEditMode");
+                                  print("_mainImagefinal $_mainImage");
+                                  print("_initialMainImageUrlfinal $_initialMainImageUrl");
+                                  print("_restArea mainImage ${_restArea.mainImage}");
 
-                _isLoading = false; // إيقاف اللودنق بعد انتهاء العملية
-      
-      
-                print(_restArea.name);
-                print(_restArea.location);
-      
-                await _submitForm(); // إذا كانت الدالة تستخدم Future
-      
-      
-                }
-                } else {
-                if (_formKey.currentState!.validate()) {
-                _formKey.currentState!.save();
-                details.onStepContinue!();
-                }
-                }
-                },
-                style: ElevatedButton.styleFrom(
-                padding: EdgeInsets.symmetric(horizontal: 30, vertical: 12),
-                shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(8),
-                ),
-                ),
-                child: _isLoading
-                ? SizedBox(
-                height: 20,
-                width: 20,
-                child: CircularProgressIndicator(
-                color: Colors.white,
-                strokeWidth: 2,
-                ),
-                )
-                    : Text(
-                _currentStep == 3 ? 'حفظ البيانات' : 'التالي',
-                style: TextStyle(
-                fontSize: 16,
-                color: Colors.white,
-                fontFamily: 'Tajawal',
-                ),
-                ),
-                ),
-      
-      
+                                await controller.updateRestArea(_restArea, _mainImage, _detailsImages, _initialMainImageUrl,_initialDetailsImageUrls);
+                                }
+
+                                // 🔴 التنقل بعد النجاح (الكنترولر سيعرض snackbar النجاح)
+                                Get.toNamed("/myHosting");
+                              } catch (e) {
+                                // 🔴 يتم التعامل مع الأخطاء وعرضها بواسطة _handleError في الكنترولر
+                                // لا حاجة لـ Get.snackbar هنا
+                                print("Error during saveRestArea: $e");
+                              }
+                            }
+                          } else { // إذا لم تكن الخطوة الأخيرة
+                            if (_formKey.currentState!.validate()) {
+                              _formKey.currentState!.save(); // حفظ البيانات
+                              details.onStepContinue!(); // الانتقال للخطوة التالية
+                            }
+                          }
+                        },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: MyColors.primaryColor, // لون زر التالي/الحفظ
+                          padding: EdgeInsets.symmetric(horizontal: 30, vertical: 12),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                        ),
+                        child: controller.isLoading.value // عرض مؤشر التحميل أو النص
+                            ? SizedBox(
+                          height: 20,
+                          width: 20,
+                          child: CircularProgressIndicator(
+                            color: Colors.white,
+                            strokeWidth: 2,
+                          ),
+                        )
+                            : Text(
+                          _currentStep == 3 ? 'حفظ البيانات' : 'التالي',
+                          style: TextStyle(
+                            fontSize: 16,
+                            color: Colors.white,
+                            fontFamily: 'Tajawal',
+                          ),
+                        ),
+                      )),
+
+
                 ],
                   ),
                 );
@@ -343,6 +503,30 @@ controller = Get.put(RestAreaController());
               validator: _requiredValidator,
             ),
             _buildTextFormField(
+              controller: descriptionController,
+              'وصف قصير للإستراحة',
+              Icons.description,
+                  (value) {
+                print(value);
+                _restArea.description = value!; // تحديث الكائن هنا
+              },
+              maxLines: 3, // 🔴 تم إضافة خاصية maxLines
+              validator: _requiredValidator,
+            ),
+            _buildTextFormField(
+              controller: otherSpecsController,
+              'مواصفات اضافية',
+              Icons.info_outline,
+                  (value) {
+                print(value);
+                _restArea.otherSpecs = value!; // تحديث الكائن هنا
+              },
+              maxLines: 3, // 🔴 تم إضافة خاصية maxLines
+              validator: _requiredValidator,
+            ),
+
+
+            _buildTextFormField(
               'المساحة الداخلية',
               Icons.area_chart, // أي رمز مناسب هنا
               controller:internalSpaceController ,
@@ -362,55 +546,63 @@ controller = Get.put(RestAreaController());
               },
               validator: _requiredValidator,
             ),
-            _buildTextFormField(
+            _buildTextFormField( // 🔴 تم تعديل هذا ليستخدم controller
+              controller: numFloorsController,
               'عدد الطوابق',
-              Icons.apps, // أي رمز مناسب هنا
-              (value) {
-                _restArea.numFloors =
-                    int.tryParse(value!) ?? 0; // تحديث الكائن هنا
+              Icons.apps,
+                  (value) {
+                _restArea.numFloors = int.tryParse(value!) ?? 0;
               },
               validator: _requiredValidator,
             ),
             _buildTextFormField(
+              controller: locationController,
               'الموقع',
               Icons.location_on,
-              (value) => _restArea.location = value!,
+                  (value) => _restArea.location = value!,
               validator: _requiredValidator,
             ),
+
             _buildNumberField(
+              controller: priceController,
               'السعر',
               Icons.attach_money,
-              (value) => _restArea.price = value,
+                  (value) => _restArea.price = value,
               validator: _requiredValidator,
             ),
             _buildNumberField(
+              controller: maxGuestsController,
               'العدد الأقصى للضيوف',
               Icons.people,
-              (value) => _restArea.maxGuests = value.toInt(),
+                  (value) => _restArea.maxGuests = value.toInt(),
               validator: _requiredValidator,
             ),
             _buildNumberField(
+              controller: depositValueController,
               'قيمة العربون',
               Icons.monetization_on_outlined,
-              (value) => _restArea.depositValue = value,
+                  (value) => _restArea.depositValue = value,
               validator: _requiredValidator,
             ),
             _buildTextFormField(
+              controller: googleMapsLocationController,
               'الموقع على خرائط جوجل (رابط)',
               Icons.map,
-              (value) => _restArea.googleMapsLocation = value ?? "",
-              validator: _requiredValidator,
+                  (value) => _restArea.googleMapsLocation = value ?? "",
+              //validator: _requiredValidator,
             ),
             _buildNumberField(
+              controller: holidayPriceController,
               'سعر العطل الرسمية',
               Icons.event,
-              (value) => _restArea.holidayPrice = value,
+                  (value) => _restArea.holidayPrice = value,
               validator: _requiredValidator,
             ),
             _buildNumberField(
+              controller: eidDaysPriceController,
               'سعر أيام العيد',
               Icons.celebration,
-              (value) => _restArea.eidDaysPrice = value,
+                  (value) => _restArea.eidDaysPrice = value,
               validator: _requiredValidator,
             ),
             _buildDropdown(
@@ -423,8 +615,7 @@ controller = Get.put(RestAreaController());
                 'لا يشترط'
               ],
               _restArea.idProofType,
-                  (value) => _restArea.idProofType = value ?? 'لا يشترط', // Default value
-
+                  (value) => setState(() => _restArea.idProofType = value ?? 'لا يشترط'),
             ),
             _buildDropdown(
               'المنطقة الجغرافية',
@@ -436,8 +627,7 @@ controller = Get.put(RestAreaController());
                 'في منطقة سياحية'
               ],
               _restArea.geoArea,
-              (value) =>
-                  _restArea.geoArea = value ?? '', // استخدم قيمة افتراضية
+                  (value) => setState(() => _restArea.geoArea = value ?? ''),
             ),
             _buildAreaTypeCheckboxes(),
             _buildTimeRow(),
@@ -491,19 +681,6 @@ controller = Get.put(RestAreaController());
             });
           },
         ),
-        CheckboxListTile(
-          title: Text('لكل الاستخدامات'),
-          value: _restArea.areaType.contains('لكل الاستخدامات'),
-          onChanged: (bool? isChecked) {
-            setState(() {
-              if (isChecked == true) {
-                _restArea.areaType.add('لكل الاستخدامات');
-              } else {
-                _restArea.areaType.remove('لكل الاستخدامات');
-              }
-            });
-          },
-        ),
       ],
     );
   }
@@ -511,7 +688,7 @@ controller = Get.put(RestAreaController());
   Step _buildRoomsAndFacilitiesStep() {
     return Step(
       title:
-          Text('الغرف والمرافق', style: TextStyle(color: MyColors.tealColor)),
+      Text('الغرف والمرافق', style: TextStyle(color: MyColors.tealColor)),
       content: Column(
         children: [
           _buildSectionTitle(
@@ -525,27 +702,27 @@ controller = Get.put(RestAreaController());
                   'غرف نوم',
                   Icons.bed,
                   _restArea.numBedrooms ?? 0,
-                  (value) => _restArea.numBedrooms = value),
+                      (value) => setState(() => _restArea.numBedrooms = value)), // 🔴 استخدام setState
               _buildNumberInputChip(
                   'أسرة مزدوجة',
                   Icons.bed,
                   _restArea.numDoubleBeds ?? 0,
-                  (value) => _restArea.numDoubleBeds = value),
+                      (value) => setState(() => _restArea.numDoubleBeds = value)), // 🔴 استخدام setState
               _buildNumberInputChip(
                   'أسرة مفردة',
                   Icons.single_bed,
                   _restArea.numSingleBeds ?? 0,
-                  (value) => _restArea.numSingleBeds = value),
+                      (value) => setState(() => _restArea.numSingleBeds = value)), // 🔴 استخدام setState
               _buildNumberInputChip(
                   'دورات مياه داخلية',
                   Icons.bathtub,
                   _restArea.numBathroomsIndoor ?? 0,
-                  (value) => _restArea.numBathroomsIndoor = value),
+                      (value) => setState(() => _restArea.numBathroomsIndoor = value)), // 🔴 استخدام setState
               _buildNumberInputChip(
                   'دورات مياه خارجية',
                   Icons.water,
                   _restArea.numBathroomsOutdoor ?? 0,
-                  (value) => _restArea.numBathroomsOutdoor = value),
+                      (value) => setState(() => _restArea.numBathroomsOutdoor = value)), // 🔴 استخدام setState
             ],
           ),
           _buildSectionTitle('المرافق الداخلية'),
@@ -553,41 +730,43 @@ controller = Get.put(RestAreaController());
             spacing: 10,
             runSpacing: 10,
             children: [
-            _buildFeatureChip(
-            'مطبخ',
-            Icons.kitchen,
-            (_restArea.kitchenAvailable == 'true'), // تحويل النص إلى bool
-                (value) {
-              // تعيين القيمة كـ bool
-              _restArea.kitchenAvailable = value ? true : false; // تعيينها كنص
-            },
-          ),
+              _buildFeatureChip(
+                'مطبخ',
+                Icons.kitchen,
+                _restArea.kitchenAvailable ?? false,
+                    (value) {
+                  setState(() {
+                    _restArea.kitchenAvailable = value;
+                  });
+                },
+              ),
               _buildFeatureChip(
                   'تكييف/تدفئة',
                   Icons.ac_unit,
                   _restArea.hasAcHeating ?? false,
-                  (value) => _restArea.hasAcHeating = value),
+                      (value) => setState(() => _restArea.hasAcHeating = value)),
               _buildFeatureChip(
                   'تلفزيون',
                   Icons.tv,
                   _restArea.tvScreens ?? false,
-                  (value) => _restArea.tvScreens = value),
+                      (value) => setState(() => _restArea.tvScreens = value)),
               _buildFeatureChip(
                   'واي فاي',
                   Icons.wifi,
                   _restArea.freeWifi ?? false,
-                  (value) => _restArea.freeWifi = value),
+                      (value) => setState(() => _restArea.freeWifi = value)),
             ],
           ),
           if (_restArea.kitchenAvailable ?? false) ...[
             _buildTextFormField(
-              'ادخل محتويات المطبخ',
-              Icons.kitchen, // أي رمز مناسب هنا
-              (value) {
-                _restArea.kitchenContents =
-                    value as List<String>; // تخزين تفاصيل الألعاب
+              controller: kitchenContentsController, // 🔴 استخدام الكنترولر الصحيح
+              'ادخل محتويات المطبخ (افصلها بفاصلة)',
+              Icons.kitchen,
+                  (value) {
+                _restArea.kitchenContents = value!.split(',').map((e) => e.trim()).toList();
               },
               validator: _requiredValidator,
+              maxLines: 3,
             ),
           ],
         ],
@@ -730,6 +909,7 @@ controller = Get.put(RestAreaController());
 // حقل إدخال الألعاب إذا كان هناك ألعاب أطفال
           if (_restArea.childrenGames ?? false) ...[
             _buildTextFormField(
+              controller: gamesdetailsController,
               'ادخل نوع  الالعاب',
               Icons.gamepad, // أي رمز مناسب هنا
               (value) {
@@ -744,6 +924,13 @@ controller = Get.put(RestAreaController());
   }
 
   Step _buildImagesStep() {
+    print("_initialMainImageUrl $_initialMainImageUrl");
+    print("_initialDetailsImageUrls $_initialDetailsImageUrls");
+    // 🔴🔴🔴 دمج الصور المحملة من الروابط مع الصور الجديدة المختارة 🔴🔴🔴
+    List<dynamic> allDetailsImagesForDisplay = [];
+    allDetailsImagesForDisplay.addAll(_initialDetailsImageUrls); // إضافة الروابط المحملة أولاً
+    allDetailsImagesForDisplay.addAll(_detailsImages); // ثم إضافة ملفات XFile الجديدة
+
     return Step(
       title: Text('الصور', style: TextStyle(color: MyColors.tealColor)),
       content: Column(
@@ -751,24 +938,40 @@ controller = Get.put(RestAreaController());
           Center(
             child: _buildImageCard(
               'الصورة الرئيسية',
-              _mainImage,
-              (image) => setState(() => _mainImage = image),
+              _mainImage, // الصورة الجديدة (XFile)
+              _initialMainImageUrl, // الرابط الأولي (String)
+                  (image) => setState(() => _mainImage = image),
               required: true,
             ),
           ),
           SizedBox(height: 20),
           _buildImageCard(
-            'صور التفاصيل',
-            null,
-            (image) => setState(() => _detailsImages.add(image!)),
+            'إضافة صور تفاصيل', // تم تغيير العنوان ليعكس وظيفة الإضافة
+            null, // لا يوجد ملف XFile مبدئيًا لبطاقة "الإضافة" هذه
+            null, // لا يوجد رابط URL مبدئي لبطاقة "الإضافة" هذه
+                (image) => setState(() => _detailsImages.add(image!)),
             multiSelect: true,
           ),
-          if (_detailsImages.isNotEmpty) ...[
+          if (allDetailsImagesForDisplay.isNotEmpty) ...[ // التحقق من القائمة المدمجة
             SizedBox(height: 10),
             Wrap(
               spacing: 8,
               runSpacing: 8,
-              children: _detailsImages.map((image) {
+              children: allDetailsImagesForDisplay.map((imageSource) {
+                Widget imageWidget;
+                if (imageSource is XFile) {
+                  // إذا كانت الصورة ملف XFile (صورة جديدة تم اختيارها)
+                  imageWidget = Image.file(File(imageSource.path), fit: BoxFit.cover);
+                } else if (imageSource is String && imageSource.isNotEmpty) {
+                  // إذا كانت الصورة رابط URL (صورة محملة من قاعدة البيانات)
+                  imageWidget = Image.network('http://10.0.2.2:8000/storage/$imageSource', fit: BoxFit.cover, // 🔴🔴🔴 تم التعديل هنا 🔴🔴🔴
+                    errorBuilder: (context, error, stackTrace) =>
+                    const Icon(Icons.broken_image, size: 40, color: Colors.red), // fallback في حالة فشل تحميل الصورة
+                  );
+                } else {
+                  imageWidget = Container(); // حالة لا ينبغي أن تحدث إذا كانت القائمة مفلترة
+                }
+
                 return Stack(
                   children: [
                     Container(
@@ -776,19 +979,24 @@ controller = Get.put(RestAreaController());
                       height: 80,
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(8),
-                        image: DecorationImage(
-                          image: FileImage(File(image.path)),
-                          fit: BoxFit.cover,
-                        ),
                       ),
+                      child: imageWidget, // عرض الودجت الصحيح للصورة
                     ),
                     Positioned(
                       top: 0,
                       right: 0,
                       child: IconButton(
-                        icon: Icon(Icons.close, size: 18, color: Colors.red),
-                        onPressed: () =>
-                            setState(() => _detailsImages.remove(image)),
+                        icon: const Icon(Icons.close, size: 18, color: Colors.red),
+                        onPressed: () {
+                          setState(() {
+                            // إزالة الصورة من القائمة الصحيحة
+                            if (imageSource is XFile) {
+                              _detailsImages.remove(imageSource);
+                            } else if (imageSource is String) {
+                              _initialDetailsImageUrls.remove(imageSource);
+                            }
+                          });
+                        },
                       ),
                     ),
                   ],
@@ -806,11 +1014,13 @@ controller = Get.put(RestAreaController());
       IconData icon,
       Function(String) onSaved, {
         String? Function(String?)? validator,
+        int? maxLines, // 🔴 تم إضافة خاصية maxLines
         TextEditingController? controller,
       }) {
     return Padding(
       padding: EdgeInsets.only(bottom: 16),
       child: TextFormField(
+        maxLines: maxLines, // 🔴 استخدام maxLines هنا
         controller: controller,
         onChanged: (value) => onSaved(value),
         onSaved: (value) => onSaved(value ?? ''),
@@ -833,11 +1043,16 @@ controller = Get.put(RestAreaController());
 
 
   Widget _buildNumberField(
-      String label, IconData icon, Function(double) onChanged,
-      {String? Function(String?)? validator}) {
+      String label,
+      IconData icon,
+      Function(double) onChanged, {
+        String? Function(String?)? validator,
+        required TextEditingController controller,
+      }) {
     return Padding(
       padding: EdgeInsets.only(bottom: 16),
       child: TextFormField(
+        controller: controller, // ✅ تم إضافته هنا
         onSaved: (value) => onChanged(double.tryParse(value ?? '0') ?? 0),
         keyboardType: TextInputType.number,
         decoration: InputDecoration(
@@ -929,6 +1144,9 @@ controller = Get.put(RestAreaController());
 
   Widget _buildNumberInputChip(
       String label, IconData icon, int value, Function(int) onChanged) {
+    // 🔴🔴🔴 إضافة طباعة تصحيح هنا 🔴🔴🔴
+    debugPrint('DEBUG: _buildNumberInputChip for "$label" received value: $value');
+
     return InputChip(
       label: Row(
         mainAxisSize: MainAxisSize.min,
@@ -998,99 +1216,67 @@ controller = Get.put(RestAreaController());
     );
   }
 
-  Widget _buildImageCard(
-    String title,
-    XFile? image,
-    Function(XFile?) onImageSelected, {
-    bool required = false,
-    bool multiSelect = false,
-  }) {
+  // 🔴🔴🔴 تم تعديل دالة _buildImageCard لتدعم عرض الصور من روابط URL 🔴🔴🔴
+  Widget _buildImageCard(String title, XFile? pickedImageFile, String? initialImageUrl, Function(XFile?) onImagePicked, {bool required = false, bool multiSelect = false}) {
     return Card(
-      elevation: 3,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(12),
-      ),
-      child: Padding(
-        padding: EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            Center(
-              child: Text(
-                title + (required ? ' *' : ''),
-                style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
-                  color: MyColors.tealColor,
-                ),
-              ),
-            ),
-            SizedBox(height: 10),
-            if (image != null || (multiSelect && _detailsImages.isNotEmpty))
-              SizedBox(
-                height: 100,
-                child: (image != null)
-                    ? _buildImagePreview(image, onImageSelected)
-                    : ListView.builder(
-                        scrollDirection: Axis.horizontal,
-                        itemCount: _detailsImages.length,
-                        itemBuilder: (context, index) {
-                          return Padding(
-                            padding: EdgeInsets.only(right: 8),
-                            child: _buildImagePreview(_detailsImages[index],
-                                (img) {
-                              setState(() => _detailsImages.removeAt(index));
-                            }),
-                          );
-                        },
-                      ),
-              ),
-            SizedBox(height: 10),
-            Row(
-              mainAxisAlignment:
-                  MainAxisAlignment.center, // محاذاة الزر إلى المنتصف
+      elevation: 2,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+      child: InkWell(
+        onTap: () async {
+          final ImagePicker _picker = ImagePicker();
+          if (multiSelect) {
+            final List<XFile> pickedFiles = await _picker.pickMultiImage();
+            if (pickedFiles.isNotEmpty) { // التحقق من أن القائمة ليست فارغة
+              pickedFiles.forEach((file) => onImagePicked(file));
+            }
+          } else {
+            final XFile? pickedFile = await _picker.pickImage(source: ImageSource.gallery);
+            if (pickedFile != null) {
+              onImagePicked(pickedFile);
+            }
+          }
+        },
+        child: Container(
+          width: double.infinity,
+          height: 150,
+          decoration: BoxDecoration(
+            color: Colors.grey[100],
+            borderRadius: BorderRadius.circular(10),
+            border: Border.all(color: required && pickedImageFile == null && (initialImageUrl == null || initialImageUrl.isEmpty) ? Colors.red : Colors.grey.shade300),
+          ),
+          child: pickedImageFile != null // إذا كان هناك ملف XFile (صورة جديدة مختارة)
+              ? Image.file(File(pickedImageFile.path), fit: BoxFit.cover)
+              : (initialImageUrl != null && initialImageUrl.isNotEmpty) // وإلا، إذا كان هناك رابط URL أولي
+              ? Image.network('http://10.0.2.2:8000/storage/$initialImageUrl', fit: BoxFit.cover,
+            errorBuilder: (context, error, stackTrace) => // في حالة فشل تحميل الصورة من الرابط
+            Column(
+              mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                ElevatedButton.icon(
-                  onPressed: () async {
-                    final picker = ImagePicker();
-                    if (multiSelect) {
-                      final images = await picker.pickMultiImage();
-                      if (images != null) {
-                        setState(() => _detailsImages.addAll(images));
-                      }
-                    } else {
-                      final img =
-                          await picker.pickImage(source: ImageSource.gallery);
-                      if (img != null) {
-                        onImageSelected(img);
-                      }
-                    }
-                  },
-                  icon: Icon(Icons.photo_library, size: 25),
-                  label: Text(multiSelect ? 'اختر صور متعددة' : 'اختر صورة'),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: MyColors.tealColor,
-                    textStyle: TextStyle(
-                      fontSize: 16,
-                      color: Colors.white,
-                      fontFamily: 'Tajawal',
-                    ),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                  ),
-                ),
-                if (image != null) ...[
-                  SizedBox(width: 10),
-                  TextButton.icon(
-                    onPressed: () => onImageSelected(null),
-                    icon: Icon(Icons.delete, color: Colors.red, size: 20),
-                    label: Text('إزالة', style: TextStyle(color: Colors.red)),
-                  ),
-                ],
+                Text("http://10.0.2.2:8000/storage/$initialImageUrl"),
+                const Icon(Icons.broken_image, size: 40, color: Colors.red),
+                const SizedBox(height: 8),
+                Text('فشل تحميل الصورة', style: TextStyle(color: Colors.red, fontFamily: 'Tajawal')),
               ],
             ),
-          ],
+          )
+              : multiSelect // إذا لم يكن هناك أي صورة، وعملية الاختيار متعددة
+              ? Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              const Icon(Icons.add_photo_alternate, size: 40, color: Colors.grey),
+              const SizedBox(height: 8),
+              Text(title, style: TextStyle(color: Colors.grey, fontFamily: 'Tajawal')),
+            ],
+          )
+              : Column( // إذا لم يكن هناك أي صورة، وعملية الاختيار فردية
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              const Icon(Icons.add_a_photo, size: 40, color: Colors.grey),
+              const SizedBox(height: 8),
+              Text(title, style: TextStyle(color: Colors.grey, fontFamily: 'Tajawal')),
+              if (required) Text('(مطلوب)', style: TextStyle(color: Colors.red, fontSize: 12, fontFamily: 'Tajawal')),
+            ],
+          ),
         ),
       ),
     );
