@@ -326,6 +326,26 @@ class Routes {
       transitionDuration: const Duration(milliseconds: 600),
     ),
     GetPage(
+      name: "/contactPage",
+      page: () =>  ContactPage(),
+
+      transitionDuration: const Duration(milliseconds: 600),
+    ),
+    GetPage(
+      name: "/pointsPage",
+      page: () =>  PointsPage(),
+
+      transitionDuration: const Duration(milliseconds: 600),
+    ),
+    GetPage(
+      name: "/request360Page",
+      page: () =>  Request360Page(),
+
+      transitionDuration: const Duration(milliseconds: 600),
+    ),
+
+
+    GetPage(
       name: "/PrivacyPolicy",
       page: () => const PrivacyPolicyScreen(),
       transition: Transition.leftToRight,

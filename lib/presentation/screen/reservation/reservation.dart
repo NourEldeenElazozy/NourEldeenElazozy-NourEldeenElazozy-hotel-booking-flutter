@@ -8,13 +8,21 @@ class Reservation extends StatefulWidget {
 }
 
 class _ReservationState extends State<Reservation> {
-
+  late HomeController Hocontroller = Get.put(HomeController());
   late ReservationController controller;
+  var userType = ''.obs; // استخدام Rx لتحديث الواجهة عند تغيير القيمة
+  Future<void> _loaduserType() async {
 
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    userType.value = prefs.getString('user_type') ?? '';
+
+
+  }
   @override
   void initState() {
     controller = Get.put(ReservationController());
     super.initState();
+    _loaduserType();
   }
 
   @override
@@ -48,6 +56,7 @@ class _ReservationState extends State<Reservation> {
       textDirection: TextDirection.rtl,
       child: Scaffold(
         appBar: homeAppBar(
+            context,
           showBackButton: true,
             "تفاصيل الحجز", false, controller.themeController.isDarkMode.value),
         body: SingleChildScrollView(
@@ -108,6 +117,16 @@ class _ReservationState extends State<Reservation> {
                         label: 'السعر اليومي',
                         value: '${restArea['price']} دينار',
                       ),
+                      _buildDetailRow(
+                        icon: Icons.monetization_on,
+                        label: 'سعر العطل الرسمية',
+                        value: '${restArea['holiday_price']} دينار',
+                      ),
+                      _buildDetailRow(
+                        icon: Icons.monetization_on,
+                        label: 'سعر ايام العيد',
+                        value: '${restArea['eid_days_price']} دينار',
+                      ),
                     ],
                   ),
                 ),
@@ -152,10 +171,16 @@ class _ReservationState extends State<Reservation> {
                         label: 'عدد البالغين',
                         value: '${reservation['adults_count']}',
                       ),
+
                       _buildDetailRow(
                         icon: Icons.child_care,
                         label: 'عدد الأطفال',
                         value: '${reservation['children_count']}',
+                      ),
+                      _buildDetailRow(
+                        icon: Icons.apartment ,
+                        label: 'نوع اللإقامة',
+                        value: '${reservation['accommodation_type']}',
                       ),
                       const SizedBox(height: 10),
                       Row(
@@ -220,6 +245,7 @@ class _ReservationState extends State<Reservation> {
                         value: user['name'],
                       ),
                       _buildDetailRow(
+                        iswatss: true,
                         icon: Icons.phone,
                         label: 'رقم الهاتف',
                         value: user['phone'],
@@ -254,27 +280,103 @@ class _ReservationState extends State<Reservation> {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
-              Expanded(
+              if (userType.value == "host")
+                Expanded(
                 child: FloatingActionButton.extended(
                   heroTag: 'approve_fab', // Unique tag for each FAB
                   onPressed: () {
-                    // Implement approval logic here
-                    Get.defaultDialog(
-                      title: "تأكيد الموافقة",
-                      middleText: "هل أنت متأكد من الموافقة على الحجز؟",
-                      textConfirm: "نعم",
-                      textCancel: "لا",
-                      confirmTextColor: Colors.white,
-                      buttonColor: Colors.green,
-                      cancelTextColor: Colors.black,
-                      onConfirm: () {
-                        Get.back(); // Close dialog
-                        // Call your controller method to approve the reservation
-                        // controller.approveReservation(reservation['id']);
-                        Get.snackbar('تم', 'تم تأكيد الحجز بنجاح!');
-                      },
-                      onCancel: () {},
-                    );
+                    // اجلب تواريخ الحجز الحالي
+                    final String currentCheckIn = reservation['check_in'];
+                    final String currentCheckOut = reservation['check_out'];
+                    final int currentId = reservation['id'];
+
+                    // ابحث عن حجوزات أخرى بنفس التاريخ (عدا هذا الحجز)
+                    final overlapping = Hocontroller.filteredReservations.where((res) {
+                      return res['id'] != currentId &&
+                          res['check_in'] == currentCheckIn &&
+                          res['check_out'] == currentCheckOut &&
+                          res['status'] == 'pending';
+                    }).toList();
+
+                    if (overlapping.isNotEmpty) {
+                      // يوجد حجز آخر بنفس التوقيت
+                      Get.defaultDialog(
+                        title: "تنبيه",
+                        middleText:
+                        "يوجد حجز آخر في نفس التوقيت لهذه الاستراحة. سيتم إلغاؤه تلقائيًا إذا قمت بتأكيد هذا الحجز. ماذا تريد أن تفعل؟",
+                        contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                        confirm: const SizedBox(), // لمنع استخدام الزر الافتراضي
+                        cancel: const SizedBox(),  // لمنع استخدام الزر الافتراضي
+                        actions: [
+                          // زر متابعة
+                          ElevatedButton(
+                            onPressed: () async {
+                              Get.back(); // إغلاق هذا التنبيه
+
+                              //await Hocontroller.confirmReservation(reservationId);
+
+                              for (var res in overlapping) {
+                                // await Hocontroller.cancelReservation(res['id']);
+                              }
+
+                              await Hocontroller.fetchRecentlyBooked();
+                            },
+                            style: ElevatedButton.styleFrom(backgroundColor: Colors.green),
+                            child: const Text("نعم، متابعة", style: TextStyle(color: Colors.white, fontFamily: 'Tajawal', )),
+                          ),
+                          // زر عرض الحجوزات
+                          OutlinedButton(
+                            onPressed: () {
+                              Get.back(); // إغلاق التنبيه
+
+                              // فتح صفحة الحجوزات لنفس اليوم
+                              Get.dialog(
+                                AlertDialog(
+                                  title: const Text("الحجوزات في هذا اليوم"),
+                                  content: SizedBox(
+                                      height: 300,
+                                      width: double.maxFinite,
+                                      child: SameDayReservationsPage(reservations: overlapping)
+                                  ),
+                                  actions: [
+                                    TextButton(
+                                      onPressed: () => Get.back(),
+                                      child: const Text("إغلاق"),
+                                    )
+                                  ],
+                                ),
+                              );
+                            },
+                            style: ElevatedButton.styleFrom(backgroundColor: Colors.orange),
+                            child: const Text("عرض الحجوزات لنفس اليوم",style: TextStyle(color: Colors.white)),
+                          ),
+                          // زر الإلغاء
+                          TextButton(
+                            onPressed: () {
+                              Get.back(); // إغلاق التنبيه
+                            },
+                            child: const Text("إلغاء", style: TextStyle(color: Colors.black)),
+                          ),
+                        ],
+                      );
+                    } else {
+                      // لا يوجد تعارض
+                      Get.defaultDialog(
+                        title: "تأكيد الموافقة",
+                        middleText: "هل أنت متأكد من الموافقة على الحجز؟",
+                        textConfirm: "نعم",
+                        textCancel: "لا",
+                        confirmTextColor: Colors.white,
+                        buttonColor: Colors.green,
+                        cancelTextColor: Colors.black,
+                        onConfirm: () {
+                          Get.back();
+                          //controller.approveReservation(currentId);
+                          Get.snackbar('تم', 'تم تأكيد الحجز.');
+                        },
+                        onCancel: () {},
+                      );
+                    }
                   },
                   label: const Text('موافقة', style: TextStyle(color: Colors.white)),
                   icon: const Icon(Icons.check, color: Colors.white),
@@ -283,6 +385,11 @@ class _ReservationState extends State<Reservation> {
                 ),
               ),
               const SizedBox(width: 15), // Space between buttons
+
+          if (userType.value == "host")
+
+
+
               Expanded(
                 child: FloatingActionButton.extended(
                   heroTag: 'reject_fab', // Unique tag for each FAB
@@ -319,7 +426,12 @@ class _ReservationState extends State<Reservation> {
     );
   }
 
-  Widget _buildDetailRow({required IconData icon, required String label, required String value}) {
+  Widget _buildDetailRow({
+    required IconData icon,
+    required String label,
+    required String value,
+    bool iswatss = false, // ← القيمة الافتراضية false
+  }) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8.0),
       child: Row(
@@ -340,7 +452,47 @@ class _ReservationState extends State<Reservation> {
                   ),
                 ),
                 const SizedBox(height: 4),
-                Text(
+
+                // إذا كان الرقم هاتف، اجعله قابل للنقر
+
+                iswatss
+                    ? GestureDetector(
+                  onTap: () async {
+                    final rawPhone = value.replaceAll(RegExp(r'\s+'), '');
+                    final fullPhone = rawPhone.startsWith('218')
+                        ? rawPhone
+                        : '218${rawPhone.replaceFirst('0', '')}';
+                    final url = Uri.parse("https://wa.me/$fullPhone");
+
+                    if (await canLaunchUrl(url)) {
+                      await launchUrl(
+                        url,
+                        mode: LaunchMode.externalApplication,
+                      );
+                    } else {
+                      Get.snackbar(
+                        "خطأ",
+                        "تعذر فتح واتساب أو الرابط",
+                        backgroundColor: Colors.red,
+                      );
+                    }
+                  },
+                  child: Row(
+                    children: [
+                      Text(
+                        value,
+                        style: TextStyle(
+                          fontSize: 16,
+                          color: Colors.green[700],
+                          decoration: TextDecoration.underline,
+                        ),
+                      ),
+                      const SizedBox(width: 8),
+                      Icon(Icons.chat, color: Colors.green, size: 20),
+                    ],
+                  ),
+                )
+                    : Text(
                   value,
                   style: TextStyle(
                     fontSize: 16,

@@ -8,14 +8,8 @@ import 'package:hotel_booking/core/themes/themes_controller.dart';
 class CustomFullAppBar extends StatelessWidget implements PreferredSizeWidget {
   final String title;
   final List<Widget>? action;
-  final bool automaticallyImplyLeading; // ✅ إضافة هذه الخاصية
 
-  const CustomFullAppBar({
-    super.key,
-    required this.title,
-    this.action,
-    this.automaticallyImplyLeading = true, // ✅ تعيين قيمة افتراضية لها (true)
-  });
+  const CustomFullAppBar({super.key, required this.title, this.action});
 
   @override
   Size get preferredSize => const Size.fromHeight(kToolbarHeight);
@@ -27,20 +21,13 @@ class CustomFullAppBar extends StatelessWidget implements PreferredSizeWidget {
     return AppBar(
       // backgroundColor: Colors.transparent,
       scrolledUnderElevation: 0,
-      automaticallyImplyLeading: automaticallyImplyLeading, // ✅ استخدام الخاصية هنا
       leadingWidth: 43,
-      // يجب أن يتم التحكم في زر الرجوع اليدوي هذا بناءً على `automaticallyImplyLeading`
-      // إذا كانت `automaticallyImplyLeading` هي false، فهذا `leading` يجب أن يختفي أيضاً
-      // أو يصبح اختياريًا.
-      // الطريقة الأسهل هي: إذا كنت ستستخدم `automaticallyImplyLeading: false`،
-      // فلا يجب أن يكون لديك هذا `leading` اليدوي مطلقًا في نفس الوقت.
-      leading: automaticallyImplyLeading
-          ? Row( // ✅ إظهار زر الرجوع اليدوي فقط إذا كانت automaticallyImplyLeading هي true
+      leading: Row(
         children: [
           const SizedBox(width: 15),
           InkWell(
             onTap: () {
-              return Get.back();
+              Navigator.pop(context);
             },
             child: SvgPicture.asset(
               MyImages.backArrow,
@@ -52,23 +39,19 @@ class CustomFullAppBar extends StatelessWidget implements PreferredSizeWidget {
             ),
           ),
         ],
-      )
-          : null, // ✅ لا تعرض شيئاً في الـ leading إذا كانت automaticallyImplyLeading هي false
+      ),
       title: Text(
         title,
-        style: const TextStyle(
-          fontSize: 20,
+        style: const TextStyle(   fontSize: 20,
           fontWeight: FontWeight.bold,
-          fontFamily: 'Tajawal',
-        ),
+          fontFamily: 'Tajawal',),
       ),
       actions: action,
     );
   }
 }
 
-// دالة homeAppBar لم يتم تعديلها لأنها منفصلة عن CustomFullAppBar
-PreferredSizeWidget homeAppBar(String title, bool status, bool isDarkMode, {bool showBackButton = false}) {
+PreferredSizeWidget homeAppBar(BuildContext context,String title, bool status, bool isDarkMode, {bool showBackButton = false}) {
   return PreferredSize(
     preferredSize: const Size.fromHeight(kToolbarHeight),
     child: SizedBox(
@@ -86,7 +69,7 @@ PreferredSizeWidget homeAppBar(String title, bool status, bool isDarkMode, {bool
                     color: isDarkMode ? MyColors.white : MyColors.black,
                   ),
                   onPressed: () {
-                    Get.back(); // Use Get.back() to navigate back
+                    Navigator.pop(context);
                   },
                 )
               else
@@ -127,6 +110,7 @@ PreferredSizeWidget homeAppBar(String title, bool status, bool isDarkMode, {bool
                       ),
                     ),
                     const SizedBox(width: 5),
+               /*
                     InkWell(
                       onTap: () {
                         Get.toNamed("/bookMark");
@@ -140,6 +124,7 @@ PreferredSizeWidget homeAppBar(String title, bool status, bool isDarkMode, {bool
                             width: 25),
                       ),
                     ),
+                */
                   ],
                 ),
               const SizedBox(width: 15), // Padding on the right

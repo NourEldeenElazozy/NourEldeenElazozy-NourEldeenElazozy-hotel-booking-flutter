@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:convert';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -15,7 +16,9 @@ import 'package:hotel_booking/presentation/common_widgets/dialogbox.dart';
 import 'package:hotel_booking/presentation/common_widgets/snackbar.dart';
 import 'package:hotel_booking/presentation/common_widgets/textformfield.dart';
 import 'package:pin_code_fields/pin_code_fields.dart';
-
+// تأكد من استيراد dart:convert لمعالجة JSON
+import 'dart:convert';
+import 'dart:async'; // لاستخدام Timer
 import '../../../../utils/validations.dart';
 
 part 'select_sms_email_screen.dart';

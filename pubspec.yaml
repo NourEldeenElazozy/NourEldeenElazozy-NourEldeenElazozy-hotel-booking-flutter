@@ -62,11 +62,15 @@ dependencies:
   firebase_core: ^2.18.0         # لتشغيل Firebase
   firebase_remote_config: ^4.2.3 # للتحكم في الإصدارات عن بُعد
   package_info_plus: ^8.0.0      # للحصول على إصدار التطبيق الحالي
+  sms_autofill: ^2.4.1
+  flutter_local_notifications: ^17.1.2
+  firebase_messaging: ^14.9.4
 
 
   # location
   location: ^5.0.3
   google_maps_flutter: ^2.5.3
+  geolocator: ^12.0.0
   cached_network_image: ^3.3.1
   dio: ^5.0.0
   flutter_localization: ^0.2.1

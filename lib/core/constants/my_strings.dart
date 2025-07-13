@@ -205,7 +205,7 @@ class MyString {
   static const String location = "الموقع";
   static const String review = "التقييم";
   static const String more = "المزيد";
-  static const String bookNow = "احجز الآن";
+  static const String bookNow = "أرسل الطلب";
 
 //-----------------------------------Review_Screen------------------------------
   static List reviewRate = [
@@ -232,7 +232,7 @@ class MyString {
   static const String hotelLocation = "موقع الفندق";
 
 //----------------------------------- DateTimeSelect ------------------------------
-  static const String selectDate = "اختر التاريخ";
+  static const String selectDate = "ارسال طلب الحجز";
   static const String checkInDate = "تاريخ تسجيل الدخول";
   static const String checkOutDate = "تاريخ تسجيل الخروج";
   static const String checkInTime = "وقت تسجيل الدخول";
@@ -305,12 +305,12 @@ class MyString {
   static const String notifications = "الإشعارات";
   static const String darkTheme = "الوضع الداكن";
   static const String language = "اللغة";
-  static const String helpCentre = "مركز المساعدة";
-  static const String privacy = "الخصوصية";
+  static const String helpCentre = "اتصل بنا";
+  static const String privacy = "الشروط و الاحكام";
   static const String rateBooKNest = "قيّم إستراحة";
   static const String logout = "تسجيل الخروج";
   static const String submit = "إرسال";
-  static const String rateTitle = "قيّم Learn Ease!";
+  static const String rateTitle = "قيّم تطبيقنا";
   static const String rateSubTitle = "اضغط على نجمة لتقييمك. شكرًا!";
 
 //----------------------------------- ProfileNotification_Screen ------------------------------

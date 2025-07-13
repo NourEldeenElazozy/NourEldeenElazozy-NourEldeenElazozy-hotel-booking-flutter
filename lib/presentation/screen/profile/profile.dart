@@ -11,11 +11,29 @@ class _ProfileState extends State<Profile> {
   late ProfileController controller;
   late bool isDarkMode;
   var userType = ''.obs; // استخدام Rx لتحديث الواجهة عند تغيير القيمة
+  var userName = ''.obs; // استخدام Rx لتحديث الواجهة عند تغيير القيمة
+  var userPhone = ''.obs; // استخدام Rx لتحديث الواجهة عند تغيير القيمة
 
   Future<void> _loaduserType() async {
 
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     userType.value = prefs.getString('user_type') ?? '';
+    print("user_type ${prefs.getString('user_type')}");
+
+  }
+  Future<void> _loadusername() async {
+
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    userName.value = prefs.getString('userName') ?? '';
+    print("user name ${prefs.getString('userName')}");
+
+
+  }
+  Future<void> _loadusermobile() async {
+
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    userPhone.value = prefs.getString('userPhone') ?? '';
+    print("userPhone ${prefs.getString('userPhone')}");
 
 
   }
@@ -142,9 +160,11 @@ class _ProfileState extends State<Profile> {
   @override
   Widget build(BuildContext context) {
     _loaduserType();
-
+    _loadusername();
+    _loadusermobile();
     return Scaffold(
       appBar: homeAppBar(
+          context,
           MyString.profile, false, controller.themeController.isDarkMode.value),
       body: SafeArea(
         child: SingleChildScrollView(
@@ -152,49 +172,33 @@ class _ProfileState extends State<Profile> {
             children: [
               InkWell(
                 onTap: () {
-                  showOptions();
+                  //showOptions();
                 },
                 child: Stack(
                   children: [
-                    selectedImage != null
-                        ? CircleAvatar(
-                            radius: 70,
-                            backgroundImage: FileImage(selectedImage!),
-                          )
-                        : CircleAvatar(
-                            radius: 70,
+
+                         CircleAvatar(
+                            radius: 50,
                             backgroundColor:
                                 controller.themeController.isDarkMode.value
                                     ? MyColors.profilePersonDark
                                     : MyColors.profilePerson,
                             child: Image.asset(
-                              MyImages.profilePerson,
+                              MyImages.logo,
                             ),
                           ),
-                    Positioned(
-                      bottom: 2,
-                      right: 2,
-                      child: SvgPicture.asset(
-                        MyImages.editProfile,
-                        colorFilter: ColorFilter.mode(
-                            controller.themeController.isDarkMode.value
-                                ? MyColors.white
-                                : MyColors.black,
-                            BlendMode.srcIn),
-                      ),
-                      // child: Icon(Icons.edit),
-                    ),
+
                   ],
                 ),
               ),
               const SizedBox(height: 10),
-              const Text(
-                "Daniel Austin",
+               Text(
+                userName.value,
                 style: TextStyle(fontWeight: FontWeight.w700, fontSize: 20),
               ),
               const SizedBox(height: 5),
-              const Text(
-                "daniel_austin@yourdomain.com",
+               Text(
+                userPhone.value,
                 style: TextStyle(fontWeight: FontWeight.w600, fontSize: 14),
               ),
               const SizedBox(height: 20),
@@ -217,6 +221,7 @@ class _ProfileState extends State<Profile> {
                 child: commonListTile(MyImages.myHost,
                     MyString.myHost, controller.isDarkMode.value),
               ),
+
               if(userType.value=="host")
                 InkWell(
                   onTap: () {
@@ -260,6 +265,13 @@ class _ProfileState extends State<Profile> {
               ),
               InkWell(
                 onTap: () {
+                  Get.toNamed('/pointsPage');
+                },
+                child: commonListTile(MyImages.whiteStar, "نقاط الولاء", controller.isDarkMode.value),
+              ),
+             /*
+                InkWell(
+                onTap: () {
                   Get.toNamed('/chooseLanguage');
                 },
                 child: commonListTile(MyImages.languageScreen, MyString.language, controller.isDarkMode.value),
@@ -271,6 +283,21 @@ class _ProfileState extends State<Profile> {
                 child: commonListTile(MyImages.helpCenterScreen,
                     MyString.helpCentre, controller.isDarkMode.value),
               ),
+              */
+              InkWell(
+                onTap: () {
+                  Get.toNamed('/contactPage');
+                },
+                child: commonListTile(MyImages.mobile,
+                    MyString.helpCentre, controller.isDarkMode.value),
+              ),
+              if(userType.value=="host")
+                InkWell(
+                  onTap: () {
+                    Get.toNamed('/request360Page');
+                  },
+                  child: commonListTile(MyImages.congratulation, "طلب تصوير 360", controller.isDarkMode.value),
+                ),
               InkWell(
                 onTap: () {
                   Get.toNamed('/PrivacyPolicy');
@@ -284,6 +311,94 @@ class _ProfileState extends State<Profile> {
                 child: commonListTile(MyImages.rateBookNestScreen,
                     MyString.rateBooKNest, controller.isDarkMode.value),
               ),
+              InkWell(
+                onTap: () {
+                  // عرض ديالوج مشاركة (أنت لاحقاً تضيف share logic هنا)
+                  Get.defaultDialog(
+                    title: 'مشاركة التطبيق',
+                    titleStyle: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                      fontFamily: 'Tajawal',
+                    ),
+                    middleText: 'انسخ الرابط وشاركه مع أصدقائك!',
+                    middleTextStyle: TextStyle(
+                      fontSize: 16,
+                      fontFamily: 'Tajawal',
+                    ),
+                    textConfirm: 'نسخ الرابط',
+                    textCancel: 'إلغاء',
+                    confirmTextColor: Colors.white,
+                    buttonColor: Colors.orange,
+                    cancelTextColor: Colors.black,
+                    onConfirm: () {
+                      Get.back();
+
+                      // هنا مثلاً نسخ الرابط (لو عندك كود نسخ)
+                      Get.snackbar(
+                        'تم النسخ',
+                        'رابط التطبيق تم نسخه ✅',
+                        backgroundColor: Colors.orange,
+                        colorText: Colors.white,
+                      );
+                    },
+                    onCancel: () {},
+                  );
+                },
+                child: commonListTile(
+                  MyImages.user, // أيقونة المشاركة
+                  'مشاركة التطبيق مع صديق',
+                  controller.isDarkMode.value,
+                ),
+              ),
+
+              InkWell(
+                onTap: () {
+                  // عرض دايلوج تأكيد الحذف
+                  Get.defaultDialog(
+                    title: 'تأكيد الحذف',
+                    titleStyle: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                      fontFamily: 'Tajawal',
+                    ),
+                    middleText: 'هل أنت متأكد أنك تريد حذف الحساب؟ هذا الإجراء لا يمكن التراجع عنه.',
+                    middleTextStyle: TextStyle(
+                      fontSize: 16,
+                      fontFamily: 'Tajawal',
+                    ),
+                    textConfirm: 'نعم، حذف',
+                    textCancel: 'إلغاء',
+                    confirmTextColor: Colors.white,
+                    buttonColor: Colors.redAccent,
+                    cancelTextColor: Colors.black,
+                    onConfirm: () {
+                      Get.back(); // إغلاق الديالوج
+                      Get.snackbar(
+                        'تم الحذف',
+                        'تم حذف حسابك بنجاح.',
+                        backgroundColor: Colors.redAccent,
+                        colorText: Colors.white,
+                      );
+                    },
+                    onCancel: () {},
+                  );
+                },
+                child: ListTile(
+                  leading: SvgPicture.asset(MyImages.canceled, height: 20, width: 20),
+                  title: Text(
+                    'حذف حسابي',
+                    style: TextStyle(
+                      color: Colors.redAccent, // لون النص أحمر
+                      fontSize: 16,
+                      fontWeight: FontWeight.w600,
+                      fontFamily: 'Tajawal',
+                    ),
+                  ),
+
+                ),
+              ),
+
               ListTile(
                 onTap: () {
                   showModalBottomSheet(

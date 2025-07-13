@@ -7,4 +7,3 @@ import 'package:hotel_booking/presentation/common_widgets/appbar.dart';
 import 'package:hotel_booking/presentation/screen/notification/notification_controller.dart';
 import 'package:intl/intl.dart';
 
-part 'notification.dart';

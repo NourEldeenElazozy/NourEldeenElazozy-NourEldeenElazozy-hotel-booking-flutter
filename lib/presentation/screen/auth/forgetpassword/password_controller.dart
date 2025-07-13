@@ -1,5 +1,7 @@
 part of 'password_import.dart';
 
+
+
 class PasswordController extends GetxController {
   ThemeController themeController = Get.put(ThemeController());
 
@@ -13,15 +15,15 @@ class PasswordController extends GetxController {
   @override
   void onInit() {
     super.onInit();
-    startTimer();
-    // يمكنك تهيئة المؤقت هنا بقيمة أولية إذا كنت ترغب في ذلك
-    // لكن الأفضل هو تهيئته عند الحاجة في startTimer
+    // يجب أن تبدأ المؤقت هنا فقط إذا كنت تريد أن يبدأ بمجرد تهيئة المتحكم
+    // وإلا، ابدأه في الدالة التي تستدعي إرسال الـ OTP
+    // startTimer();
   }
   @override
   void dispose() {
     // هذا السطر مهم لضمان إلغاء المؤقت عند إغلاق الشاشة
     // لكي لا يظل يعمل في الخلفية ويستهلك موارد
-  _timer?.cancel();
+    _timer?.cancel();
     super.dispose();
   }
   @override
@@ -81,7 +83,7 @@ class PasswordController extends GetxController {
     );
 
     try {
-      // 🔹 أرسل طلبًا إلى API للتحقق من وجود المستخدم
+      // 🔹 تحقق من وجود المستخدم
       final checkUserResponse = await Dio().post(
         'http://10.0.2.2:8000/api/check-user-exists',
         data: {"phone": phone},
@@ -96,14 +98,10 @@ class PasswordController extends GetxController {
           'هذا الرقم غير مسجل. يرجى التسجيل أولاً.',
           backgroundColor: Colors.red,
         );
-        return; // توقف إذا لم يكن المستخدم موجودًا
+        return;
       }
-      // ✅ التغيير هنا: استخدام Get.off()
-      // هذا يزيل الشاشة الحالية (SelectSmsEmailScreen) من المكدس
-      // قبل دفع OtpSendScreen، مما يضمن وجود نسخة واحدة فقط من OtpSendScreen
-      // في شجرة الـ widgets في أي وقت.
-      //Get.off(() => const OtpSendScreen());
-      // ✅ 2. إذا كان المستخدم موجودًا، أرسل OTP
+
+      // ✅ 2. إرسال OTP إذا كان المستخدم موجودًا
       final otpResponse = await Dio().post(
         'http://10.0.2.2:8000/api/send-otp',
         data: {"target_number": phone},
@@ -111,40 +109,111 @@ class PasswordController extends GetxController {
 
       Get.back(); // أغلق الـ loading بعد إرسال OTP
 
-      if (otpResponse.data['success'] == true) {
-        print("receivedOtp.values ${otpResponse.data['otp']}");
-        receivedOtp.value=otpResponse.data['otp'].toString();
-
-        // ✅ التغيير هنا: استخدام Get.off()
-        // هذا يزيل الشاشة الحالية (SelectSmsEmailScreen) من المكدس
-        // قبل دفع OtpSendScreen، مما يضمن وجود نسخة واحدة فقط من OtpSendScreen
-        // في شجرة الـ widgets في أي وقت.
-        Get.off(() => const OtpSendScreen());
+      // 🔴🔴🔴 التعديل هنا: معالجة البيانات المستلمة 🔴🔴🔴
+      Map<String, dynamic> parsedData;
+      if (otpResponse.data is String) {
+        // إذا كانت البيانات نصية، حاول تحليلها كـ JSON
+        try {
+          parsedData = jsonDecode(otpResponse.data);
+        } catch (e) {
+          // إذا فشل التحليل، اعتبرها استجابة غير صالحة
+          Get.snackbar(
+            'خطأ',
+            'استجابة غير صالحة من الخادم (تنسيق JSON خاطئ)',
+            backgroundColor: Colors.red,
+            colorText: Colors.white,
+          );
+          print('JSON Decoding Error: $e');
+          return;
+        }
+      } else if (otpResponse.data is Map<String, dynamic>) {
+        // إذا كانت البيانات بالفعل Map، استخدمها مباشرة
+        parsedData = otpResponse.data;
       } else {
+        // أي نوع آخر غير متوقع
         Get.snackbar(
           'خطأ',
-          otpResponse.data['message'] ?? 'فشل إرسال رمز التحقق',
+          'استجابة غير متوقعة من الخادم (نوع بيانات غير مدعوم)',
           backgroundColor: Colors.red,
-          colorText: Colors.white
+          colorText: Colors.white,
+        );
+        print('Unexpected otpResponse.data type: ${otpResponse.data.runtimeType}');
+        return;
+      }
+
+      // 🔴🔴🔴 استخدام parsedData بدلاً من otpResponse.data مباشرة 🔴🔴🔴
+      print('--- OTP Response Debug ---');
+      print('parsedData runtimeType: ${parsedData.runtimeType}');
+      print('parsedData full content: $parsedData');
+      print('parsedData[\'status\']: ${parsedData['status']}');
+      print('--- End OTP Response Debug ---');
+
+
+      if (parsedData['status'] == 'success') {
+        final content = parsedData['content'];
+        // regex لاستخراج 6 أرقام متتالية
+        final otpMatch = RegExp(r'\d{6}').firstMatch(content);
+
+        if (otpMatch != null) {
+          receivedOtp.value = otpMatch.group(0)!;
+          // ابدأ المؤقت هنا بعد نجاح إرسال الـ OTP
+          startTimer();
+          Get.off(() => const OtpSendScreen());
+        } else {
+          Get.snackbar(
+            'خطأ',
+            'تعذر استخراج رمز التحقق من الرسالة',
+            backgroundColor: Colors.red,
+            colorText: Colors.white,
+          );
+        }
+      } else {
+        // إذا كان الـ 'status' ليس 'success'
+        Get.snackbar(
+          'خطأ',
+          parsedData['message'] ?? 'فشل إرسال رمز التحقق (حالة غير ناجحة)', // تم تعديل الرسالة
+          backgroundColor: Colors.red,
+          colorText: Colors.white,
         );
       }
     } on DioException catch (e) {
-      Get.back();
-      print("errs ${ e.response?.data}");
-      print("phone ${ phone}");
+      Get.back(); // إغلاق التحميل عند حدوث خطأ
+      print("Dio Error: ${e.response?.data}");
+      print("Phone: $phone");
+
+      String errorMessage = 'حدث خطأ في الاتصال بالخادم';
+      final dynamic errorData = e.response?.data;
+
+      if (errorData != null) {
+        if (errorData is Map<String, dynamic> && errorData.containsKey('message') && errorData['message'] is String) {
+          errorMessage = errorData['message'];
+        } else if (errorData is String) {
+          errorMessage = errorData;
+        } else if (errorData is List && errorData.isNotEmpty) {
+          final first = errorData[0];
+          if (first is String) {
+            errorMessage = first;
+          } else if (first is Map<String, dynamic> && first.containsKey('message') && first['message'] is String) {
+            errorMessage = first['message'];
+          } else {
+            errorMessage = 'خطأ من الخادم: تنسيق رسالة غير معروف في القائمة.';
+          }
+        } else {
+          errorMessage = 'استجابة خطأ غير متوقعة من الخادم: ${errorData.toString()}';
+        }
+      }
 
       Get.snackbar(
         'خطأ',
-        e.response?.data['message'] ?? 'حدث خطأ في الاتصال بالخادم',
+        errorMessage,
         backgroundColor: Colors.red,
         colorText: Colors.white,
-
-
       );
     } catch (e) {
-      Get.back();
-      print( 'حدث خطأ غير متوقع: $e');
-      Get.snackbar('خطأ', 'حدث خطأ غير متوقع: $e');
+      Get.back(); // إغلاق التحميل عند أي خطأ غير متوقع
+      print('حدث خطأ غير متوقع: $e');
+      Get.snackbar('خطأ', 'حدث خطأ غير متوقع: ${e.toString()}',
+          backgroundColor: Colors.red, colorText: Colors.white);
     }
   }
 

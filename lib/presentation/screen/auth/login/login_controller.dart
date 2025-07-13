@@ -13,6 +13,14 @@ class LoginController extends GetxController {
   var token = ''.obs;
   var user = User(id: 0, name: '', phone: '',userType: "").obs;
 
+  Future<String?> getDeviceToken() async {
+    try {
+      return await FirebaseMessaging.instance.getToken();
+    } catch (e) {
+      print('Failed to get device token: $e');
+      return null;
+    }
+  }
   Future<void> login(String phone, String password) async {
     isLoading.value = true;
     try {
@@ -40,7 +48,26 @@ class LoginController extends GetxController {
         token.value = loginResponse.token;
         user.value = loginResponse.user;
         await _storeData(loginResponse.token, loginResponse.user);
+        // جلب device token
+        String? deviceToken = await getDeviceToken();
+        if (deviceToken != null) {
+          print("deviceToken: ${deviceToken.toString()}");
 
+
+        await Dio().post(
+          'http://10.0.2.2:8000/api/update-device-token',
+          data: {
+            'device_token': deviceToken,
+          },
+          options: Options(
+            headers: {
+              'Authorization': 'Bearer ${loginResponse.token}',
+            },
+          ),
+        );
+        } else {
+          print('Error: ${response.statusCode}');
+        }
         // يمكنك تخزين التوكن أو أي معلومات أخرى هنا
       } else {
         // التعامل مع الأخطاء
@@ -57,10 +84,11 @@ class LoginController extends GetxController {
     Get.focusScope!.unfocus();
 
     if (!isValid) {
-      return;
+      isLoading.value = true; // ← إظهار التحميل
     } else {
       // استدعاء دالة تسجيل الدخول
       login(phoneController.text, passwordController.text).then((response) {
+        isLoading.value = false; // ← إخفاء التحميل
         // تحقق من نجاح تسجيل الدخول
         if (token.isNotEmpty) {
           // إذا كانت البيانات صحيحة، انتقل إلى الصفحة التالية

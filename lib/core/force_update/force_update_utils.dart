@@ -38,12 +38,12 @@ class ForceUpdateUtils {
   }
 
   // Modified to use Get.context or a provided context if GetX isn't used
-  static void showUpdateDialog(String appId) {
+  static void showUpdateDialog(String appId,{bool dismissible = true}) {
     // Ensure Get.context is not null before showing the dialog
     if (Get.context != null) {
       showDialog(
         context: Get.context!, // Use Get.context for a context under MaterialApp
-        barrierDismissible: false,
+        barrierDismissible: dismissible,
         builder: (context) => PopScope(
           canPop: false, // Prevents back button dismissal
           child: AlertDialog(

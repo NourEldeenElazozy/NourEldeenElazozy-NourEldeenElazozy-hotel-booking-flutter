@@ -156,6 +156,7 @@ class HomeController extends GetxController {
        bool matchesStatus = reservation['status'].toString().toLowerCase() == status.toLowerCase();
        bool matchesRestArea = true;
 
+
        if (selectedRestAreaIdFilter.value != null && selectedRestAreaIdFilter.value != -1) {
          // تأكد من أن rest_area و id موجودين
          matchesRestArea = reservation['rest_area']?['id'] == selectedRestAreaIdFilter.value;
@@ -164,22 +165,25 @@ class HomeController extends GetxController {
      }).toList();
 
      // تطبيق فرز التاريخ بعد الفلترة حسب الحالة والاستراحة
+
      if (selectedDateSortOrder.value == 'oldest') {
        tempFilteredList.sort((a, b) {
-         // استخدم 'created_at' أو 'booking_date' حسب الحقل الصحيح في الـ API
-         DateTime dateA = DateTime.tryParse(a['created_at'] ?? '') ?? DateTime(1900);
-         DateTime dateB = DateTime.tryParse(b['created_at'] ?? '') ?? DateTime(1900);
-         return dateA.compareTo(dateB); // الأقدم أولاً
+         // الترتيب حسب check_in (أقرب تاريخ أولاً)
+         DateTime dateA = DateTime.tryParse(a['check_in'] ?? '') ?? DateTime(2100);
+         DateTime dateB = DateTime.tryParse(b['check_in'] ?? '') ?? DateTime(2100);
+         return dateA.compareTo(dateB);
        });
      } else if (selectedDateSortOrder.value == 'newest') {
        tempFilteredList.sort((a, b) {
+         // الترتيب حسب created_at (أحدث طلب أولاً)
          DateTime dateA = DateTime.tryParse(a['created_at'] ?? '') ?? DateTime(1900);
          DateTime dateB = DateTime.tryParse(b['created_at'] ?? '') ?? DateTime(1900);
-         return dateB.compareTo(dateA); // الأحدث أولاً
+         return dateB.compareTo(dateA);
        });
      }
 
      filteredReservations.value = tempFilteredList;
+     print("filteredReservations ${filteredReservations.value}");
      print("Filtered list updated for status: $status, count: ${filteredReservations.length}");
    }
 
@@ -404,6 +408,7 @@ class HomeController extends GetxController {
        // طباعة المعاملات
        print("Query Parameters: $queryParameters");
 
+
        // إجراء الطلب
        final response = await Dio().get(
          'http://10.0.2.2:8000/api/rest-areas/filter',
@@ -413,6 +418,8 @@ class HomeController extends GetxController {
        if (response.statusCode == 200) {
          restAreas.value = response.data; // تخزين البيانات في المتغير
          print(restAreas.value);
+         print("Query all: ${restAreas.value}");
+         print("Query all: ${restAreas[0]['google_maps_location']}");
        } else {
          restAreas.clear();
 

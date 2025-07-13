@@ -107,37 +107,42 @@ class _DateTimeSelectState extends State<DateTimeSelect> {
                     : Button(
 
                   onpressed: () async {
-                    if (controller.dateTimeKey.currentState!.validate()) {
-                      if(controller.adult.value==0){
-                        Get.snackbar("خطأ", "لايمكن ان يكون عدد البالغين صفر",backgroundColor: Colors.red);
-                      }else{
-                        // استدعاء دالة التحميل
-                        print(controller.adult.value);
-                        print(controller.children.value);
-                        //controller.loading();
-                        controller.makeReservation(restId);
-                        // معالجة التاريخ
-                        String dateText = controller.checkInDateController.value.text; // "27 Mar 2025"
-                        DateTime date = intl.DateFormat("dd MMM yyyy").parse(dateText);
-                        String formattedDate = intl.DateFormat("dd/MM/yyyy").format(date);
+                    controller.isSubmitted.value = true;
+                    print(controller.selectedType.value);
 
-                        print(formattedDate); // سيظهر 27/03/2025
-
-                        // تنفيذ التحقق من التاريخ
-                        //controller.dateTimeValidation(context);
-
-                        // إغلاق التحميل بعد الانتهاء من العملية
-                        //controller.dismissLoading();
-
-                        // يمكنك الانتقال إلى صفحة أخرى إذا كان ذلك مطلوبًا
-                        // Get.toNamed("/dateTimeSelect");
-                      }
-
-                    } else {
-                      // ❌ أحد التواريخ غير موجود
-                      Get.snackbar("خطأ", "يرجى ملء جميع الحقول المطلوبة",backgroundColor: Colors.red);
+                    if (controller.selectedType.value.isEmpty || controller.selectedType.value == '') {
+                      _showErrorSnackBar(context, "يرجى اختيار نوع الإقامة");
+                      return;
                     }
 
+                    if (controller.dateTimeKey.currentState!.validate()) {
+                      bool isTypeAllowZero = (controller.selectedType.value == "مناسبات");
+
+                      if (!isTypeAllowZero && controller.adult.value == 0) {
+                        _showErrorSnackBar(context, "لا يمكن أن يكون عدد البالغين صفر");
+                        return;
+                      }
+
+                      // لو النوع لا يسمح بصفر أطفال، نجبر الأطفال على 0
+                      if (!isTypeAllowZero && controller.children.value > 0) {
+                        controller.children.value = 0;
+                      }
+
+                      // استدعاء دالة الحجز
+                      print(controller.adult.value);
+                      print(controller.children.value);
+
+
+                      // معالجة التاريخ
+                      String dateText = controller.checkInDateController.value.text;
+                      DateTime date = intl.DateFormat("yyyy-MM-dd").parse(dateText);
+                      String formattedDate = intl.DateFormat("dd/MM/yyyy").format(date);
+                      print("Formatted Date: $formattedDate");
+                      controller.makeReservation(restId);
+
+                    } else {
+                      _showErrorSnackBar(context, "يرجى ملء جميع الحقول المطلوبة");
+                    }
                   },
                   text: MyString.continueButton,
                   textSize: 16,
@@ -146,6 +151,7 @@ class _DateTimeSelectState extends State<DateTimeSelect> {
                 ),
                 ),
               ),
+
               body: SingleChildScrollView(
                 child: Obx(() => Padding(
                     padding: const EdgeInsets.all(15),
@@ -155,11 +161,12 @@ class _DateTimeSelectState extends State<DateTimeSelect> {
                         children: [
                           Container(
                             padding: const EdgeInsets.all(10),
+                            /*
                             decoration: BoxDecoration(
                               color: controller.themeController.isDarkMode.value ? MyColors.darkTextFieldColor : Colors.green.shade50,
                               borderRadius: BorderRadius.circular(15),
                             ),
-                            /*
+
                         child: TableCalendar(
                           focusedDay: _focusedDay,
                           firstDay: DateTime.utc(1950),
@@ -314,6 +321,8 @@ class _DateTimeSelectState extends State<DateTimeSelect> {
                             ],
                           ),
                           const SizedBox(height: 20),
+
+
                         /*
                           Row(
                             children: [
@@ -515,6 +524,67 @@ class _DateTimeSelectState extends State<DateTimeSelect> {
                               )
                             ],
                           ),
+                          const SizedBox(height: 20),
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              const Text("نوع الإقامة", style: TextStyle(fontWeight: FontWeight.w700)),
+
+                              Obx(() => Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Row(
+                                    children: [
+                                      Expanded(
+                                        child: RadioListTile<String>(
+                                          title: const Text("عائلات"),
+                                          value: "عائلات",
+                                          groupValue: controller.selectedType.value,
+                                          onChanged: (value) {
+                                            controller.selectedType.value = value!;
+                                          },
+                                          contentPadding: EdgeInsets.zero,
+                                        ),
+                                      ),
+                                      Expanded(
+                                        child: RadioListTile<String>(
+                                          title: const Text("شباب"),
+                                          value: "شباب",
+                                          groupValue: controller.selectedType.value,
+                                          onChanged: (value) {
+                                            controller.selectedType.value = value!;
+                                          },
+                                          contentPadding: EdgeInsets.zero,
+                                        ),
+                                      ),
+                                      Expanded(
+                                        child: RadioListTile<String>(
+                                          title: const Text("مناسبات"),
+                                          value: "مناسبات",
+                                          groupValue: controller.selectedType.value,
+                                          onChanged: (value) {
+                                            controller.selectedType.value = value!;
+                                          },
+                                          contentPadding: EdgeInsets.zero,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+
+                                  // شرط الفلديشن: عرض رسالة إذا لم يتم اختيار نوع الإقامة
+                                  if (controller.isSubmitted.value && controller.selectedType.value.isEmpty)
+                                    const Padding(
+                                      padding: EdgeInsets.only(right: 12.0, top: 4),
+                                      child: Text(
+                                        "يرجى اختيار نوع الإقامة",
+                                        style: TextStyle(color: Colors.red, fontSize: 12),
+                                      ),
+                                    ),
+                                ],
+                              )),
+                            ],
+                          ),
+
                         ],
                       ),
                     )
@@ -527,4 +597,16 @@ class _DateTimeSelectState extends State<DateTimeSelect> {
 
     );
   }
+}
+void _showErrorSnackBar(BuildContext context, String message) {
+  ScaffoldMessenger.of(context).showSnackBar(
+    SnackBar(
+      content: Text(message, style: const TextStyle(color: Colors.white)),
+      backgroundColor: Colors.red,
+      duration: const Duration(seconds: 3),
+      behavior: SnackBarBehavior.floating,
+      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+    ),
+  );
 }

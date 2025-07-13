@@ -291,8 +291,8 @@ class _HotelDetailState extends State<HotelDetail> {
                               ),
                               // ويدجيت التجول الافتراضي
                               if (controller.detail.id != null &&
-                                  controller.detail.id != null &&
-                                  (controller.detail.cityname as String).isNotEmpty)
+                                  controller.detail.id != null
+                               && (controller.detail.cityname as String).isNotEmpty)
 
                                 Padding(
                                   padding: const EdgeInsets.only(bottom: 20, top: 10),
