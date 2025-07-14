@@ -81,10 +81,23 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: [
-                    Text(
-                      MyString.description,
-                      style: TextStyle(color: onboardingController.themeController.isDarkMode.value ? MyColors.onBoardingDescriptionDarkColor : MyColors.textPaymentInfo, fontWeight: FontWeight.w400, fontSize: 16),
-                      textAlign: TextAlign.justify,
+                    Directionality(
+                      textDirection: TextDirection.rtl,
+                      child: Text(
+                        onboardingController.changeValue.value == 0
+                            ? MyString.description
+                            : onboardingController.changeValue.value == 1
+                            ? MyString.description2
+                            : MyString.description3,
+                        style: TextStyle(
+                          color: onboardingController.themeController.isDarkMode.value
+                              ? MyColors.onBoardingDescriptionDarkColor
+                              : MyColors.textPaymentInfo,
+                          fontWeight: FontWeight.w400,
+                          fontSize: 16,
+                        ),
+                        textAlign: TextAlign.justify,
+                      ),
                     ),
                     DotsIndicator(
                       dotsCount: 3,

@@ -371,7 +371,7 @@ class _HomeState extends State<Home> {
                             color: MyColors.disabledColor,
                             borderRadius: BorderRadius.circular(40),
                             image: DecorationImage(
-                              image: NetworkImage('http://10.0.2.2:8000/storage/${reservation['main_image']}'), // استخدام الصورة الرئيسية من بيانات الحجز
+                              image: NetworkImage('https://esteraha.ly/public/${reservation['main_image']}'), // استخدام الصورة الرئيسية من بيانات الحجز
                               fit: BoxFit.cover,
                             ),
                           ),

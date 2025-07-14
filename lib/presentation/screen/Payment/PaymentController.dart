@@ -29,7 +29,7 @@ class PaymentsController extends GetxController {
 
     try {
       final response = await dio.Dio().post(
-        'http://10.0.2.2:8000/api/test-cash-payment',
+        'https://esteraha.ly/api/test-cash-payment',
         data: {
           'amount': amount,
           'package_id': packageId,
@@ -109,7 +109,7 @@ class PaymentsController extends GetxController {
     isLoading.value = true;
     try {
       final response = await dio.Dio().post(
-          'http://10.0.2.2:8000/api/test-payment', // 🔁 غيّر الرابط حسب بيئتك
+          'https://esteraha.ly/api/test-payment', // 🔁 غيّر الرابط حسب بيئتك
         data: {
           'amount': amount,
           'phone': phone,
@@ -149,7 +149,7 @@ class PaymentsController extends GetxController {
       print(MyString.custom_ref);
 
       final response = await dio.Dio().post(
-        'http://10.0.2.2:8000/api/transaction',
+        'https://esteraha.ly/api/transaction',
         data: {
           "custom_ref": MyString.custom_ref,
         },
@@ -214,7 +214,7 @@ class PaymentsController extends GetxController {
   }) async {
     try {
       final response = await dio.Dio().post(
-        'http://10.0.2.2:8000/api/user-packages',
+        'https://esteraha.ly/api/user-packages',
         data: {
           'package_id': packageId,
           'rest_area_ids': restAreaIds,

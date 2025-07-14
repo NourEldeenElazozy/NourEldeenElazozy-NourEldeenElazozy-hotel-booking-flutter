@@ -38,7 +38,7 @@ class BottomSheetController extends GetxController {
          isLoading.value = true;
 
 
-         final response = await Dio().get('http://10.0.2.2:8000/api/cities');
+         final response = await Dio().get('https://esteraha.ly/api/cities');
 
          if (response.statusCode == 200) {
             cities.value = (response.data['cities'] as List)

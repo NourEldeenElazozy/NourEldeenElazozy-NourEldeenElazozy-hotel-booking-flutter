@@ -187,7 +187,7 @@ class _HotelDetailState extends State<HotelDetail> {
                           itemCount: 1,
                           itemBuilder: (context, index, realIndex) {
                             return Image.network(
-                                "http://10.0.2.2:8000/storage/${controller.detail.mainImage.toString()}",
+                                "https://esteraha.ly/public/${controller.detail.mainImage.toString()}",
                                 fit: BoxFit.fill,
                                 width: MediaQuery.of(context).size.width);
                           },
@@ -551,10 +551,10 @@ class _HotelDetailState extends State<HotelDetail> {
                                           decoration: BoxDecoration(
                                             image: DecorationImage(
                                               image: NetworkImage(
-                                                  "http://10.0.2.2:8000/storage/${controller.detail.detailsImages[index].toString()}"),
+                                                  "https://esteraha.ly/public/${controller.detail.detailsImages[index].toString()}"),
                                               fit: BoxFit.cover,
                                             ),
-                                          ),
+                                           ),
                                         ),
                                       );
                                     },
@@ -567,7 +567,7 @@ class _HotelDetailState extends State<HotelDetail> {
                                     borderRadius: BorderRadius.circular(15),
                                     image: DecorationImage(
                                       image: NetworkImage(
-                                          "http://10.0.2.2:8000/storage/${controller.detail.detailsImages[index].toString()}"),
+                                          "https://esteraha.ly/public/${controller.detail.detailsImages[index].toString()}"),
                                       fit: BoxFit.cover,
                                     ),
                                   ),

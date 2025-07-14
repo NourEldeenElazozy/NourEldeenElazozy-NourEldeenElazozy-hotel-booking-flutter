@@ -85,7 +85,7 @@ class PasswordController extends GetxController {
     try {
       // 🔹 تحقق من وجود المستخدم
       final checkUserResponse = await Dio().post(
-        'http://10.0.2.2:8000/api/check-user-exists',
+        'https://esteraha.ly/api/check-user-exists',
         data: {"phone": phone},
       );
 
@@ -103,7 +103,7 @@ class PasswordController extends GetxController {
 
       // ✅ 2. إرسال OTP إذا كان المستخدم موجودًا
       final otpResponse = await Dio().post(
-        'http://10.0.2.2:8000/api/send-otp',
+        'https://esteraha.ly/api/send-otp',
         data: {"target_number": phone},
       );
 
@@ -310,7 +310,7 @@ class PasswordController extends GetxController {
 
       // ✅ إرسال طلب تغيير كلمة المرور إلى الخادم
       final response = await Dio().post(
-        'http://10.0.2.2:8000/api/change-password', // ✅ نقطة نهاية الـ API لتغيير كلمة المرور
+        'https://esteraha.ly/api/change-password', // ✅ نقطة نهاية الـ API لتغيير كلمة المرور
         data: {
           "phone": phoneNumber, // رقم الهاتف
           "new_password": newPassword.text, // كلمة المرور الجديدة

@@ -75,7 +75,7 @@ class RegisterController extends GetxController {
       Get.dialog(const Center(child: CircularProgressIndicator()), barrierDismissible: false);
 
       final otpResponse = await Dio().post(
-        'http://10.0.2.2:8000/api/send-otp',
+        'https://esteraha.ly/api/send-otp',
         data: {"target_number": phone},
       );
 
@@ -141,7 +141,7 @@ class RegisterController extends GetxController {
                           Get.dialog(const Center(child: CircularProgressIndicator()), barrierDismissible: false);
 
                           final response = await Dio().post(
-                            'http://10.0.2.2:8000/api/register',
+                            'https://esteraha.ly/api/register',
                             data: {
                               'name': nameController.text,
                               'phone': rawPhone,
@@ -197,7 +197,7 @@ class RegisterController extends GetxController {
           : phoneNumber;
 
       final response = await Dio().post(
-        'http://10.0.2.2:8000/api/send-otp',
+        'https://esteraha.ly/api/send-otp',
         data: {"target_number": phone},
       );
 

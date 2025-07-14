@@ -264,6 +264,7 @@ class _MyAppState extends State<MyApp> {
           debugShowCheckedModeBanner: false,
           theme: themeController.darkMode.value ? Themes.darkTheme : Themes.lightTheme,
           initialRoute: "/bottomBar", // تم تعيين initialRoute هنا
+          //initialRoute: "/onboarding", // تم تعيين initialRoute هنا
           getPages: Routes.navigator, // تم تعيين getPages هنا
         ));
       },

@@ -964,7 +964,7 @@ controller = Get.put(RestAreaController());
                   imageWidget = Image.file(File(imageSource.path), fit: BoxFit.cover);
                 } else if (imageSource is String && imageSource.isNotEmpty) {
                   // إذا كانت الصورة رابط URL (صورة محملة من قاعدة البيانات)
-                  imageWidget = Image.network('http://10.0.2.2:8000/storage/$imageSource', fit: BoxFit.cover, // 🔴🔴🔴 تم التعديل هنا 🔴🔴🔴
+                  imageWidget = Image.network('https://esteraha.ly/storage/$imageSource', fit: BoxFit.cover, // 🔴🔴🔴 تم التعديل هنا 🔴🔴🔴
                     errorBuilder: (context, error, stackTrace) =>
                     const Icon(Icons.broken_image, size: 40, color: Colors.red), // fallback في حالة فشل تحميل الصورة
                   );
@@ -1247,12 +1247,12 @@ controller = Get.put(RestAreaController());
           child: pickedImageFile != null // إذا كان هناك ملف XFile (صورة جديدة مختارة)
               ? Image.file(File(pickedImageFile.path), fit: BoxFit.cover)
               : (initialImageUrl != null && initialImageUrl.isNotEmpty) // وإلا، إذا كان هناك رابط URL أولي
-              ? Image.network('http://10.0.2.2:8000/storage/$initialImageUrl', fit: BoxFit.cover,
+              ? Image.network('https://esteraha.ly/storage/$initialImageUrl', fit: BoxFit.cover,
             errorBuilder: (context, error, stackTrace) => // في حالة فشل تحميل الصورة من الرابط
             Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Text("http://10.0.2.2:8000/storage/$initialImageUrl"),
+                Text("https://esteraha.ly/storage/$initialImageUrl"),
                 const Icon(Icons.broken_image, size: 40, color: Colors.red),
                 const SizedBox(height: 8),
                 Text('فشل تحميل الصورة', style: TextStyle(color: Colors.red, fontFamily: 'Tajawal')),

@@ -78,7 +78,7 @@ class HomeController extends GetxController {
        }
 
        final response = await Dio().post(
-         'http://10.0.2.2:8000/api/reservations/offline',
+         'https://esteraha.ly/api/reservations/offline',
          options: Options(
            headers: {
              'Authorization': 'Bearer $token',
@@ -207,7 +207,7 @@ class HomeController extends GetxController {
    Future<Map<int, bool>> checkPaymentStatus(List<int> restAreaIds) async {
      try {
        final response = await Dio().post(
-         'http://10.0.2.2:8000/api/check-payment-status',
+         'https://esteraha.ly/api/check-payment-status',
          data: {
            'rest_area_ids': restAreaIds,
          },
@@ -284,7 +284,7 @@ class HomeController extends GetxController {
 
        print("tokenss $token");
        final response = await Dio().get(
-         'http://10.0.2.2:8000/api/reservations',
+         'https://esteraha.ly/api/reservations',
          options: Options(
            headers: {
              'Authorization': 'Bearer $token',
@@ -411,7 +411,7 @@ class HomeController extends GetxController {
 
        // إجراء الطلب
        final response = await Dio().get(
-         'http://10.0.2.2:8000/api/rest-areas/filter',
+         'https://esteraha.ly/api/rest-areas/filter',
          queryParameters: queryParameters,
        );
        restAreas.clear();
@@ -443,7 +443,7 @@ class HomeController extends GetxController {
      try {
 
        final response = await Dio().get(
-         'http://10.0.2.2:8000/api/most-booked',
+         'https://esteraha.ly/api/most-booked',
          options: Options(
            headers: {
              'Authorization': 'Bearer $token',

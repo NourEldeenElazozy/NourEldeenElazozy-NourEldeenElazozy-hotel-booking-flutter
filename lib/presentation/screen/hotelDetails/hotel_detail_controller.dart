@@ -41,7 +41,7 @@ class HomeDetailController extends GetxController {
   Future<void> fetchReservedDates(int restAreaId) async {
     try {
       isLoading2.value = true; // **ابدأ التحميل**
-      final response = await _dio.get('http://10.0.2.2:8000/api/reservations/$restAreaId/reserved-dates');
+      final response = await _dio.get('https://esteraha.ly/api/reservations/$restAreaId/reserved-dates');
 
       if (response.statusCode == 200 && response.data != null && response.data['success'] == true) {
         // تحويل التواريخ المستلمة من JSON إلى قائمة من DateTime
@@ -158,7 +158,7 @@ class HomeDetailController extends GetxController {
     print("Loading state activated: ${isLoading.value}");
 
     try {
-      final url = 'http://10.0.2.2:8000/api/reviews'; // تأكد من هذا العنوان
+      final url = 'https://esteraha.ly/api/reviews'; // تأكد من هذا العنوان
       final SharedPreferences prefs = await SharedPreferences.getInstance();
       var token = prefs.getString('token');
       // إذا كنت تستخدم التوثيق بـ Sanctum (Bearer Token)

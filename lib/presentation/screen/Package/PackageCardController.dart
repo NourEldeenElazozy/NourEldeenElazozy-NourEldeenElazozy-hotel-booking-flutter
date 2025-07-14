@@ -17,7 +17,7 @@ class PackageCardController extends GetxController {
 
     try {
       final response = await Dio().get(
-        'http://10.0.2.2:8000/api/packages',
+        'https://esteraha.ly/api/packages',
         options: Options(
           sendTimeout: const Duration(seconds: 30), // مهلة الإرسال 1 ثانية
           receiveTimeout: const Duration(seconds: 30), // مهلة الاستلام 1 ثانية

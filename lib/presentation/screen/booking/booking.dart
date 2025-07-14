@@ -557,7 +557,7 @@ class _BookingState extends State<Booking> with SingleTickerProviderStateMixin {
                                                     fit: BoxFit.cover,
                                                     image: NetworkImage(
 
-                                                        "http://10.0.2.2:8000/storage/${Hocontroller.filteredReservations[index]['rest_area']['main_image']}"))),
+                                                        "https://esteraha.ly/storage/${Hocontroller.filteredReservations[index]['rest_area']['main_image']}"))),
                                           ),
                                           const SizedBox(width: 10),
                                           Column(

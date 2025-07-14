@@ -25,7 +25,7 @@ class LoginController extends GetxController {
     isLoading.value = true;
     try {
       final response = await Dio().post(
-        'http://10.0.2.2:8000/api/login',
+        'https://esteraha.ly/api/login',
         data: {
           'phone': phone,
           'password': password,
@@ -55,7 +55,7 @@ class LoginController extends GetxController {
 
 
         await Dio().post(
-          'http://10.0.2.2:8000/api/update-device-token',
+          'https://esteraha.ly/api/update-device-token',
           data: {
             'device_token': deviceToken,
           },

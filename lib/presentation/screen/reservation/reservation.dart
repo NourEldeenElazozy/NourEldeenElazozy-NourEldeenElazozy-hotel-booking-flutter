@@ -86,7 +86,7 @@ class _ReservationState extends State<Reservation> {
                         ClipRRect(
                           borderRadius: BorderRadius.circular(10),
                           child: Image.network(
-                           "http://10.0.2.2:8000/storage/${restArea['main_image']}",
+                           "https://esteraha.ly/public/storage/${restArea['main_image']}",
 
                             height: 200,
                             width: double.infinity,
