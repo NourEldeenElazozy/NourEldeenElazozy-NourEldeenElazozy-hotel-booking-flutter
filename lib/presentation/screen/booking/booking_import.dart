@@ -18,7 +18,7 @@ import '../../../core/constants/my_colors.dart';
 import '../../../core/constants/my_images.dart';
 import '../../../core/constants/my_strings.dart';
 import '../home/home_model.dart';
-
+import 'package:dio/dio.dart';
 part 'booking.dart';
 part 'booking_controller.dart';
 part 'cancel_booking.dart';

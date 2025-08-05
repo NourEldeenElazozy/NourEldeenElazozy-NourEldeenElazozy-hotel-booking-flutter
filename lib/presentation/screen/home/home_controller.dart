@@ -24,6 +24,7 @@ class HomeController extends GetxController {
    var recentlyBooked = [].obs;
    var recently = [].obs;
    String? token;
+   //Map<int, bool> paymentStatusMap = {};
    RxList<bool> selectedFacilities = List.generate(MyString.facilities.length, (index) => false).obs;
    var restAreas = [].obs; // تخزين البيانات هنا
     @override
@@ -201,7 +202,23 @@ class HomeController extends GetxController {
        // ويمكنك استدعاء API لتحديث الحالة في السيرفر
      }
    }
+
+
+   void processPaymentStatusResponse(Map<String, dynamic> json) {
+     if (json['status'] == 'success' && json['data'] is List) {
+       for (var item in json['data']) {
+         final id = int.tryParse(item['rest_area_id'].toString());
+         final paid = item['paid'] == true;
+
+         if (id != null) {
+           paymentStatusMap[id] = paid;
+         }
+       }
+     }
+   }
+
    bool hasUnpaidRestAreas() {
+
      return paymentStatusMap.values.any((paid) => paid == false);
    }
    Future<Map<int, bool>> checkPaymentStatus(List<int> restAreaIds) async {
@@ -215,17 +232,19 @@ class HomeController extends GetxController {
 
        if (response.statusCode == 200) {
          final List data = response.data['data'];
-         print("استجابة فحص الدفع: $data");
+         print("✅ استجابة فحص الدفع: $data");
+         print("🔍 معرفات الاستراحات المطلوب فحصها: $restAreaIds");
 
-         // تأكد أن البيانات ليست فارغة
          if (data.isEmpty) {
            print("⚠️ لم يتم إرجاع بيانات لحالة الدفع.");
            return {};
          }
 
-         // تحويل البيانات إلى خريطة Map: rest_area_id => paid
+         // ✅ التحويل الآمن باستخدام int.tryParse
          return {
-           for (var item in data) item['rest_area_id'] as int: item['paid'] == true
+           for (var item in data)
+             if (int.tryParse(item['rest_area_id'].toString()) != null)
+               int.parse(item['rest_area_id'].toString()): item['paid'] == true,
          };
        } else {
          print("⚠️ فشل في جلب حالة الدفع. كود الاستجابة: ${response.statusCode}");
@@ -236,6 +255,7 @@ class HomeController extends GetxController {
        return {};
      }
    }
+
 
 
    Future<List<Detail>> getHomeDetail() async {

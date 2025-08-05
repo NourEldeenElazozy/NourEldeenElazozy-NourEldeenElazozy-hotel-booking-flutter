@@ -30,15 +30,21 @@ class _EditProfileState extends State<EditProfile> {
   void initState() {
     super.initState();
     controller = Get.put(RegisterController());
-    controller.nameController.text='Daniel Austin';
-    controller.nickNameController.text='Daniel';
-    controller.dateController.text='1995-05-08';
-    controller.phoneController.text='daniel_austin@yourdomain.com';
-    controller.mobileNumberController.text='9898989898';
-    controller.selectedGender = "Male";
+    _loadUserData();
   }
   List<String> genderList = ["ذكر", "أنثى"];
+  Future<void> _loadUserData() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
 
+    setState(() {
+      controller.nameController.text = prefs.getString('userName') ?? '';
+      controller.nickNameController.text = prefs.getString('userName')?.split(' ').first ?? '';
+      controller.phoneController.text = prefs.getString('userPhone') ?? '';
+      controller.mobileNumberController.text = prefs.getString('userPhone') ?? '';
+
+      // يمكنك إضافة المزيد من الحقول حسب ما يتم تخزينه
+    });
+  }
   @override
   Widget build(BuildContext context) {
     controller.selectedGender = genderList[0]; // يعني "ذكر"

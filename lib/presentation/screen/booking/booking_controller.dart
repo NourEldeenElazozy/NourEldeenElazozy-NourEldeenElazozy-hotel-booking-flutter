@@ -22,10 +22,73 @@ class BookingController extends GetxController {
 
 
  */
+  final Dio _dio = Dio(BaseOptions(
+    baseUrl: 'https://esteraha.ly/api',
+    headers: {
+      'Accept': 'application/json',
+
+    },
+  ));
   @override
   void onInit() {
     super.onInit();
     getToken(); // استدعاء الدالة لجلب التوكن عند بدء التحكم
+  }
+  Future<void> markReservationAsCompleted(int reservationId) async {
+    try {
+      final response = await _dio.post(
+        '/reservations/$reservationId/complete',
+      );
+
+      if (response.statusCode == 200) {
+        Get.snackbar(
+          'نجاح',
+          'تم تأكيد الحجز بنجاح',
+          snackPosition: SnackPosition.BOTTOM,
+          backgroundColor: Colors.green,
+          colorText: Colors.white,
+        );
+      } else {
+        throw Exception('فشل في تحديث حالة الحجز');
+      }
+    } on DioException catch (e) {
+      Get.snackbar(
+        'خطأ',
+        e.response?.data['message'] ?? 'حدث خطأ أثناء تأكيد الحجز',
+        snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
+      );
+      throw e;
+    }
+  }
+  Future<void> markReservationAscanceled(int reservationId) async {
+    try {
+      final response = await _dio.post(
+        '/reservations/$reservationId/canceled',
+      );
+
+      if (response.statusCode == 200) {
+        Get.snackbar(
+          'نجاح',
+          'تم الغاء الحجز بنجاح',
+          snackPosition: SnackPosition.BOTTOM,
+          backgroundColor: Colors.green,
+          colorText: Colors.white,
+        );
+      } else {
+        throw Exception('فشل في تحديث حالة الحجز');
+      }
+    } on DioException catch (e) {
+      Get.snackbar(
+        'خطأ',
+        e.response?.data['message'] ?? 'حدث خطأ أثناء تأكيد الحجز',
+        snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
+      );
+      throw e;
+    }
   }
 
   Future<void> getToken() async {

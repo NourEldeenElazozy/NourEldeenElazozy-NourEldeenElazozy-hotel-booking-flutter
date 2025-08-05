@@ -13,17 +13,23 @@ class _BookingState extends State<Booking> with SingleTickerProviderStateMixin {
 
   String status = "";
   var userType = ''.obs; // استخدام Rx لتحديث الواجهة عند تغيير القيمة
+  var isLoading = true.obs; // إضافة حالة تحميل
   @override
   void initState() {
     super.initState();
-    Hocontroller.getReservations();
-    controller.getMyBooking();
+    _initData();
+  }
+  Future<void> _initData() async {
+    await Hocontroller.getReservations();
+    await controller.getMyBooking();
+    await _loadUserType(); // الانتظار حتى يتم تحميل نوع المستخدم
+
     controller.selectedItem.value = 0;
     controller.passingStatus.value = 'Paid';
     Hocontroller.filterList('pending');
-    _loaduserType();
-  }
 
+    isLoading.value = false; // إخفاء حالة التحميل
+  }
 
 
 // دالة لعرض bottom sheet لفلترة الاستراحات
@@ -308,12 +314,9 @@ class _BookingState extends State<Booking> with SingleTickerProviderStateMixin {
     );
   }
 
-  Future<void> _loaduserType() async {
-
+  Future<void> _loadUserType() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     userType.value = prefs.getString('user_type') ?? '';
-
-
   }
   @override
   Widget build(BuildContext context) {
@@ -321,27 +324,37 @@ class _BookingState extends State<Booking> with SingleTickerProviderStateMixin {
       textDirection: TextDirection.rtl,
       child: Scaffold(
 
-          floatingActionButton: userType.value == 'host'
-              ? Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  FloatingActionButton.extended(
-                              onPressed: () {
-                  Get.toNamed("/myHosting");
-                              },
-                              icon: Icon(Icons.add, color: Colors.white),
-                              label: Text("إضافة حجز خارجي", style: TextStyle(color: Colors.white)),
-                              backgroundColor: MyColors.primaryColor,
-                            ),
-                ],
-              )
-              : null,
-          appBar: homeAppBar( context,MyString.myBooking, false,
+          floatingActionButton: Obx(() {
+            if (userType.value.isEmpty) {
+              return const SizedBox.shrink(); // بدلاً من Container()
+            }
+            return userType.value == 'host'
+                ? Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+
+                    FloatingActionButton.extended(
+                                  onPressed: () {
+                    Get.toNamed("/myHosting");
+                                  },
+                                  icon: const Icon(Icons.add, color: Colors.white),
+                                  label: const Text(
+                    "إضافة حجز خارجي",
+                    style: TextStyle(color: Colors.white),
+                                  ),
+                                  backgroundColor: MyColors.primaryColor,
+                                  heroTag: 'uniqueTag',
+                                ),
+                  ],
+                )
+                : const SizedBox.shrink(); // يجب إرجاع Widget دائماً
+          }),
+          appBar: homeAppBar( context,MyString.myBooking, false,showBackButton: true,backToHome: true,
               controller.themeController.isDarkMode.value),
           body: Obx(() {
             //controller.getToken();
-            if (controller.isLoading.value) {
-              return Center(child: CircularProgressIndicator()); // عنصر التحميل الدائري
+            if (Hocontroller.isLoading.value || controller.isLoading.value) {
+              return const Center(child: CircularProgressIndicator());
             }
             print("controller.getToken ${controller.token}");
             if (controller.token.isEmpty) {
@@ -512,7 +525,19 @@ class _BookingState extends State<Booking> with SingleTickerProviderStateMixin {
                             controller.themeController.isDarkMode.value
                                 ? Colors.green.shade200
                                 : Colors.green.shade800;
-                          } else {
+                          }
+
+                          else if (status == 'confirmed') {
+                            bgColor =
+                            controller.themeController.isDarkMode.value
+                                ? Colors.blue.shade900
+                                : Colors.blue.shade100;
+                            textColor =
+                            controller.themeController.isDarkMode.value
+                                ? Colors.blue.shade200
+                                : Colors.blue.shade800;
+                          }
+                          else {
                             // canceled
                             bgColor =
                             controller.themeController.isDarkMode.value
@@ -576,11 +601,7 @@ class _BookingState extends State<Booking> with SingleTickerProviderStateMixin {
                                                   borderRadius: BorderRadius.circular(5),
                                                 ),
                                                 child: Text(
-                                                  status == 'pending'
-                                                      ? MyString.ongoingButton
-                                                      : status == 'completed'
-                                                      ? MyString.completed
-                                                      : MyString.canceled,
+                                                  _getStatusText(status),
                                                   style: TextStyle(
                                                     color: textColor,
                                                     fontWeight: FontWeight.w600,
@@ -588,6 +609,7 @@ class _BookingState extends State<Booking> with SingleTickerProviderStateMixin {
                                                   ),
                                                 ),
                                               ),
+
                                               // Buttons for "Cancel Reservation" and "Confirm Reservation"
                                               if (status == 'pending')
                                                 Padding(
@@ -605,9 +627,38 @@ class _BookingState extends State<Booking> with SingleTickerProviderStateMixin {
                                                             confirmTextColor: Colors.white,
                                                             buttonColor: Colors.red,
                                                             cancelTextColor: Colors.black,
-                                                            onConfirm: () {
-                                                              Get.back(); // Close dialog
-                                                              // Hocontroller.cancelReservation(Hocontroller.filteredReservations[index]['id']);
+                                                            onConfirm: () async {
+                                                              Get.back(); // إغلاق حوار التأكيد فقط
+
+                                                              try {
+                                                                final currentReservation = Hocontroller.filteredReservations[index];
+                                                                final reservationId = currentReservation['id'];
+
+                                                                // عرض مؤشر تحميل
+
+
+                                                                await controller.markReservationAscanceled(reservationId);
+
+                                                                // تحديث البيانات
+                                                                await Hocontroller.getReservations();
+                                                                await controller.getMyBooking();
+
+                                                                // إغلاق مؤشر التحميل
+                                                                if (Get.isDialogOpen!) Get.back();
+
+                                                              } catch (e) {
+                                                                // إغلاق أي حوارات مفتوحة في حالة الخطأ
+                                                                if (Get.isDialogOpen!) Get.back();
+
+                                                                Get.snackbar(
+                                                                  "خطأ",
+                                                                  "فشل في إلغاء الحجز: ${e.toString()}",
+                                                                  snackPosition: SnackPosition.BOTTOM,
+                                                                  backgroundColor: Colors.red,
+                                                                  colorText: Colors.white,
+                                                                  duration: Duration(seconds: 3),
+                                                                );
+                                                              }
                                                             },
                                                             onCancel: () {},
                                                           );
@@ -686,14 +737,20 @@ class _BookingState extends State<Booking> with SingleTickerProviderStateMixin {
                                                                       ElevatedButton(
                                                                         onPressed: () async {
                                                                           Get.back(); // إغلاق هذا التنبيه
-
+                                                                          Get.dialog(
+                                                                            Center(child: CircularProgressIndicator()),
+                                                                            barrierDismissible: false,
+                                                                          );
                                                                           //await Hocontroller.confirmReservation(reservationId);
-
+                                                                          await controller.markReservationAsCompleted(reservationId);
+                                                                          Hocontroller.getReservations();
+                                                                          controller.getMyBooking();
                                                                           for (var res in overlapping) {
                                                                            // await Hocontroller.cancelReservation(res['id']);
                                                                           }
 
                                                                           await Hocontroller.fetchRecentlyBooked();
+                                                                          Hocontroller.update(); // 3. تحديث الواجهة
                                                                         },
                                                                         style: ElevatedButton.styleFrom(backgroundColor: Colors.green),
                                                                         child: const Text("نعم، متابعة", style: TextStyle(color: Colors.white, fontFamily: 'Tajawal', )),
@@ -737,7 +794,12 @@ class _BookingState extends State<Booking> with SingleTickerProviderStateMixin {
                                                                 } else {
                                                                   // لا يوجد تضارب
                                                                   //await Hocontroller.confirmReservation(reservationId);
+
+                                                                  await controller.markReservationAsCompleted(reservationId);
                                                                   await Hocontroller.fetchRecentlyBooked();
+                                                                  Hocontroller.getReservations();
+                                                                  controller.getMyBooking();
+
                                                                 }
 
                                                               },
@@ -1047,5 +1109,20 @@ class SameDayReservationsPage extends StatelessWidget {
         ),
       ),
     );
+  }
+}
+// دالة مساعدة
+String _getStatusText(String status) {
+  switch (status) {
+    case 'pending':
+      return MyString.ongoingButton;
+    case 'completed':
+      return MyString.completed;
+    case 'confirmed':
+      return MyString.confirmed;
+    case 'canceled':
+      return MyString.canceled;
+    default:
+      return status; // أو يمكنك إرجاع قيمة افتراضية
   }
 }

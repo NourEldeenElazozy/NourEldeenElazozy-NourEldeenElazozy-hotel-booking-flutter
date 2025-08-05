@@ -439,6 +439,7 @@ class MySotingScreen extends StatelessWidget {
             Get.snackbar("خطأ", result['message'], backgroundColor: Colors.red, colorText: Colors.white);
             // يبقى الـ Dialog مفتوحاً للسماح للمستخدم بتصحيح البيانات عند الفشل
           }
+          Get.back(); // إغلاق الـ Dialog فقط عند النجاح
         },
         style: ElevatedButton.styleFrom(
           backgroundColor: MyColors.primaryColor,

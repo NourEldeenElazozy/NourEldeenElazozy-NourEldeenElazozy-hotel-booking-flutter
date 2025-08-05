@@ -465,7 +465,9 @@ class _HomeState extends State<Home> {
                             style: TextStyle(fontWeight: FontWeight.w700, fontSize: 16),
                           ),
                           InkWell(
-                            onTap: () {},
+                            onTap: () {
+                              Get.toNamed("/Booking");
+                            },
                             child: const Text(
                               MyString.seeAll,
                               style: TextStyle(fontWeight: FontWeight.w700, fontSize: 14),

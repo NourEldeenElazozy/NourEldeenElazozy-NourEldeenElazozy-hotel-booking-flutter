@@ -145,7 +145,7 @@ class _HotelDetailState extends State<HotelDetail> {
                         horizontal: 10, vertical: 10),
                     child: InkWell(
                       onTap: () {
-                        Get.back();
+                        Navigator.of(context).pop();
                       },
                       child: Padding(
                         padding: const EdgeInsets.all(2.0),
@@ -160,26 +160,7 @@ class _HotelDetailState extends State<HotelDetail> {
                       ),
                     ),
                   ),
-                  actions: [
-                    SvgPicture.asset(MyImages.bookMarkLight,
-                        colorFilter: ColorFilter.mode(
-                            innerBoxIsScrolled == true
-                                ? controller.themeController.darkMode.value
-                                    ? MyColors.white
-                                    : MyColors.black
-                                : MyColors.white,
-                            BlendMode.srcIn)),
-                    const SizedBox(width: 15),
-                    SvgPicture.asset(MyImages.allMenu,
-                        colorFilter: ColorFilter.mode(
-                            innerBoxIsScrolled == true
-                                ? controller.themeController.darkMode.value
-                                    ? MyColors.white
-                                    : MyColors.black
-                                : MyColors.white,
-                            BlendMode.srcIn)),
-                    const SizedBox(width: 15),
-                  ],
+
                   flexibleSpace: FlexibleSpaceBar(
                     background: Stack(
                       children: [

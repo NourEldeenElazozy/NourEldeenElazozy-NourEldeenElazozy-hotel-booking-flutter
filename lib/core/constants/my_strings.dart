@@ -5,7 +5,7 @@ class MyString {
   static int packageId = 0; // ✅ يمكن تغييره
 //----------------------------- Welcome_Screen -----------------------------
   static const String welcome = "مرحبا بك في";
-  static const String bookNest = "إستراحة";
+  static const String bookNest = "إستراحة-Esteraha";
   static const String vacation = "أفضل حجز فندقي لهذا القرن\nليرافق عطلتك";
 
 //----------------------------- Onboarding_Screen -----------------------------
@@ -358,6 +358,7 @@ class MyString {
   static const String cancelBookingButton = "إلغاء الحجز";
   static const String viewTicketButton = "عرض التذكرة";
   static const String completed = "تهانينا، لقد أكملت الحجز!";
+  static const String confirmed = "هذ الحجز مؤكد";
   static const String canceled = "لقد قمت بإلغاء هذا الحجز الفندقي";
 
 //----------------------------------- CancelBooking ------------------------------
