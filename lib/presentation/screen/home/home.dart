@@ -94,7 +94,7 @@ class _HomeState extends State<Home> {
                     ),
                     const SizedBox(height: 18),
                     // Search
-                   /*
+
                     InkWell(
                       onTap: () {
                         Get.to(const Search(status: 'home'));
@@ -139,7 +139,7 @@ class _HomeState extends State<Home> {
                         ),
                       ),
                     ),
-                    */
+
                     const SizedBox(height: 20),
                     // Row(
                     //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -338,6 +338,16 @@ class _HomeState extends State<Home> {
                     ? Center(
                   child: CircularProgressIndicator(
                     color: controller.themeController.isDarkMode.value ? Colors.white : MyColors.successColor,
+                  ),
+                )
+                    : controller.restAreas.isEmpty
+                    ? Center(
+                  child: Text(
+                    'لايوجد بيانات مطابقة لبحثك',
+                    style: TextStyle(
+                      fontSize: 16,
+                      color: Colors.grey,
+                    ),
                   ),
                 )
                     : ListView.builder(

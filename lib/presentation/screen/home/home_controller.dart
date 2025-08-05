@@ -392,7 +392,7 @@ class HomeController extends GetxController {
        }
 
        // إضافة city_id إذا كان موجودًا
-       if (cityId != null && cityId >= 0) {
+       if (cityId != null && cityId > 0) {
          queryParameters['city_id'] = cityId;
        }
        // إضافة host_id إذا كان موجودًا
@@ -439,13 +439,14 @@ class HomeController extends GetxController {
          restAreas.value = response.data; // تخزين البيانات في المتغير
          print(restAreas.value);
          print("Query all: ${restAreas.value}");
-         print("Query all: ${restAreas[0]['google_maps_location']}");
+        // print("Query all: ${restAreas[0]['google_maps_location']}");
+         print("response: ${response}");
        } else {
          restAreas.clear();
 
        }
      } catch (e) {
-       Get.snackbar('خطأ', 'حدث خطأ أثناء جلب البيانات: $e');
+       Get.snackbar('خطأ', 'حدث خطأ أثناء جلب البيانات: ');
        print('حدث خطأ أثناء جلب س: $e');
      } finally {
        isLoading.value = false;
