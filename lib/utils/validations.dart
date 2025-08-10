@@ -64,7 +64,7 @@ class Validations {
       return "الرقم السري مطلوب";
     }
     else if(value.length < 6) {
-      return "أدخل الحد الأدنى 8 والحد الأقصى 30 حرفًا";
+      return "أدخل الحد الأدنى 6 والحد الأقصى 30 حرفًا";
     }
     return null;
   }
@@ -83,13 +83,31 @@ class Validations {
     return null;
   }
 
-  String? mobileNumberValidation(value) {
-    if(value == null || value.isEmpty) {
+  String? mobileNumberValidation(String? value) {
+    if (value == null || value.isEmpty) {
       return "أدخل رقم الهاتف المحمول!";
-    } else if(value.length < 10) {
-      return "دخل 10 أرقام على الأقل";
     }
-    return null;
+
+    // تحقق أن الرقم يحتوي على أرقام فقط
+    final numericRegex = RegExp(r'^[0-9]+$');
+    if (!numericRegex.hasMatch(value)) {
+      return "الرقم يجب أن يحتوي على أرقام فقط";
+    }
+
+    // تحقق أن الطول بالضبط 10
+    if (value.length != 10) {
+      return "يجب أن يكون الرقم مكون من 10 أرقام";
+    }
+
+    // تحقق أن البداية صحيحة
+    final validStarts = ["092", "093", "094", "091", "095"];
+    bool startsCorrect = validStarts.any((prefix) => value.startsWith(prefix));
+
+    if (!startsCorrect) {
+      return "يجب أن يبدأ الرقم بـ 092-093-094-091 -095";
+    }
+
+    return null; // صحيح
   }
 
   //------------------------------------------------------------------------------------------------------

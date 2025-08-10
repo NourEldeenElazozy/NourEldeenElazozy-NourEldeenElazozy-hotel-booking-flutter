@@ -60,6 +60,7 @@ class Detail {
   String? idProofType;
   double? eidDaysPrice;
   String?virtual_tour_link;
+  String?google_maps_location;
   // الصور
  // List<String> detailsImages = []; // صور التفاصيل
   List<String> detailsImages = []; // صور إضافية
@@ -78,33 +79,34 @@ class Detail {
     cityname = json['city_name'];
     description = json['description'];
     mainImage = json['main_image'];
-    rating = json['rating']?.toDouble() ?? 0.0;
+    rating = _parseDouble(json['rating']);
     geoArea = json['geo_area'];
     checkin = json['check_in_time'];
     checkout = json['check_out_time'];
     areaType = json['area_type'];
-    totalSpace = json['total_space']?.toDouble();
-    internalSpace = json['internal_space']?.toDouble();
-    maxGuests = json['max_guests'];
-    numDoubleBeds = json['num_double_beds'];
-    numSingleBeds = json['num_single_beds'];
-    numHalls = json['num_halls'];
-    numBedrooms = json['num_bedrooms'];
-    numFloors = json['num_floors'];
-    numBathroomsIndoor = json['num_bathrooms_indoor'];
-    numBathroomsOutdoor = json['num_bathrooms_outdoor'];
+    totalSpace = _parseDouble(json['total_space']);
+    internalSpace = _parseDouble(json['internal_space']);
+
+    maxGuests = _parseInt(json['max_guests']);
+    numDoubleBeds = _parseInt(json['num_double_beds']);
+    numSingleBeds = _parseInt(json['num_single_beds']);
+    numHalls = _parseInt(json['num_halls']);
+    numBedrooms = _parseInt(json['num_bedrooms']);
+    numFloors = _parseInt(json['num_floors']);
+    numBathroomsIndoor = _parseInt(json['num_bathrooms_indoor']);
+    numBathroomsOutdoor = _parseInt(json['num_bathrooms_outdoor']);
 
     kitchenAvailable = json['kitchen_available'] == 1; // Assuming 1 means true
     kitchenContents = json['kitchen_contents'];
     hasACHeating = json['has_ac_heating'] == 1;
-    tvScreens = json['tv_screens'];
+    tvScreens = _parseInt(json['tv_screens']);
     freeWifi = json['free_wifi'] == 1;
     entertainmentGames = json['entertainment_games'];
     outdoorSpace = json['outdoor_space'] == 1;
     grassSpace = json['grass_space'] == 1;
     poolType = json['pool_type'];
-    poolSpace = json['pool_space']?.toDouble();
-    poolDepth = json['pool_depth']?.toDouble();
+    poolSpace = _parseDouble(json['pool_space']);
+    poolDepth = _parseDouble(json['pool_depth']);
     poolHeating = json['pool_heating'] == 1;
     poolFilter = json['pool_filter'] == 1;
     garage = json['garage'] == 1;
@@ -115,6 +117,8 @@ class Detail {
     well = json['well'] == 1;
     powerGenerator = json['power_generator'] == 1;
     OutdoorBathroom = json['outdoor_bathroom'] == 1;
+    google_maps_location=json['google_maps_location'];
+    virtual_tour_link=json['resthouse_requests'];
     // معالجة الصور
 
     if (json['details_images'] != null) {
@@ -171,6 +175,7 @@ class Detail {
       well: well,
       powerGenerator: powerGenerator,
       OutdoorBathroom: OutdoorBathroom,
+
 
     ));
   }
@@ -231,10 +236,20 @@ class RecentlyBook {
     return data;
   }
 }
-double? _parseDouble(dynamic value) {
-  if (value == null) return null;
+double _parseDouble(dynamic value) {
+  if (value == null) return 0.0;
   if (value is double) return value;
   if (value is int) return value.toDouble();
-  if (value is String) return double.tryParse(value);
-  return null;
+  if (value is String) {
+    return double.tryParse(value) ?? 0.0;
+  }
+  return 0.0;
+}
+int _parseInt(dynamic value) {
+  if (value == null) return 0;
+  if (value is int) return value;
+  if (value is String) {
+    return int.tryParse(value) ?? 0;
+  }
+  return 0;
 }

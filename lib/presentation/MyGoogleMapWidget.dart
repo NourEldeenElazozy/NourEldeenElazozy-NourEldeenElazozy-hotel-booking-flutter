@@ -85,8 +85,8 @@ class _MapPickerScreenState extends State<MapPickerScreen> {
   final Set<Marker> _markers = {};
 
   // 🔴🔴🔴 ملاحظة: استبدل هذا بعنوان URL الأساسي لصور الاستراحات الخاصة بك 🔴🔴🔴
-  // على سبيل المثال: 'http://your-backend-api.com/storage/' أو 'http://10.0.2.2:8000/storage/'
-  static const String _imageBaseUrl = 'http://10.0.2.2:8000/storage/'; // مثال، يجب تغييره ليناسب backend الخاص بك
+  // على سبيل المثال: 'http://your-backend-api.com/storage/' أو 'https://esteraha.ly/storage/'
+  static const String _imageBaseUrl = 'https://esteraha.ly/storage/'; // مثال، يجب تغييره ليناسب backend الخاص بك
 
   @override
   void initState() {

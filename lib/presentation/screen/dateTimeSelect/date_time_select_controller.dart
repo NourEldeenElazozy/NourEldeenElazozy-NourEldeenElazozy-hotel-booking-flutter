@@ -18,7 +18,7 @@ class DateTimeSelectController extends GetxController {
   Rx<DateTime> toDate = DateTime.now().obs;
   Future<void> fetchReservedDates(int restAreaId) async {
     try {
-      final response = await Dio.Dio().get('http://10.0.2.2:8000/api/reservations/$restAreaId/reserved-dates');
+      final response = await Dio.Dio().get('https://esteraha.ly/api/reservations/$restAreaId/reserved-dates');
 
       if (response.statusCode == 200 && response.data != null) {
         // تحويل التواريخ المستلمة من JSON إلى قائمة من DateTime
@@ -56,7 +56,7 @@ class DateTimeSelectController extends GetxController {
  */
 
       final response = await Dio.Dio().post(
-        'http://10.0.2.2:8000/api/reservations',
+        'https://esteraha.ly/api/reservations',
         options: Dio.Options(
           headers: {
             'Authorization': 'Bearer $token',

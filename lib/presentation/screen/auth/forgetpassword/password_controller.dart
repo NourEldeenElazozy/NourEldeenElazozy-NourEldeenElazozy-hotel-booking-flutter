@@ -67,14 +67,7 @@ class PasswordController extends GetxController {
     String rawPhone = smsController.text;
     String phone;
 
-    if (rawPhone.startsWith('09')) {
-      phone = '218${rawPhone.substring(1)}';
-    } else if (rawPhone.startsWith('9')) {
-      phone = '218$rawPhone';
-    } else {
-      Get.snackbar('خطأ', 'يجب أن يبدأ رقم الهاتف بـ 09 أو 9');
-      return;
-    }
+
 
     // ✅ 1. تحقق من وجود المستخدم أولاً
     Get.dialog(
@@ -85,11 +78,12 @@ class PasswordController extends GetxController {
     try {
       // 🔹 تحقق من وجود المستخدم
       final checkUserResponse = await Dio().post(
-        'http://10.0.2.2:8000/api/check-user-exists',
-        data: {"phone": phone},
+        'https://esteraha.ly/api/check-user-exists',
+        data: {"phone": rawPhone},
       );
 
-      final bool userExists = checkUserResponse.data['user_exists'];
+      final bool userExists = checkUserResponse.data['exists'] ?? false;
+
 
       if (!userExists) {
         Get.back(); // أغلق الـ loading
@@ -103,8 +97,8 @@ class PasswordController extends GetxController {
 
       // ✅ 2. إرسال OTP إذا كان المستخدم موجودًا
       final otpResponse = await Dio().post(
-        'http://10.0.2.2:8000/api/send-otp',
-        data: {"target_number": phone},
+        'https://esteraha.ly/api/send-otp',
+        data: {"target_number": rawPhone},
       );
 
       Get.back(); // أغلق الـ loading بعد إرسال OTP
@@ -179,7 +173,7 @@ class PasswordController extends GetxController {
     } on DioException catch (e) {
       Get.back(); // إغلاق التحميل عند حدوث خطأ
       print("Dio Error: ${e.response?.data}");
-      print("Phone: $phone");
+      print("Phone: $rawPhone");
 
       String errorMessage = 'حدث خطأ في الاتصال بالخادم';
       final dynamic errorData = e.response?.data;
@@ -310,7 +304,7 @@ class PasswordController extends GetxController {
 
       // ✅ إرسال طلب تغيير كلمة المرور إلى الخادم
       final response = await Dio().post(
-        'http://10.0.2.2:8000/api/change-password', // ✅ نقطة نهاية الـ API لتغيير كلمة المرور
+        'https://esteraha.ly/api/change-password', // ✅ نقطة نهاية الـ API لتغيير كلمة المرور
         data: {
           "phone": phoneNumber, // رقم الهاتف
           "new_password": newPassword.text, // كلمة المرور الجديدة

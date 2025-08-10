@@ -106,14 +106,14 @@ class _FillProfileScreenState extends State<FillProfileScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: const CustomFullAppBar(title: MyString.fillProfile),
+      appBar: const CustomFullAppBar(title: "MyString.fillProfile"),
       bottomNavigationBar: Container(
         height: 90,
         padding: const EdgeInsets.all(15),
         child:
         Button(
           onpressed: () {
-            return controller.fillProfileSubmit(status: 'fill');
+           // return controller.fillProfileSubmit(status: 'fill');
           },
           text: MyString.continueButton,
         ),

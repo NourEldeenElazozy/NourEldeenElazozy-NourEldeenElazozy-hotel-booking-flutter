@@ -27,7 +27,7 @@ class NotificationController extends GetxController {
     try {
       await loadUserId();
       print ('user_id2 ${userId.value}');
-      final response = await Dio().get('http://10.0.2.2:8000/api/notifications',
+      final response = await Dio().get('https://esteraha.ly/api/notifications',
           queryParameters: {
             'user_id': userId.value
           }

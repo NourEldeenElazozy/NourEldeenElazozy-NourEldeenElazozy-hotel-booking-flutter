@@ -105,7 +105,7 @@ class MySotingScreen extends StatelessWidget {
                                         ClipRRect(
                                           borderRadius: BorderRadius.circular(12),
                                           child: Image.network(
-                                            "http://10.0.2.2:8000/storage/${restArea["main_image"]}",
+                                            "https://esteraha.ly/storage/${restArea["main_image"]}",
                                             width: 100,
                                             height: 100,
                                             fit: BoxFit.cover,
@@ -439,6 +439,7 @@ class MySotingScreen extends StatelessWidget {
             Get.snackbar("خطأ", result['message'], backgroundColor: Colors.red, colorText: Colors.white);
             // يبقى الـ Dialog مفتوحاً للسماح للمستخدم بتصحيح البيانات عند الفشل
           }
+          Get.back(); // إغلاق الـ Dialog فقط عند النجاح
         },
         style: ElevatedButton.styleFrom(
           backgroundColor: MyColors.primaryColor,

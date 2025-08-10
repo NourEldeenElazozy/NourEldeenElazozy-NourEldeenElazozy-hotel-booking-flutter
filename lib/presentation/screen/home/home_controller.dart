@@ -24,6 +24,7 @@ class HomeController extends GetxController {
    var recentlyBooked = [].obs;
    var recently = [].obs;
    String? token;
+   //Map<int, bool> paymentStatusMap = {};
    RxList<bool> selectedFacilities = List.generate(MyString.facilities.length, (index) => false).obs;
    var restAreas = [].obs; // تخزين البيانات هنا
     @override
@@ -78,7 +79,7 @@ class HomeController extends GetxController {
        }
 
        final response = await Dio().post(
-         'http://10.0.2.2:8000/api/reservations/offline',
+         'https://esteraha.ly/api/reservations/offline',
          options: Options(
            headers: {
              'Authorization': 'Bearer $token',
@@ -201,13 +202,29 @@ class HomeController extends GetxController {
        // ويمكنك استدعاء API لتحديث الحالة في السيرفر
      }
    }
+
+
+   void processPaymentStatusResponse(Map<String, dynamic> json) {
+     if (json['status'] == 'success' && json['data'] is List) {
+       for (var item in json['data']) {
+         final id = int.tryParse(item['rest_area_id'].toString());
+         final paid = item['paid'] == true;
+
+         if (id != null) {
+           paymentStatusMap[id] = paid;
+         }
+       }
+     }
+   }
+
    bool hasUnpaidRestAreas() {
+
      return paymentStatusMap.values.any((paid) => paid == false);
    }
    Future<Map<int, bool>> checkPaymentStatus(List<int> restAreaIds) async {
      try {
        final response = await Dio().post(
-         'http://10.0.2.2:8000/api/check-payment-status',
+         'https://esteraha.ly/api/check-payment-status',
          data: {
            'rest_area_ids': restAreaIds,
          },
@@ -215,17 +232,19 @@ class HomeController extends GetxController {
 
        if (response.statusCode == 200) {
          final List data = response.data['data'];
-         print("استجابة فحص الدفع: $data");
+         print("✅ استجابة فحص الدفع: $data");
+         print("🔍 معرفات الاستراحات المطلوب فحصها: $restAreaIds");
 
-         // تأكد أن البيانات ليست فارغة
          if (data.isEmpty) {
            print("⚠️ لم يتم إرجاع بيانات لحالة الدفع.");
            return {};
          }
 
-         // تحويل البيانات إلى خريطة Map: rest_area_id => paid
+         // ✅ التحويل الآمن باستخدام int.tryParse
          return {
-           for (var item in data) item['rest_area_id'] as int: item['paid'] == true
+           for (var item in data)
+             if (int.tryParse(item['rest_area_id'].toString()) != null)
+               int.parse(item['rest_area_id'].toString()): item['paid'] == true,
          };
        } else {
          print("⚠️ فشل في جلب حالة الدفع. كود الاستجابة: ${response.statusCode}");
@@ -236,6 +255,7 @@ class HomeController extends GetxController {
        return {};
      }
    }
+
 
 
    Future<List<Detail>> getHomeDetail() async {
@@ -284,7 +304,7 @@ class HomeController extends GetxController {
 
        print("tokenss $token");
        final response = await Dio().get(
-         'http://10.0.2.2:8000/api/reservations',
+         'https://esteraha.ly/api/reservations',
          options: Options(
            headers: {
              'Authorization': 'Bearer $token',
@@ -372,7 +392,7 @@ class HomeController extends GetxController {
        }
 
        // إضافة city_id إذا كان موجودًا
-       if (cityId != null && cityId >= 0) {
+       if (cityId != null && cityId > 0) {
          queryParameters['city_id'] = cityId;
        }
        // إضافة host_id إذا كان موجودًا
@@ -411,7 +431,7 @@ class HomeController extends GetxController {
 
        // إجراء الطلب
        final response = await Dio().get(
-         'http://10.0.2.2:8000/api/rest-areas/filter',
+         'https://esteraha.ly/api/rest-areas/filter',
          queryParameters: queryParameters,
        );
        restAreas.clear();
@@ -419,13 +439,14 @@ class HomeController extends GetxController {
          restAreas.value = response.data; // تخزين البيانات في المتغير
          print(restAreas.value);
          print("Query all: ${restAreas.value}");
-         print("Query all: ${restAreas[0]['google_maps_location']}");
+        // print("Query all: ${restAreas[0]['google_maps_location']}");
+         print("response: ${response}");
        } else {
          restAreas.clear();
 
        }
      } catch (e) {
-       Get.snackbar('خطأ', 'حدث خطأ أثناء جلب البيانات: $e');
+       Get.snackbar('خطأ', 'حدث خطأ أثناء جلب البيانات: ');
        print('حدث خطأ أثناء جلب س: $e');
      } finally {
        isLoading.value = false;
@@ -443,7 +464,7 @@ class HomeController extends GetxController {
      try {
 
        final response = await Dio().get(
-         'http://10.0.2.2:8000/api/most-booked',
+         'https://esteraha.ly/api/most-booked',
          options: Options(
            headers: {
              'Authorization': 'Bearer $token',

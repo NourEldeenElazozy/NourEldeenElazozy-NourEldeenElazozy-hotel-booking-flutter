@@ -4,7 +4,7 @@ import 'package:get/get.dart';
 import 'package:hotel_booking/core/constants/my_colors.dart';
 import 'package:hotel_booking/core/constants/my_images.dart';
 import 'package:hotel_booking/core/themes/themes_controller.dart';
-
+import 'dart:math' as math;
 class CustomFullAppBar extends StatelessWidget implements PreferredSizeWidget {
   final String title;
   final List<Widget>? action;
@@ -30,12 +30,14 @@ class CustomFullAppBar extends StatelessWidget implements PreferredSizeWidget {
               Navigator.pop(context);
             },
             child: SvgPicture.asset(
+              width: 20,
               MyImages.backArrow,
               colorFilter: ColorFilter.mode(
-                  themeController.isDarkMode.value
-                      ? MyColors.white
-                      : MyColors.black,
-                  BlendMode.srcIn),
+                themeController.isDarkMode.value
+                    ? MyColors.white
+                    : MyColors.black,
+                BlendMode.srcIn,
+              ),
             ),
           ),
         ],
@@ -51,7 +53,13 @@ class CustomFullAppBar extends StatelessWidget implements PreferredSizeWidget {
   }
 }
 
-PreferredSizeWidget homeAppBar(BuildContext context,String title, bool status, bool isDarkMode, {bool showBackButton = false}) {
+PreferredSizeWidget homeAppBar(BuildContext context,String title, bool status, bool isDarkMode, { bool showBackButton = false,
+  bool backToHome = false, // اختياري: العودة للصفحة الرئيسية
+  bool backToBottomBar = false, // اختياري: العودة لشريط التبويب
+  VoidCallback? customBackAction, // اختياري: سلوك مخصص // إضافة هذا المعامل
+}
+
+    ) {
   return PreferredSize(
     preferredSize: const Size.fromHeight(kToolbarHeight),
     child: SizedBox(
@@ -68,9 +76,17 @@ PreferredSizeWidget homeAppBar(BuildContext context,String title, bool status, b
                     Icons.arrow_back,
                     color: isDarkMode ? MyColors.white : MyColors.black,
                   ),
-                  onPressed: () {
-                    Navigator.pop(context);
-                  },
+
+  onPressed: customBackAction ?? () {
+    if (backToHome) {
+      Get.offAllNamed('/bottomBar');
+    } else if (backToBottomBar) {
+      Navigator.of(context).pop();
+    } else {
+      // السلوك العادي (العودة للخلف)
+      Navigator.of(context).pop();
+    }
+  }
                 )
               else
                 Container( // Original app icon container if no back button

@@ -41,8 +41,8 @@ class RegisterScreenState extends State<RegisterScreen> with SingleTickerProvide
               bottom: TabBar(
                 controller: _tabController,
                 tabs: const [
-                  Tab(text: "التسجيل كمقيم"),
-                  Tab(text: "التسجيل كمستضيف"),
+                  Tab(text: "التسجيل كباحث عن إستراحة"),
+                  Tab(text: "التسجيل كمالك إستراحة"),
                 ],
               ),
             ),
@@ -191,6 +191,8 @@ class RegisterScreenState extends State<RegisterScreen> with SingleTickerProvide
                           initialDate: DateTime.now(),
                           firstDate: DateTime(1900),
                           lastDate: DateTime.now(),
+
+
                         );
                         if (pickedDate != null) {
                           controller.birthDate.value =

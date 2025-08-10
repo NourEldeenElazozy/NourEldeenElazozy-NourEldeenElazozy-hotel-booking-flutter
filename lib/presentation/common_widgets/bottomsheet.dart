@@ -78,8 +78,8 @@ class FilterBottomSheet extends StatelessWidget {
                                         onTap: () {
                                           controller.selectedCityIndex.value = index;
                                           controller.selectedCityId.value = controller.cities[index].id; // تحديث `city_id`
-                                          controller.selectedCityId.value=0;
-                                          print("تم اختيار المدينة رقم: ${controller.selectedCityIndex.value}"); // طباعة `city_id`
+                                          //controller.selectedCityId.value=0;
+                                          print("تم اختيار المدينة رقم: ${controller.selectedCityId.value}"); // طباعة `city_id`
 
                                         },
                                         child: Container(
@@ -642,6 +642,7 @@ class FilterBottomSheet extends StatelessWidget {
                           height: 50,
                           child: Button(
                             onpressed: () {
+
                               controller.selectedCityIndex.value = -1;
                               controller.selectedCityId=(-1).obs;
                               cityId=0;
@@ -680,7 +681,8 @@ class FilterBottomSheet extends StatelessWidget {
                                 Get.find<HomeController>().getRestAreas(maxGuests: maxGuests);
                               }
                               print("  maxGuests $maxGuests");
-                              print("  cityId ${controller.selectedCityIndex.value}");
+                              print("  cityId ${controller.selectedCityId.value}");
+                              print("تمم اختيار المدينة رقم: ${controller.selectedCityId.value}"); // طباعة `city_id`
                               print("  priceMin ${homecontroller.priceMin.value}");
                               print("  priceMax ${homecontroller.priceMax.value}");
                               // تجميع المرافق المختارة
@@ -697,7 +699,8 @@ class FilterBottomSheet extends StatelessWidget {
 
                                 maxGuests:maxGuests ,
                                    areaTypes: controller.selectedTimeString.value,
-                                  cityId: controller.selectedCityIndex.value,
+                                  cityId: controller.selectedCityId.value,
+                                 // cityId: controller.selectedCityIndex.value,
                                   priceMin: homecontroller.priceMin.value, // إضافة الحد الأدنى للسعر
                                   priceMax: homecontroller.priceMax.value,  // إضافة الحد الأقصى للسعر
                                 rating:  controller.selectedRate.value+1,

@@ -5,17 +5,20 @@ class MyString {
   static int packageId = 0; // ✅ يمكن تغييره
 //----------------------------- Welcome_Screen -----------------------------
   static const String welcome = "مرحبا بك في";
-  static const String bookNest = "إستراحة";
+  static const String bookNest = "إستراحة-Esteraha";
   static const String vacation = "أفضل حجز فندقي لهذا القرن\nليرافق عطلتك";
 
 //----------------------------- Onboarding_Screen -----------------------------
   static List text = [
-    "لنقضي\nأفضل عطلة\nمعًا",
-    "السفر\nأصبح أسهل\nبين يديك",
-    "لنكتشف\nالعالم\nمعًا"
+    "مرحباً بك في تطبيق\nإستراحة – Esteraha",
+    "مميزات\n  ذكية لتجربتك ",
+    "هل تمتلك استراحة أو منتجع؟",
   ];
 
-  static const String description = "لوريم إيبسوم هو نص افتراضي يتم استخدامه كنموذج في التصاميم.";
+
+  static const String description = "احجز استراحتك أو منتجعك المفضل بخطوات بسيطة، وابدأ عطلتك براحة وبدون عمولة .";
+  static const String description2 = "ابحث عن الاستراحه او المنتجع عبر خرائط Google واستمتع بجولة افتراضية من داخلها من هاتفك بإستخدام افضل تقنيات التصوير.";
+  static const String description3 = "سجّل الآن وابدأ بعرض استراحتك، جذّب العملاء، وتابع حجوزاتك بكل سهولة واحترافية من مكان واحد.";
   static const String next = "التالي";
   static const String skip = "تخطي";
 
@@ -53,7 +56,7 @@ class MyString {
   static List<String> genderSelect = [
     "ذكر",
     "أنثى",
-    "آخر",
+
   ];
 
 //-----------------------------------ChoicePassword_Screen------------------------------
@@ -202,7 +205,7 @@ class MyString {
   static const String hotelDescription = "الوصف";
   static const String hotelLongDescription = "لوريم إيبسوم هو نص افتراضي يُستخدم في التصاميم والنماذج.";
   static const String facilites = "المرافق الخارجية";
-  static const String location = "الموقع";
+  static const String location = "الموقع علي الخريطة";
   static const String review = "التقييم";
   static const String more = "المزيد";
   static const String bookNow = "أرسل الطلب";
@@ -229,7 +232,7 @@ class MyString {
   static const String galleryHotelPhotos = "صور فندق المعرض";
 
 //----------------------------------- GoogleMap ------------------------------
-  static const String hotelLocation = "موقع الفندق";
+  static const String hotelLocation = "موقع الإستراحة";
 
 //----------------------------------- DateTimeSelect ------------------------------
   static const String selectDate = "ارسال طلب الحجز";
@@ -355,6 +358,7 @@ class MyString {
   static const String cancelBookingButton = "إلغاء الحجز";
   static const String viewTicketButton = "عرض التذكرة";
   static const String completed = "تهانينا، لقد أكملت الحجز!";
+  static const String confirmed = "هذ الحجز مؤكد";
   static const String canceled = "لقد قمت بإلغاء هذا الحجز الفندقي";
 
 //----------------------------------- CancelBooking ------------------------------

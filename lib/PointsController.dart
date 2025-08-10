@@ -16,7 +16,7 @@ class PointsController extends GetxController {
       debugPrint(token);
 
       final response = await Dio().get(
-        'http://10.0.2.2:8000/api/getUserPoints',
+        'https://esteraha.ly/api/getUserPoints',
         options: Options(
           headers: {
             'Authorization': 'Bearer $token',

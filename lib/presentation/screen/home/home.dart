@@ -94,7 +94,7 @@ class _HomeState extends State<Home> {
                     ),
                     const SizedBox(height: 18),
                     // Search
-                   /*
+
                     InkWell(
                       onTap: () {
                         Get.to(const Search(status: 'home'));
@@ -139,7 +139,7 @@ class _HomeState extends State<Home> {
                         ),
                       ),
                     ),
-                    */
+
                     const SizedBox(height: 20),
                     // Row(
                     //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -340,6 +340,16 @@ class _HomeState extends State<Home> {
                     color: controller.themeController.isDarkMode.value ? Colors.white : MyColors.successColor,
                   ),
                 )
+                    : controller.restAreas.isEmpty
+                    ? Center(
+                  child: Text(
+                    'لايوجد بيانات مطابقة لبحثك',
+                    style: TextStyle(
+                      fontSize: 16,
+                      color: Colors.grey,
+                    ),
+                  ),
+                )
                     : ListView.builder(
                   scrollDirection: Axis.horizontal,
                   itemCount: controller.restAreas.length, // استخدام متغير الحجوزات
@@ -371,7 +381,7 @@ class _HomeState extends State<Home> {
                             color: MyColors.disabledColor,
                             borderRadius: BorderRadius.circular(40),
                             image: DecorationImage(
-                              image: NetworkImage('http://10.0.2.2:8000/storage/${reservation['main_image']}'), // استخدام الصورة الرئيسية من بيانات الحجز
+                              image: NetworkImage('https://esteraha.ly/public/${reservation['main_image']}'), // استخدام الصورة الرئيسية من بيانات الحجز
                               fit: BoxFit.cover,
                             ),
                           ),
@@ -465,7 +475,9 @@ class _HomeState extends State<Home> {
                             style: TextStyle(fontWeight: FontWeight.w700, fontSize: 16),
                           ),
                           InkWell(
-                            onTap: () {},
+                            onTap: () {
+                              Get.toNamed("/Booking");
+                            },
                             child: const Text(
                               MyString.seeAll,
                               style: TextStyle(fontWeight: FontWeight.w700, fontSize: 14),

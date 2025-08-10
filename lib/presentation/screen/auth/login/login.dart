@@ -80,6 +80,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         CustomTextFormField(
                           controller: controller.phoneController,
                           obscureText: false,
+                          maxLength: 10,
                           keyboardType: TextInputType.phone,
                           textInputAction: TextInputAction.next,
                           validator: (value) {
@@ -128,21 +129,27 @@ class _LoginScreenState extends State<LoginScreen> {
                           ),
                         ),
                         const SizedBox(height: 30),
-                        Obx(() => SizedBox(
-                          height: 55,
-                          width: MediaQuery.of(context).size.width,
-                          child: controller.isLoading.value
-                              ? const Center(child: CircularProgressIndicator(color: Colors.orange,)) // ← أثناء التحميل
-                              : Button(
-                            onpressed: () {
-                              controller.submit();
-                            },
-                            text: MyString.signIn,
-                            shadowColor: controller.themeController.isDarkMode.value
-                                ? Colors.transparent
-                                : MyColors.buttonShadowColor,
+                        Obx(
+                              () => SizedBox(
+                            height: 55,
+                            width: MediaQuery.of(context).size.width,
+                            child: controller.isLoading.value
+                                ? const Center(
+                              child: CircularProgressIndicator(color: Colors.orange),
+                            )
+                                : Button(
+                              onpressed: () {
+                                if (controller.formKey.currentState!.validate()) {
+                                  controller.submit();
+                                }
+                              },
+                              text: MyString.signIn,
+                              shadowColor: controller.themeController.isDarkMode.value
+                                  ? Colors.transparent
+                                  : MyColors.buttonShadowColor,
+                            ),
                           ),
-                        )),
+                        ),
                         const SizedBox(height: 30),
                         InkWell(
                             onTap: () {

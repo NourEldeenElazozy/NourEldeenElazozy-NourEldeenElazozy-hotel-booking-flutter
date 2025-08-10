@@ -27,7 +27,7 @@ class ReviewController extends GetxController {
       // تعديل نقطة النهاية لجلب المراجعات الخاصة بـ restAreaId معينة
       // يجب أن تكون نقطة النهاية في Laravel كما يلي:
       // Route::get('/reviews/{rest_area_id}', [ReviewController::class, 'index']);
-      final url = 'http://10.0.2.2:8000/api/reviews/$restAreaId'; // <--- المسار لجلب المراجعات
+      final url = 'https://esteraha.ly/api/reviews/$restAreaId'; // <--- المسار لجلب المراجعات
 
       final response = await _dio.get(url);
 

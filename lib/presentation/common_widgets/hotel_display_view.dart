@@ -70,7 +70,7 @@ class _VerticalViewState extends State<VerticalView> {
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(15),
                     image: DecorationImage(
-                      image: NetworkImage("http://10.0.2.2:8000/storage/${controller.recently[widget.index]['rest_area']['main_image']}"),
+                      image: NetworkImage("https://esteraha.ly/storage/${controller.recently[widget.index]['rest_area']['main_image']}"),
                       fit: BoxFit.cover,
                     ),
                   ),

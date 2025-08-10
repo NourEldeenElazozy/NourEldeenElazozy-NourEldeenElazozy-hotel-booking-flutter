@@ -55,7 +55,7 @@ class RestAreaController extends GetxController {
 
       // ====== إرسال الطلب ======
       final response = await Dio.Dio().post(
-        'http://10.0.2.2:8000/api/store', // تأكد من نقطة نهاية الـ API الصحيحة
+        'https://esteraha.ly/api/store', // تأكد من نقطة نهاية الـ API الصحيحة
         data: formData,
         options: Dio.Options(
           headers: {
@@ -180,7 +180,7 @@ class RestAreaController extends GetxController {
 
       // ====== إرسال الطلب ======
       final response = await Dio.Dio().post( // استخدام POST مع _method: PUT
-        'http://10.0.2.2:8000/api/rest-areas/${restArea.id}', // نقطة نهاية التحديث
+        'https://esteraha.ly/api/rest-areas/${restArea.id}', // نقطة نهاية التحديث
         data: formData,
         options: Dio.Options(
           headers: {

@@ -16,7 +16,7 @@ import 'package:flutter_localizations/flutter_localizations.dart'; // <--- تم 
 import 'package:sms_autofill/sms_autofill.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:intl/date_symbol_data_local.dart'; // <--- استيراد جديد لتهيئة اللغة
-
+import 'package:shared_preferences/shared_preferences.dart';
 // تأكد من وجود ملف firebase_options.dart الخاص بمشروعك
 import 'firebase_options.dart';
 // 🔴🔴🔴 تم إزالة استيراد ForceUpdateScreen.dart 🔴🔴🔴
@@ -216,24 +216,34 @@ Future<void> main() async {
       final hash = await SmsAutoFill().getAppSignature;
       print("Hash: ${hash ?? 'NO HASH RECEIVED'}");
     }
+    // تحقق مما إذا كان المستخدم شاهد Onboarding أم لا
+    final prefs = await SharedPreferences.getInstance();
+    final hasSeenOnboarding = prefs.getBool('onboarding') ?? false;
 
+    // احفظ المسار المبدئي
+    final initialRoute = hasSeenOnboarding ? "/bottomBar" : "/onboarding";
+    print("hasSeenOnboarding $hasSeenOnboarding");
     // 4. تشغيل التطبيق الرئيسي
-    runApp(MyApp());
+    runApp(MyApp(initialRoute: initialRoute));
 
   } catch (e) {
+    final prefs = await SharedPreferences.getInstance();
+    final hasSeenOnboarding = prefs.getBool('onboarding') ?? false;
+    final initialRoute = hasSeenOnboarding ? "/bottomBar" : "/onboarding";
+
     debugPrint('Firebase initialization error: $e');
     // في حالة حدوث خطأ في تهيئة Firebase
-    runApp(MyApp());
+    runApp(MyApp(initialRoute: initialRoute));
   }
 }
 
 class MyApp extends StatefulWidget {
-  const MyApp({
-    super.key,
-  });
+  final String initialRoute;
+  const MyApp({super.key, required this.initialRoute});
 
   @override
   State<MyApp> createState() => _MyAppState();
+
 }
 
 class _MyAppState extends State<MyApp> {
@@ -263,7 +273,8 @@ class _MyAppState extends State<MyApp> {
           supportedLocales: const [Locale('ar', 'SA')], // تحديد اللغة العربية كلغة مدعومة
           debugShowCheckedModeBanner: false,
           theme: themeController.darkMode.value ? Themes.darkTheme : Themes.lightTheme,
-          initialRoute: "/bottomBar", // تم تعيين initialRoute هنا
+          initialRoute: widget.initialRoute, // ✅ هنا التعديل, // تم تعيين initialRoute هنا
+          //initialRoute: "/onboarding", // تم تعيين initialRoute هنا
           getPages: Routes.navigator, // تم تعيين getPages هنا
         ));
       },

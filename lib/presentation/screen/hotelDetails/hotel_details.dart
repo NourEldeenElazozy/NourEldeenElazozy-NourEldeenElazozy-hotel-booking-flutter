@@ -14,18 +14,22 @@ class _HotelDetailState extends State<HotelDetail> {
   @override
   void initState() {
     super.initState();
-    print("reservedDates ${controller.reservedDates}");
+    print("reservedDates ${Get.arguments['data']['id']}");
+
     // استلام restAreaId من الـ arguments
-    if (Get.arguments != null && Get.arguments['restAreaId'] != null) {
-      restAreaId = Get.arguments['restAreaId'];
+    if (Get.arguments != null && Get.arguments['data']['id'] != null) {
+      restAreaId = Get.arguments['data']['id'];
       // استدعاء دالة جلب التواريخ المحجوزة
       controller.fetchReservedDates(restAreaId);
     } else {
       // التعامل مع حالة عدم وجود restAreaId (مثلاً، العودة للخلف أو عرض رسالة خطأ)
+      print('لم يتم تحديد معرف الاستراحة.');
+      /*
       Get.snackbar('خطأ', 'لم يتم تحديد معرف الاستراحة.',
           snackPosition: SnackPosition.BOTTOM,
           backgroundColor: Colors.red,
           colorText: Colors.white);
+       */
       Future.delayed(const Duration(seconds: 2), () => Get.back());
     }
   }
@@ -103,6 +107,7 @@ class _HotelDetailState extends State<HotelDetail> {
     print("//////////////////");
 
     controller.fetchReservedDates(int.parse(controller.detail.id.toString()));
+    print(controller.detail.virtual_tour_link);
     print(controller.reservedDates);
     print(controller.detail.mainImage);
     print(controller.detail.detailsImages[0].toString());
@@ -145,7 +150,7 @@ class _HotelDetailState extends State<HotelDetail> {
                         horizontal: 10, vertical: 10),
                     child: InkWell(
                       onTap: () {
-                        Get.back();
+                        Navigator.of(context).pop();
                       },
                       child: Padding(
                         padding: const EdgeInsets.all(2.0),
@@ -160,26 +165,7 @@ class _HotelDetailState extends State<HotelDetail> {
                       ),
                     ),
                   ),
-                  actions: [
-                    SvgPicture.asset(MyImages.bookMarkLight,
-                        colorFilter: ColorFilter.mode(
-                            innerBoxIsScrolled == true
-                                ? controller.themeController.darkMode.value
-                                    ? MyColors.white
-                                    : MyColors.black
-                                : MyColors.white,
-                            BlendMode.srcIn)),
-                    const SizedBox(width: 15),
-                    SvgPicture.asset(MyImages.allMenu,
-                        colorFilter: ColorFilter.mode(
-                            innerBoxIsScrolled == true
-                                ? controller.themeController.darkMode.value
-                                    ? MyColors.white
-                                    : MyColors.black
-                                : MyColors.white,
-                            BlendMode.srcIn)),
-                    const SizedBox(width: 15),
-                  ],
+
                   flexibleSpace: FlexibleSpaceBar(
                     background: Stack(
                       children: [
@@ -187,7 +173,7 @@ class _HotelDetailState extends State<HotelDetail> {
                           itemCount: 1,
                           itemBuilder: (context, index, realIndex) {
                             return Image.network(
-                                "http://10.0.2.2:8000/storage/${controller.detail.mainImage.toString()}",
+                                "https://esteraha.ly/public/${controller.detail.mainImage.toString()}",
                                 fit: BoxFit.fill,
                                 width: MediaQuery.of(context).size.width);
                           },
@@ -551,10 +537,10 @@ class _HotelDetailState extends State<HotelDetail> {
                                           decoration: BoxDecoration(
                                             image: DecorationImage(
                                               image: NetworkImage(
-                                                  "http://10.0.2.2:8000/storage/${controller.detail.detailsImages[index].toString()}"),
+                                                  "https://esteraha.ly/public/${controller.detail.detailsImages[index].toString()}"),
                                               fit: BoxFit.cover,
                                             ),
-                                          ),
+                                           ),
                                         ),
                                       );
                                     },
@@ -567,7 +553,7 @@ class _HotelDetailState extends State<HotelDetail> {
                                     borderRadius: BorderRadius.circular(15),
                                     image: DecorationImage(
                                       image: NetworkImage(
-                                          "http://10.0.2.2:8000/storage/${controller.detail.detailsImages[index].toString()}"),
+                                          "https://esteraha.ly/public/${controller.detail.detailsImages[index].toString()}"),
                                       fit: BoxFit.cover,
                                     ),
                                   ),
@@ -936,7 +922,11 @@ class _HotelDetailState extends State<HotelDetail> {
                                 ),
                                 child: InkWell(
                                   onTap: () {
-                                    Get.toNamed("/googleMap");
+                                    print( controller.detail.google_maps_location);
+                                    Get.toNamed(
+                                      "/googleMap",
+                                      arguments: controller.detail.google_maps_location,
+                                    );
                                   },
                                   child: Icon(
                                     Icons.arrow_forward,

@@ -30,7 +30,7 @@ class ProfileController extends GetxController {
   }) async {
     try {
       isLoading.value=true;
-      final Dio _dio = Dio(BaseOptions(baseUrl: "http://10.0.2.2:8000/api"));
+      final Dio _dio = Dio(BaseOptions(baseUrl: "https://esteraha.ly/api"));
       final response = await _dio.post("/resthouse-request", data: {
         "name": name,
         "phone": phone,

@@ -205,6 +205,7 @@ class _ProfileState extends State<Profile> {
               Divider(
                 color: Colors.grey.shade300,
               ),
+              if(userType.value.isNotEmpty)
               InkWell(
                 onTap: () {
                   Get.toNamed("/editProfile");
@@ -212,6 +213,7 @@ class _ProfileState extends State<Profile> {
                 child: commonListTile(MyImages.editProfileScreen,
                     MyString.editProfile, controller.isDarkMode.value),
               ),
+              if(userType.value.isNotEmpty)
               if(userType.value=="host")
               InkWell(
                 onTap: () {
@@ -221,7 +223,7 @@ class _ProfileState extends State<Profile> {
                 child: commonListTile(MyImages.myHost,
                     MyString.myHost, controller.isDarkMode.value),
               ),
-
+              if(userType.value.isNotEmpty)
               if(userType.value=="host")
                 InkWell(
                   onTap: () {
@@ -231,7 +233,15 @@ class _ProfileState extends State<Profile> {
                   child: commonListTile(MyImages.selectedBooking,
                       MyString.myBook, controller.isDarkMode.value),
                 ),
-
+              if(userType.value.isEmpty)
+                InkWell(
+                  onTap: () {
+                    Get.toNamed('/registerScreen');
+                  },
+                  child: commonListTile(MyImages.unSelectedProfile,
+                      MyString.registerTitle, controller.isDarkMode.value),
+                ),
+              if(userType.value.isNotEmpty)
               InkWell(
                 onTap: () {
                   Get.toNamed('/profileNotification');
@@ -263,6 +273,7 @@ class _ProfileState extends State<Profile> {
                   },
                 ),
               ),
+              if(userType.value.isNotEmpty)
               InkWell(
                 onTap: () {
                   Get.toNamed('/pointsPage');
@@ -291,6 +302,7 @@ class _ProfileState extends State<Profile> {
                 child: commonListTile(MyImages.mobile,
                     MyString.helpCentre, controller.isDarkMode.value),
               ),
+              if(userType.value.isNotEmpty)
               if(userType.value=="host")
                 InkWell(
                   onTap: () {
@@ -298,12 +310,14 @@ class _ProfileState extends State<Profile> {
                   },
                   child: commonListTile(MyImages.congratulation, "طلب تصوير 360", controller.isDarkMode.value),
                 ),
+              if(userType.value.isNotEmpty)
               InkWell(
                 onTap: () {
                   Get.toNamed('/PrivacyPolicy');
                 },
                 child: commonListTile(MyImages.privacyScreen, MyString.privacy, controller.isDarkMode.value),
               ),
+              if(userType.value.isNotEmpty)
               InkWell(
                 onTap: () {
                   ratingDialog(context, controller.isDarkMode.value);
@@ -311,6 +325,7 @@ class _ProfileState extends State<Profile> {
                 child: commonListTile(MyImages.rateBookNestScreen,
                     MyString.rateBooKNest, controller.isDarkMode.value),
               ),
+              if(userType.value.isNotEmpty)
               InkWell(
                 onTap: () {
                   // عرض ديالوج مشاركة (أنت لاحقاً تضيف share logic هنا)
@@ -351,7 +366,7 @@ class _ProfileState extends State<Profile> {
                   controller.isDarkMode.value,
                 ),
               ),
-
+              if(userType.value.isNotEmpty)
               InkWell(
                 onTap: () {
                   // عرض دايلوج تأكيد الحذف
@@ -398,7 +413,7 @@ class _ProfileState extends State<Profile> {
 
                 ),
               ),
-
+              if(userType.value.isNotEmpty)
               ListTile(
                 onTap: () {
                   showModalBottomSheet(
