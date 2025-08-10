@@ -332,119 +332,125 @@ class _HomeState extends State<Home> {
                 ),
               ),
                */
-              SizedBox(
-                height: 300,
-                child: controller.isLoading.value
-                    ? Center(
-                  child: CircularProgressIndicator(
-                    color: controller.themeController.isDarkMode.value ? Colors.white : MyColors.successColor,
-                  ),
-                )
-                    : controller.restAreas.isEmpty
-                    ? Center(
-                  child: Text(
-                    'لايوجد بيانات مطابقة لبحثك',
-                    style: TextStyle(
-                      fontSize: 16,
-                      color: Colors.grey,
-                    ),
-                  ),
-                )
-                    : ListView.builder(
-                  scrollDirection: Axis.horizontal,
-                  itemCount: controller.restAreas.length, // استخدام متغير الحجوزات
-                  itemBuilder: (context, index) {
-                    var reservation = controller.restAreas[index]; // الوصول إلى بيانات الحجز
+            SizedBox(
+              height: 300,
+              child: Obx(() => controller.isLoading.value
+                  ? Center(
+                child: CircularProgressIndicator(
+                  color: controller.themeController.isDarkMode.value ? Colors.white : MyColors.successColor,
+                ),
+              )
+                  : controller.restAreas.isEmpty
+                  ? Center(
+                child: Text(
+                  'لايوجد بيانات مطابقة لبحثك',
+                  style: TextStyle(fontSize: 16, color: Colors.grey),
+                ),
+              )
+                  : ListView.builder(
+                scrollDirection: Axis.horizontal,
+                itemCount: controller.restAreas.length,
+                itemBuilder: (context, index) {
+                  var reservation = controller.restAreas[index];
+                  int id = reservation['id'];
 
-                    return Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 5.0),
-                      child: InkWell(
-                        onTap: () {
-                          /*
-                          Get.toNamed("/hotelDetail", arguments: {'data' : controller.homeDetails[index]});
-                           */
+                  bool isFav = controller.favoriteIds.contains(id);
 
-                          Detail detail = Detail.fromJson(reservation);
-
-                          // إضافة الكائن إلى homeDetails إذا كان ذلك مطلوبًا
-                          controller.homeDetails.add(detail);
-
-
-                          Get.toNamed("/hotelDetail", arguments: {'data': reservation});
-                          print("reservation");
-                          print(reservation);
-                        },
-                        child: Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 20),
-                          width: 230,
-                          decoration: BoxDecoration(
-                            color: MyColors.disabledColor,
-                            borderRadius: BorderRadius.circular(40),
-                            image: DecorationImage(
-                              image: NetworkImage('https://esteraha.ly/public/${reservation['main_image']}'), // استخدام الصورة الرئيسية من بيانات الحجز
-                              fit: BoxFit.cover,
-                            ),
-                          ),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.end,
-                                children: [
-                                  Container(
-                                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 3),
-                                    decoration: BoxDecoration(
-                                      color: MyColors.primaryColor,
-                                      borderRadius: BorderRadius.circular(20),
-                                    ),
-                                    child: Row(
-                                      mainAxisAlignment: MainAxisAlignment.center,
-                                      children: [
-                                        SvgPicture.asset(MyImages.whiteStar, width: 10),
-                                        const SizedBox(width: 5),
-                                        Text(
-                                          reservation['rating'].toString(), // عرض تقييم المنطقة
-                                          style: const TextStyle(color: MyColors.white, fontWeight: FontWeight.w600, fontSize: 12),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                ],
-                              ),
-                              const Spacer(),
-                              Text(
-                                reservation['name'], // عرض اسم المنطقة
-                                style: const TextStyle(color: MyColors.white, fontWeight: FontWeight.w700, fontSize: 18),
-                              ),
-                              const SizedBox(height: 5),
-                              Text(
-                                reservation['location'], // عرض موقع المنطقة
-                                style: const TextStyle(color: MyColors.white, fontWeight: FontWeight.w400, fontSize: 14),
-                              ),
-                              const SizedBox(height: 5),
-                              Row(
-                                children: [
-                                  Text(
-                                    reservation['price'], // عرض سعر المنطقة
-                                    style: const TextStyle(color: MyColors.white, fontWeight: FontWeight.w700, fontSize: 20),
-                                  ),
-                                  const Text(
-                                    " / per night",
-                                    style: TextStyle(color: MyColors.white, fontWeight: FontWeight.w400, fontSize: 14),
-                                  ),
-                                  const Spacer(),
-                                  SvgPicture.asset(MyImages.bookMarkLight),
-                                ],
-                              ),
-                            ],
+                  return Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 5.0),
+                    child: InkWell(
+                      onTap: () {
+                        Detail detail = Detail.fromJson(reservation);
+                        controller.homeDetails.add(detail);
+                        Get.toNamed("/hotelDetail", arguments: {'data': reservation});
+                      },
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 20),
+                        width: 230,
+                        decoration: BoxDecoration(
+                          color: MyColors.disabledColor,
+                          borderRadius: BorderRadius.circular(40),
+                          image: DecorationImage(
+                            image: NetworkImage('https://esteraha.ly/public/${reservation['main_image']}'),
+                            fit: BoxFit.cover,
                           ),
                         ),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Container(
+                                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 3),
+                                  decoration: BoxDecoration(
+                                    color: MyColors.primaryColor,
+                                    borderRadius: BorderRadius.circular(20),
+                                  ),
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      SvgPicture.asset(MyImages.whiteStar, width: 10),
+                                      const SizedBox(width: 5),
+                                      Text(
+                                        reservation['rating'].toString(),
+                                        style: const TextStyle(color: MyColors.white, fontWeight: FontWeight.w600, fontSize: 12),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+
+                                GestureDetector(
+                                  onTap: () {
+                                    controller.toggleFavorite(id);
+                                    setState(() {
+
+                                    });
+                                  },
+                                  child: SvgPicture.asset(
+                                    isFav ? MyImages.selectedBookMarkBlack : MyImages.unSelectBookMark,
+                                    width: 25,
+                                    height: 25,
+
+                                  ),
+                                ),
+
+                              ],
+                            ),
+                            const Spacer(),
+                            Text(
+                              reservation['name'],
+                              style: const TextStyle(color: MyColors.white, fontWeight: FontWeight.w700, fontSize: 18),
+                            ),
+                            const SizedBox(height: 5),
+                            Text(
+                              reservation['location'],
+                              style: const TextStyle(color: MyColors.white, fontWeight: FontWeight.w400, fontSize: 14),
+                            ),
+                            const SizedBox(height: 5),
+                            Row(
+                              children: [
+                                Text(
+                                  reservation['price'],
+                                  style: const TextStyle(color: MyColors.white, fontWeight: FontWeight.w700, fontSize: 20),
+                                ),
+                                const Text(
+                                  " / per night",
+                                  style: TextStyle(color: MyColors.white, fontWeight: FontWeight.w400, fontSize: 14),
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
                       ),
-                    );
-                  },
-                ),
-              ),
-              const SizedBox(height: 15),
+                    ),
+                  );
+                },
+              )),
+            ),
+
+
+            const SizedBox(height: 15),
               Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: ElevatedButton(

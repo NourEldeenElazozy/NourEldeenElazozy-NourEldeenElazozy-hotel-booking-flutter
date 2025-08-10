@@ -86,7 +86,7 @@ class _MapPickerScreenState extends State<MapPickerScreen> {
 
   // 🔴🔴🔴 ملاحظة: استبدل هذا بعنوان URL الأساسي لصور الاستراحات الخاصة بك 🔴🔴🔴
   // على سبيل المثال: 'http://your-backend-api.com/storage/' أو 'https://esteraha.ly/storage/'
-  static const String _imageBaseUrl = 'https://esteraha.ly/storage/'; // مثال، يجب تغييره ليناسب backend الخاص بك
+  static const String _imageBaseUrl = 'https://esteraha.ly/public/'; // مثال، يجب تغييره ليناسب backend الخاص بك
 
   @override
   void initState() {
@@ -195,8 +195,8 @@ class _MapPickerScreenState extends State<MapPickerScreen> {
       final String? name = item['name'];
       final int id = item['id'];
       final String? areaType = item['area_type'];
-      final int? totalSpace = item['total_space'];
-      final int? maxGuests = item['max_guests'];
+      final int? totalSpace = int.tryParse(item['total_space'].toString());
+      final int? maxGuests = int.tryParse(item['max_guests'].toString());
       final String? mainImageRelativePath = item['main_image'];
       final String? price = item['price'];
 
@@ -221,6 +221,7 @@ class _MapPickerScreenState extends State<MapPickerScreen> {
               },
             ),
           );
+
         }
       }
     }
@@ -235,7 +236,7 @@ class _MapPickerScreenState extends State<MapPickerScreen> {
     });
 
      _addRestAreaMarkers(); // أولاً، قم بتوليد علامات المواقع الثابتة
-
+    print (" _markers $_markers");
     bool serviceEnabled;
     LocationPermission permission;
 
@@ -309,14 +310,14 @@ class _MapPickerScreenState extends State<MapPickerScreen> {
     final String? price = restAreaDetails['price'];
     final String? description = restAreaDetails['description'];
     final String? areaType = restAreaDetails['area_type']; // تغيير من widget.restAreasData إلى restAreaDetails
-    final int? maxGuests = restAreaDetails['max_guests'];
+    final int? maxGuests = int.tryParse(restAreaDetails['max_guests'].toString());
 
     String imageUrl = '';
     if (mainImageRelativePath != null && mainImageRelativePath.isNotEmpty) {
       // بناء رابط الصورة الكامل. تأكد أن _imageBaseUrl صحيح.
       imageUrl = _imageBaseUrl + mainImageRelativePath;
     }
-
+print(" imageUrl $imageUrl");
     showModalBottomSheet(
       context: context,
       isScrollControlled: true, // للسماح للـ BottomSheet بأخذ ارتفاع متغير
@@ -554,6 +555,7 @@ class _MapPickerScreenState extends State<MapPickerScreen> {
 
   @override
   Widget build(BuildContext context) {
+
     return Directionality(
       textDirection: TextDirection.rtl,
       child: Scaffold(
@@ -603,7 +605,9 @@ class _MapPickerScreenState extends State<MapPickerScreen> {
               rotateGesturesEnabled: true,
               markers: _markers,
             ),
-            if (!_isLoadingLocation && _currentCameraPosition != null)
+           //Red Markers
+            /*
+             if (!_isLoadingLocation && _currentCameraPosition != null)
               const Center(
                 child: Icon(
                   Icons.location_on,
@@ -611,6 +615,7 @@ class _MapPickerScreenState extends State<MapPickerScreen> {
                   size: 50,
                 ),
               ),
+             */
             Positioned(
               bottom: 20.0,
               left: 0,
@@ -618,6 +623,7 @@ class _MapPickerScreenState extends State<MapPickerScreen> {
               child: Center(
                 child: Column(
                   children: [
+                   /*
                     if (_pickedLocation != null)
                       Card(
                         margin: const EdgeInsets.all(8.0),
@@ -631,6 +637,7 @@ class _MapPickerScreenState extends State<MapPickerScreen> {
                           ),
                         ),
                       ),
+                    */
                  //   ElevatedButton.icon(
                     //                     onPressed: _pickedLocation == null
                     //                         ? null

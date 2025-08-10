@@ -24,6 +24,9 @@ class HomeController extends GetxController {
    var recentlyBooked = [].obs;
    var recently = [].obs;
    String? token;
+
+   var favoriteIds = <int>{}.obs; // Set قابل للملاحظة (Rx)
+
    //Map<int, bool> paymentStatusMap = {};
    RxList<bool> selectedFacilities = List.generate(MyString.facilities.length, (index) => false).obs;
    var restAreas = [].obs; // تخزين البيانات هنا
@@ -33,8 +36,36 @@ class HomeController extends GetxController {
         fetchRecentlyBooked(); // جلب البيانات عند بدء التطبيق
         getReservations();
         getRestAreas();
+        _loadFavoritesFromPrefs();
       super.onInit();
    }
+   void toggleFavorite(int id) {
+     if (favoriteIds.contains(id)) {
+       favoriteIds.remove(id);
+     } else {
+       favoriteIds.add(id);
+     }
+     favoriteIds.refresh();  // ضروري لإشعار الواجهة بالتغيير
+     _saveFavoritesToPrefs(); // تحفظ التغييرات على الجهاز
+     print(favoriteIds);
+   }
+
+
+   Future<void> _saveFavoritesToPrefs() async {
+     final prefs = await SharedPreferences.getInstance();
+     // SharedPreferences لا يدعم List<int> مباشرة، فنحولها إلى List<String>
+     List<String> favsAsString = favoriteIds.map((e) => e.toString()).toList();
+     await prefs.setStringList('favorite_ids', favsAsString);
+   }
+
+   Future<void> _loadFavoritesFromPrefs() async {
+     final prefs = await SharedPreferences.getInstance();
+     List<String>? favsAsString = prefs.getStringList('favorite_ids');
+     if (favsAsString != null) {
+       favoriteIds.value = favsAsString.map((e) => int.tryParse(e) ?? 0).where((e) => e != 0).toSet();
+     }
+   }
+
    static Map<String, String> facilitiesMap = {
      "واي فاي": "free_wifi",
      "مسبح": "pool",

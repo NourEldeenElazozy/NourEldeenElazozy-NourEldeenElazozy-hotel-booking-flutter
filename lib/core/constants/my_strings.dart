@@ -5,7 +5,7 @@ class MyString {
   static int packageId = 0; // ✅ يمكن تغييره
 //----------------------------- Welcome_Screen -----------------------------
   static const String welcome = "مرحبا بك في";
-  static const String bookNest = "إستراحة-Esteraha";
+  static const String bookNest = "إستراحة - Esteraha";
   static const String vacation = "أفضل حجز فندقي لهذا القرن\nليرافق عطلتك";
 
 //----------------------------- Onboarding_Screen -----------------------------
