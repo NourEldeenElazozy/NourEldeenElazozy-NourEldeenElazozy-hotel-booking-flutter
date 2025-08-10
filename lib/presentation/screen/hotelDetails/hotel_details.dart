@@ -14,18 +14,22 @@ class _HotelDetailState extends State<HotelDetail> {
   @override
   void initState() {
     super.initState();
-    print("reservedDates ${controller.reservedDates}");
+    print("reservedDates ${Get.arguments['data']['id']}");
+
     // استلام restAreaId من الـ arguments
-    if (Get.arguments != null && Get.arguments['restAreaId'] != null) {
-      restAreaId = Get.arguments['restAreaId'];
+    if (Get.arguments != null && Get.arguments['data']['id'] != null) {
+      restAreaId = Get.arguments['data']['id'];
       // استدعاء دالة جلب التواريخ المحجوزة
       controller.fetchReservedDates(restAreaId);
     } else {
       // التعامل مع حالة عدم وجود restAreaId (مثلاً، العودة للخلف أو عرض رسالة خطأ)
+      print('لم يتم تحديد معرف الاستراحة.');
+      /*
       Get.snackbar('خطأ', 'لم يتم تحديد معرف الاستراحة.',
           snackPosition: SnackPosition.BOTTOM,
           backgroundColor: Colors.red,
           colorText: Colors.white);
+       */
       Future.delayed(const Duration(seconds: 2), () => Get.back());
     }
   }
@@ -103,6 +107,7 @@ class _HotelDetailState extends State<HotelDetail> {
     print("//////////////////");
 
     controller.fetchReservedDates(int.parse(controller.detail.id.toString()));
+    print(controller.detail.virtual_tour_link);
     print(controller.reservedDates);
     print(controller.detail.mainImage);
     print(controller.detail.detailsImages[0].toString());
@@ -917,7 +922,11 @@ class _HotelDetailState extends State<HotelDetail> {
                                 ),
                                 child: InkWell(
                                   onTap: () {
-                                    Get.toNamed("/googleMap");
+                                    print( controller.detail.google_maps_location);
+                                    Get.toNamed(
+                                      "/googleMap",
+                                      arguments: controller.detail.google_maps_location,
+                                    );
                                   },
                                   child: Icon(
                                     Icons.arrow_forward,

@@ -56,7 +56,7 @@ class MyString {
   static List<String> genderSelect = [
     "ذكر",
     "أنثى",
-    "آخر",
+
   ];
 
 //-----------------------------------ChoicePassword_Screen------------------------------
@@ -205,7 +205,7 @@ class MyString {
   static const String hotelDescription = "الوصف";
   static const String hotelLongDescription = "لوريم إيبسوم هو نص افتراضي يُستخدم في التصاميم والنماذج.";
   static const String facilites = "المرافق الخارجية";
-  static const String location = "الموقع";
+  static const String location = "الموقع علي الخريطة";
   static const String review = "التقييم";
   static const String more = "المزيد";
   static const String bookNow = "أرسل الطلب";
@@ -232,7 +232,7 @@ class MyString {
   static const String galleryHotelPhotos = "صور فندق المعرض";
 
 //----------------------------------- GoogleMap ------------------------------
-  static const String hotelLocation = "موقع الفندق";
+  static const String hotelLocation = "موقع الإستراحة";
 
 //----------------------------------- DateTimeSelect ------------------------------
   static const String selectDate = "ارسال طلب الحجز";

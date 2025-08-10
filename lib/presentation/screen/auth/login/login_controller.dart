@@ -84,7 +84,7 @@ class LoginController extends GetxController {
     Get.focusScope!.unfocus();
 
     if (!isValid) {
-      isLoading.value = true; // ← إظهار التحميل
+      isLoading.value = false; // ← إظهار التحميل
     } else {
       // استدعاء دالة تسجيل الدخول
       login(phoneController.text, passwordController.text).then((response) {

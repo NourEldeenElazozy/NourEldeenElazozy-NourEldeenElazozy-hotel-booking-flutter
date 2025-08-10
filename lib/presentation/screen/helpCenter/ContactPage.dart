@@ -1,10 +1,28 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:hotel_booking/core/constants/my_strings.dart';
 import 'package:hotel_booking/presentation/common_widgets/appbar.dart';
+import 'package:hotel_booking/presentation/screen/helpCenter/help_center_import.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-class ContactPage extends StatelessWidget {
+
+class ContactPage extends StatefulWidget {
   ContactPage({Key? key}) : super(key: key);
+
+  @override
+  State<ContactPage> createState() => _ContactPageState();
+}
+
+class _ContactPageState extends State<ContactPage> {
+  // استدعاء الكونترولر
+  final HelpCenterController controller = Get.put(HelpCenterController());
+
+  // Controllers للحقل
+  final TextEditingController nameController = TextEditingController();
+  final TextEditingController phoneController = TextEditingController();
+  final TextEditingController messageController = TextEditingController();
+
+  bool isLoading = false;
 
   // دالة مساعدة لفتح الروابط
   void _launchUrl(String url) async {
@@ -14,19 +32,39 @@ class ContactPage extends StatelessWidget {
     }
   }
 
-  // مفاتيح الكنترول للحقول
-  final TextEditingController nameController = TextEditingController();
-  final TextEditingController phoneController = TextEditingController();
-  final TextEditingController messageController = TextEditingController();
+  Future<void> _sendMessage() async {
+    String name = nameController.text.trim();
+    String phone = phoneController.text.trim();
+    String message = messageController.text.trim();
+
+    if (name.isEmpty || phone.isEmpty || message.isEmpty) {
+      Get.snackbar('خطأ', 'الرجاء تعبئة جميع الحقول ✋',
+          backgroundColor: Colors.redAccent, colorText: Colors.white);
+      return;
+    }
+
+    setState(() {
+      isLoading = true;
+    });
+
+    await controller.sendMessage(name: name, phone: phone, message: message);
+
+    setState(() {
+      isLoading = false;
+    });
+
+    // إذا أردت مسح الحقول بعد الإرسال الناجح فقط، تأكد من الحالة في sendMessage أو أضف من هنا:
+    // nameController.clear();
+    // phoneController.clear();
+    // messageController.clear();
+  }
 
   @override
   Widget build(BuildContext context) {
     return Directionality(
       textDirection: TextDirection.rtl,
       child: Scaffold(
-        appBar: homeAppBar(
-            context,
-            MyString.helpCentre, false, false, showBackButton: true),
+        appBar: homeAppBar(context, MyString.helpCentre, false, false, showBackButton: true),
         body: SingleChildScrollView(
           child: Column(
             children: [
@@ -56,7 +94,7 @@ class ContactPage extends StatelessWidget {
                       ),
                       SizedBox(height: 16),
 
-                      // 1️⃣ خدمة العملاء
+                      // خدمة العملاء
                       ListTile(
                         leading: Icon(Icons.phone, color: Colors.orange.shade700),
                         title: Text(
@@ -70,7 +108,7 @@ class ContactPage extends StatelessWidget {
 
                       Divider(),
 
-                      // 2️⃣ Facebook
+                      // Facebook
                       ListTile(
                         leading: Icon(Icons.facebook, color: Colors.blueAccent),
                         title: Text(
@@ -84,7 +122,7 @@ class ContactPage extends StatelessWidget {
 
                       Divider(),
 
-                      // 3️⃣ Instagram
+                      // Instagram
                       ListTile(
                         leading: Icon(Icons.camera_alt_outlined, color: Colors.pinkAccent),
                         title: Text(
@@ -98,7 +136,7 @@ class ContactPage extends StatelessWidget {
 
                       Divider(),
 
-                      // 4️⃣ TikTok
+                      // TikTok
                       ListTile(
                         leading: Icon(Icons.play_circle_fill, color: Colors.black),
                         title: Text(
@@ -111,8 +149,6 @@ class ContactPage extends StatelessWidget {
                       ),
 
                       Divider(height: 32),
-
-
                     ],
                   ),
                 ),
@@ -131,7 +167,7 @@ class ContactPage extends StatelessWidget {
                     children: [
                       Center(
                         child: Text(
-                          'ارسل لنا رسالة ',
+                          'ارسل لنا رسالة',
                           style: TextStyle(
                             fontSize: 20,
                             fontWeight: FontWeight.bold,
@@ -189,41 +225,18 @@ class ContactPage extends StatelessWidget {
                       ),
                       SizedBox(height: 16),
 
-                      // زر إرسال
+                      // زر إرسال مع Loading
                       SizedBox(
                         width: double.infinity,
                         child: ElevatedButton.icon(
-                          onPressed: () {
-                            String name = nameController.text.trim();
-                            String phone = phoneController.text.trim();
-                            String message = messageController.text.trim();
-
-                            if (name.isEmpty || phone.isEmpty || message.isEmpty) {
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                SnackBar(
-                                  content: Text('الرجاء تعبئة جميع الحقول ✋'),
-                                  backgroundColor: Colors.redAccent,
-
-                                ),
-                              );
-                            } else {
-                              // مثال: عرض Snackbar عند النجاح
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                SnackBar(
-                                  content: Text('تم إرسال رسالتك بنجاح ✅'),
-                                  backgroundColor: Colors.green,
-                                ),
-                              );
-
-                              // تفريغ الحقول
-                              nameController.clear();
-                              phoneController.clear();
-                              messageController.clear();
-                            }
-                          },
-                          icon: Icon(Icons.send),
+                          onPressed: isLoading ? null : _sendMessage,
+                          icon: isLoading ? SizedBox(
+                            width: 20,
+                            height: 20,
+                            child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2),
+                          ) : Icon(Icons.send),
                           label: Text(
-                            'إرسال',
+                            isLoading ? 'جاري الإرسال...' : 'إرسال',
                             style: TextStyle(fontFamily: 'Tajawal'),
                           ),
                           style: ElevatedButton.styleFrom(
@@ -241,7 +254,6 @@ class ContactPage extends StatelessWidget {
               ),
 
               SizedBox(height: 20),
-              // 📝 حقول الإرسال
 
               Text(
                 'شكراً لتواصلكم معنا ❤️',

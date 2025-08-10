@@ -38,7 +38,7 @@ class _EditProfileState extends State<EditProfile> {
 
     setState(() {
       controller.nameController.text = prefs.getString('userName') ?? '';
-      controller.nickNameController.text = prefs.getString('userName')?.split(' ').first ?? '';
+
       controller.phoneController.text = prefs.getString('userPhone') ?? '';
       controller.mobileNumberController.text = prefs.getString('userPhone') ?? '';
 
@@ -55,144 +55,88 @@ class _EditProfileState extends State<EditProfile> {
         bottomNavigationBar: Container(
           height: 90,
           padding: const EdgeInsets.all(15),
-          child:Button(
-            onpressed: () {
-              controller.fillProfileSubmit(status: 'update');
-            },
-            text: MyString.update,
-          ),
+          child:Obx(() {
+            return ElevatedButton(
+              onPressed: controller.isLoading.value ? null : () {
+                controller.fillProfileSubmit(status: 'update');
+              },
+              child: controller.isLoading.value
+                  ? SizedBox(
+                width: 20,
+                height: 20,
+                child: CircularProgressIndicator(
+                  color: Colors.white,
+                  strokeWidth: 2,
+                ),
+              )
+                  : Text(MyString.update,style: TextStyle(    fontSize: 18,
+                fontWeight: FontWeight.bold,
+                fontFamily: 'Tajawal',),),
+            );
+          }),
+
         ),
         body: Obx(() => SingleChildScrollView(
           child: Padding(
             padding: const EdgeInsets.fromLTRB(15, 20, 15, 20),
             child: Form(
-                key: controller.fillFormKey,
-                child: Column(
-                  children: [
-                    CustomTextFormField(
-                      controller: controller.nameController,
-                      obscureText: false,
-                      hintText: MyString.fullName,
-                      fillColor: controller.themeController.isDarkMode.value ? MyColors.darkTextFieldColor : MyColors.disabledTextFieldColor,
-                      textInputAction: TextInputAction.next,
-                      validator: Validations().nameValidation,
-                    ),
-                    const SizedBox(height: 20),
-                    CustomTextFormField(
-                        controller: controller.nickNameController,
-                        obscureText: false,
-                        hintText: MyString.nickName,
-                        fillColor: controller.themeController.isDarkMode.value ? MyColors.darkTextFieldColor : MyColors.disabledTextFieldColor,
-                        textInputAction: TextInputAction.next,
-                        validator: Validations().nameValidation
-                    ),
-                    const SizedBox(height: 20),
-                    Obx(() => InkWell(
-                      onTap: () {
-                        _selectDate(context);
-                      },
-                      child: AbsorbPointer(
-                        child: CustomTextFormField(
-                          controller: controller.dateController,
-                          obscureText: false,
-                          validator: Validations().dateValidation,
-                          textInputAction: TextInputAction.next,
-                          hintText:  MyString.dateBirth,
-                          fillColor: controller.themeController.isDarkMode.value ? MyColors.darkTextFieldColor : MyColors.disabledTextFieldColor,
-                          suffixIcon: Padding(
-                            padding: const EdgeInsets.all(15),
-                            child: SvgPicture.asset(MyImages.datePicker),
-                          ),
-                        ),
-                      ),
-                    ),),
-                    const SizedBox(height: 20),
+              key: controller.fillFormKey,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // Label للاسم الكامل
+                  const Text(
+                    'الاسم الكامل',
+                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
+                  ),
+                  const SizedBox(height: 5),
+                  CustomTextFormField(
+                    controller: controller.nameController,
+                    obscureText: false,
+                    hintText: MyString.fullName,
+                    fillColor: controller.themeController.isDarkMode.value
+                        ? MyColors.darkTextFieldColor
+                        : MyColors.disabledTextFieldColor,
+                    textInputAction: TextInputAction.next,
+                    validator: Validations().nameValidation,
+                  ),
+                  const SizedBox(height: 20),
 
-                    const SizedBox(height: 20),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        SizedBox(
-                            width: MediaQuery.of(context).size.width * 25 /100,
-                            child: countryPickerDropdown(controller.countryCode, controller.countryCodes)
-                        ),
-                        SizedBox(
-                          width: MediaQuery.of(context).size.width * 62 /100,
-                          child: CustomTextFormField(
-                            controller: controller.mobileNumberController,
-                            obscureText: false,
-                            validator: Validations().mobileNumberValidation,
-                            keyboardType: TextInputType.phone,
-                            textInputAction: TextInputAction.done,
-                            hintText: MyString.phoneNumber,
-                            fillColor: MyColors.disabledTextFieldColor,
-                          ),
-                        ),
-                      ],
-                    ),
-                    // IntlPhoneField(
-                    //   controller: controller.mobileNumberController,
-                    //   initialCountryCode: 'US',
-                    //   onChanged: (number) {
-                    //     // _phoneNumber = number.number;
-                    //   },
-                    //   validator: (phoneNumber) {
-                    //     if (phoneNumber == null || phoneNumber.number.isEmpty) {
-                    //       return 'Phone number is required';
-                    //     }
-                    //     // else {
-                    //     //   final phoneNumber = PhoneNumber.fromCompleteNumber(completeNumber: 'Us');
-                    //     //   if (phoneNumber.isValidNumber) {
-                    //     //     return 'Invalid phone number';
-                    //     //   }
-                    //     // }
-                    //     return null;
-                    //   },
-                    //   dropdownIconPosition: IconPosition.trailing,
-                    //   dropdownIcon: const Icon(Icons.keyboard_arrow_down, color: Colors.grey,),
-                    //   autovalidateMode: AutovalidateMode.onUserInteraction,
-                    //   // validator: (value) {
-                    //   //   controller.mobileNumberValidation(value);
-                    //   // },
-                    //   decoration: InputDecoration(
-                    //     filled: true,
-                    //     fillColor: controller.themeController.isDarkMode.value ? MyColors.darkTextFieldColor : MyColors.disabledTextFieldColor,
-                    //     counterText: "",
-                    //     border: OutlineInputBorder(
-                    //       borderRadius: BorderRadius.circular(15),
-                    //       borderSide: BorderSide(color: Colors.grey.shade300),
-                    //     ),
-                    //     focusedBorder: OutlineInputBorder(
-                    //       borderSide: BorderSide(color: controller.themeController.isDarkMode.value ? Colors.white : Colors.black),
-                    //       borderRadius: BorderRadius.circular(15),
-                    //     ),
-                    //     focusedErrorBorder: OutlineInputBorder(
-                    //       borderSide: BorderSide(color: controller.themeController.isDarkMode.value ? Colors.white : Colors.black),
-                    //       borderRadius: BorderRadius.circular(15),
-                    //     ),
-                    //     enabledBorder: OutlineInputBorder(
-                    //       borderRadius: BorderRadius.circular(15),
-                    //       borderSide: BorderSide(color: controller.themeController.isDarkMode.value ? Colors.transparent : Colors.grey.shade300),
-                    //     ),
-                    //     errorBorder: OutlineInputBorder(
-                    //       borderRadius: BorderRadius.circular(15),
-                    //       borderSide: BorderSide(color: controller.themeController.isDarkMode.value ? Colors.transparent : Colors.grey.shade300),
-                    //     ),
-                    //     hintText: MyString.phoneNumber,
-                    //     hintStyle: const TextStyle(color: Colors.grey, fontWeight: FontWeight.w400, fontSize: 14),
-                    //   ),
-                    // ),
-                    const SizedBox(height: 20),
-                    commonDropdownButton(
+                  // Label لرقم الهاتف
+                  const Text(
+                    'رقم الهاتف',
+                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
+                  ),
+                  const SizedBox(height: 5),
+                  CustomTextFormField(
+                    controller: controller.mobileNumberController,
+                    obscureText: false,
+                    validator: Validations().mobileNumberValidation,
+                    keyboardType: TextInputType.phone,
+                    textInputAction: TextInputAction.done,
+                    hintText: MyString.phoneNumber,
+                    fillColor: MyColors.disabledTextFieldColor,
+                  ),
+                  const SizedBox(height: 20),
+
+                  // Label للجنس
+                  const Text(
+                    'الجنس',
+                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
+                  ),
+                  const SizedBox(height: 5),
+                  Align(
+                    alignment: Alignment.centerRight,
+                    child: commonDropdownButton(
                       controller.selectedGender,
                       MyString.genderSelect,
                       controller.themeController.isDarkMode.value,
-
                     ),
-                  ],
-                )
+                  ),
+                ],
+              ),
             ),
+
           ),
         ),),
       ),

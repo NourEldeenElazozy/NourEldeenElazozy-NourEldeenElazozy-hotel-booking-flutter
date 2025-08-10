@@ -17,6 +17,7 @@ class RegisterController extends GetxController {
   TextEditingController passwordController =TextEditingController();
   TextEditingController testController =TextEditingController();
   TextEditingController cityController=TextEditingController();
+
   var token = ''.obs;
   var user = User(id: 0, name: '', phone: '',userType: "").obs;
   /*
@@ -51,93 +52,124 @@ class RegisterController extends GetxController {
   }
 
 
-  Future<void> _showOptDialog(String otp, String rawPhone, String useType, BuildContext context) async {
+  Future<void> _showOtpDialog(String otp, String rawPhone, String useType, BuildContext context) async {
     final otpController = TextEditingController();
-    bool isDialogOpen = true;
 
-    await Get.dialog(
-      Directionality(
-        textDirection: TextDirection.rtl,
-        child: PopScope(
-          canPop: false,
-          child: AlertDialog(
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-              title: const Text(
-                "تأكيد الرمز",
-                textAlign: TextAlign.center,
-                style: TextStyle(fontWeight: FontWeight.bold),
-              ),
-              content: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  const Text(
-                    "أدخل رمز التحقق المكون من 6 أرقام المرسل إلى رقمك",
-                    textAlign: TextAlign.center,
-                  ),
-                  const SizedBox(height: 20),
-                  PinCodeTextField(
-                    appContext: context,
-                    length: 6,
-                    controller: otpController,
-                    keyboardType: TextInputType.number,
-                    pinTheme: PinTheme(
-                      shape: PinCodeFieldShape.box,
-                      borderRadius: BorderRadius.circular(8),
-                      fieldHeight: 50,
-                      fieldWidth: 40,
-                      activeFillColor: Colors.white,
-                      inactiveFillColor: Colors.white,
-                      selectedFillColor: Colors.white,
+    await showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext dialogContext) {
+        bool isLoading = false; // حالة تحميل داخل الدايالوج
+
+        return StatefulBuilder(
+          builder: (context, setState) {
+            return Directionality(
+              textDirection: TextDirection.rtl,
+              child: AlertDialog(
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                title: const Text(
+                  "تأكيد الرمز",
+                  textAlign: TextAlign.center,
+                  style: TextStyle(fontWeight: FontWeight.bold),
+                ),
+                content: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    const Text(
+                      "أدخل رمز التحقق المكون من 6 أرقام المرسل إلى رقمك",
+                      textAlign: TextAlign.center,
                     ),
-                    animationType: AnimationType.fade,
-                    onChanged: (value) {},
+                    const SizedBox(height: 20),
+                    Directionality(
+                      textDirection: TextDirection.ltr,
+                      child: PinCodeTextField(
+                        appContext: context,
+                        length: 6,
+                        controller: otpController,
+                        keyboardType: TextInputType.number,
+                        pinTheme: PinTheme(
+                          shape: PinCodeFieldShape.box,
+                          borderRadius: BorderRadius.circular(8),
+                          fieldHeight: 50,
+                          fieldWidth: 40,
+                          activeFillColor: Colors.white,
+                          inactiveFillColor: Colors.white,
+                          selectedFillColor: Colors.white,
+                        ),
+                        animationType: AnimationType.fade,
+                        onChanged: (value) {},
+                      ),
+                    ),
+                    if (isLoading)
+                      const Padding(
+                        padding: EdgeInsets.only(top: 20),
+                        child: CircularProgressIndicator(),
+                      ),
+                  ],
+                ),
+                actions: [
+                  TextButton(
+                    onPressed: () {
+                      otpController.dispose();
+                      if (Navigator.of(dialogContext).canPop()) {
+                        Navigator.of(dialogContext).pop();
+                      }
+                    },
+                    child: const Text("إلغاء"),
+                  ),
+                  ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: MyColors.primaryColor,
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                    ),
+                    onPressed: isLoading
+                        ? null
+                        : () async {
+                      if (otpController.text == otp) {
+                        setState(() => isLoading = true);
+
+                        try {
+                          await _completeRegistration(rawPhone, useType);
+                          print("11111111111111");
+                          otpController.dispose();
+                          if (Navigator.of(dialogContext).canPop()) {
+                            Navigator.of(dialogContext).pop();
+                          }
+                          print("222222222222222222222");
+                        } catch (e) {
+                          _showSafeSnackbar(
+                            title: 'خطأ',
+                            message: 'حدث خطأ أثناء التسجيل: ${e.toString()}',
+                            isError: true,
+                          );
+                          setState(() => isLoading = false);
+                        }
+                      } else {
+                        _showSafeSnackbar(
+                          title: 'خطأ',
+                          message: 'رمز التحقق غير صحيح',
+                          isError: true,
+                        );
+                      }
+                    },
+
+                    child: const Text("تأكيد", style: TextStyle(color: Colors.white)),
                   ),
                 ],
               ),
-              actions: [
-              TextButton(
-              onPressed: () {
-        isDialogOpen = false;
-       // Get.back();
-        },
-          child: const Text("إلغاء"),
-        ),
-        ElevatedButton(
-          style: ElevatedButton.styleFrom(
-            backgroundColor: MyColors.primaryColor,
-            shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(8)),
-          ),
-
-        onPressed: () async {
-          if (otpController.text == otp) {
-            isDialogOpen = false;
-            //Get.back();
-            await _completeRegistration(rawPhone, useType);
-          } else {
-            _showSafeSnackbar(
-              title: 'خطأ',
-              message: 'رمز التحقق غير صحيح',
-              isError: true,
             );
-          }
-        },
-        child: const Text("تأكيد", style: TextStyle(color: Colors.white)),
-      ),
-      ],
-    ),
-    ),
-    ),
-    barrierDismissible: false,
-    ).then((_) {
-    otpController.dispose();
-    });
+          },
+        );
+      },
+    );
   }
+
+
+
+
   Future<void> _completeRegistration(String rawPhone, String useType) async {
     try {
-      // عرض مؤشر تحميل بطريقة آمنة
-      await _showLoadingDialog();
-
+      print("333333333333333333");
       final response = await Dio().post(
         'https://esteraha.ly/api/register',
         data: {
@@ -150,38 +182,28 @@ class RegisterController extends GetxController {
           'password': passwordController.text,
         },
       );
-
-      // إغلاق مؤشر التحمل بطريقة آمنة
-      _hideLoadingDialog();
-
+      print("444444444444444444444");
       if (response.statusCode == 200) {
         final loginResponse = LoginResponse.fromJson(response.data);
         token.value = loginResponse.token;
         user.value = loginResponse.user;
         await _storeData(loginResponse.token, loginResponse.user);
-
+        print("555555555555555555");
         Get.offAllNamed("/bottomBar");
+        print("66666666666666666");
         _showSafeSnackbar(
           title: 'نجاح',
           message: 'تم التسجيل بنجاح!',
           isError: false,
         );
       } else {
-        _showSafeSnackbar(
-          title: 'خطأ',
-          message: 'فشل في التسجيل: ${response.statusCode}',
-          isError: true,
-        );
+        throw Exception('فشل في التسجيل: ${response.statusCode}');
       }
     } catch (e) {
-      _hideLoadingDialog();
-      _showSafeSnackbar(
-        title: 'خطأ',
-        message: 'حدث خطأ أثناء التسجيل: ${e.toString()}',
-        isError: true,
-      );
+      throw Exception('حدث خطأ أثناء التسجيل: ${e.toString()}');
     }
   }
+
 
   Future<void> _showLoadingDialog() async {
     if (!(Get.isDialogOpen ?? false)) {
@@ -197,7 +219,7 @@ class RegisterController extends GetxController {
 
   void _hideLoadingDialog() {
     if (Get.isDialogOpen ?? false) {
-      //Get.back();
+      Get.back();  // فك التعليق هنا لإغلاق اللودنج
     }
   }
   void _showSafeSnackbar({
@@ -236,6 +258,18 @@ class RegisterController extends GetxController {
         Get.snackbar('خطأ', 'تنسيق رقم الهاتف غير صحيح. يجب أن يبدأ بـ 09 أو 9.', backgroundColor: Colors.red);
         return;
       }
+      // 1. تحقق أولاً من وجود الرقم مسبقاً
+      final checkResponse = await Dio().post(
+        'https://esteraha.ly/api/check-user-exists',
+        data: {'phone': rawPhone},
+      );
+
+      if (checkResponse.statusCode == 200 && checkResponse.data['exists'] == true) {
+        Get.snackbar('خطأ', 'رقم الهاتف مسجل مسبقاً، يرجى تسجيل الدخول أو استخدام رقم آخر.', backgroundColor: Colors.red
+        ,
+        );
+        return; // توقف هنا لأن الرقم مسجل
+      }
 
       Get.dialog(const Center(child: CircularProgressIndicator()), barrierDismissible: false);
 
@@ -272,79 +306,18 @@ class RegisterController extends GetxController {
         }
 
         final otp = otpMatch.group(0)!;
-        await _showOptDialog(otpMatch.group(0)!, rawPhone, useType, context);
-        /*
-        showModalBottomSheet(
-          context: context,
-          isScrollControlled: true,
-          builder: (_) {
-            TextEditingController otpController = TextEditingController();
-            return Directionality(
-              textDirection: TextDirection.rtl,
-              child: Padding(
-                padding: EdgeInsets.only(
-                  left: 16.0,
-                  right: 16.0,
-                  top: 16.0,
-                  bottom: MediaQuery.of(context).viewInsets.bottom + 16.0,
-                ),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Center(child: Text("أدخل رمز التحقق المرسل إلى رقمك", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20))),
-                    const SizedBox(height: 10),
-                    TextField(
-                      controller: otpController,
-                      keyboardType: TextInputType.number,
-                      maxLength: 6,
-                      decoration: const InputDecoration(border: OutlineInputBorder(), hintText: 'رمز التحقق'),
-                    ),
-                    ElevatedButton(
-                      onPressed: () async {
-                        if (otpController.text == otp) {
-                          Navigator.pop(context);
-                          Get.dialog(const Center(child: CircularProgressIndicator()), barrierDismissible: false);
 
-                          final response = await Dio().post(
-                            'https://esteraha.ly/api/register',
-                            data: {
-                              'name': nameController.text,
-                              'phone': rawPhone,
-                              'date_of_birth': birthDate.value,
-                              'city': int.parse(cityController.text),
-                              'gender': gender.value,
-                              'user_type': useType,
-                              'password': passwordController.text,
-                            },
-                            options: Options(validateStatus: (status) => status! < 500),
-                          );
-
-                          Get.back();
-
-                          if (response.statusCode == 200) {
-                            final loginResponse = LoginResponse.fromJson(response.data);
-                            token.value = loginResponse.token;
-                            user.value = loginResponse.user;
-                            await _storeData(loginResponse.token, loginResponse.user);
-                            Get.snackbar('نجاح', 'تم تسجيل المستخدم بنجاح!', backgroundColor: Colors.green);
-                            Get.offNamedUntil("/bottomBar", (route) => false);
-                          } else {
-                            Get.snackbar('خطأ', 'فشل في التسجيل: ${response.statusCode}', backgroundColor: Colors.red);
-                          }
-                        } else {
-                          Get.snackbar('خطأ', 'رمز التحقق غير صحيح', backgroundColor: Colors.red);
-                        }
-                      },
-                      child: const Center(child: Text("تأكيد")),
-                    ),
-                  ],
-                ),
-              ),
-            );
-          },
-        );
-         */
+        // تمرير كل بيانات التسجيل إلى صفحة OTP
+        Get.to(() => OtpVerificationPage(
+          otp: otp,
+          rawPhone: rawPhone,
+          useType: useType,
+          name: nameController.text,
+          dateOfBirth: birthDate.value,
+          city: int.parse(cityController.text),
+          gender: gender.value,
+          password: passwordController.text,
+        ));
       } else {
         Get.snackbar('خطأ', parsedData['message'] ?? 'فشل إرسال رمز التحقق', backgroundColor: Colors.red);
       }
@@ -353,6 +326,7 @@ class RegisterController extends GetxController {
       Get.snackbar('خطأ', 'حدث خطأ غير متوقع: ${e.toString()}', backgroundColor: Colors.red);
     }
   }
+
 
 
   Future<void> sendOtp(String phoneNumber) async {
@@ -400,81 +374,7 @@ class RegisterController extends GetxController {
     }
   }
 
-/*
- void showOtpBottomSheet(String phoneNumber) {
-    Get.bottomSheet(
-      Directionality(
-        textDirection: TextDirection.rtl,
-        child: Container(
-          padding: const EdgeInsets.all(16),
-          decoration: const BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
-          ),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Center(
-                child: Text(
-                  "أدخل رمز التحقق المرسل إلى رقمك",
-                  style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 20,
-                    color: Colors.black87,
-                  ),
-                ),
-              ),
-              const SizedBox(height: 20),
-              TextField(
-                onChanged: (value) => otp.value = value,
-                keyboardType: TextInputType.number,
-                maxLength: 4,
-                decoration: InputDecoration(
-                  labelText: "رمز التحقق",
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  counterText: "",
-                ),
-              ),
-              const SizedBox(height: 20),
-              SizedBox(
-                width: double.infinity,
-                child: ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    padding: const EdgeInsets.symmetric(vertical: 14),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    backgroundColor: Colors.blue,
-                  ),
-                  onPressed: () {
-                    if (otp.value == generatedOtp.value) {
-                      Get.back(); // إغلاق البوتوم شيت
-                      createAccount(); // إنشاء الحساب
-                    } else {
-                      Get.snackbar("خطأ", "رمز التحقق غير صحيح",backgroundColor: Colors.red);
-                    }
-                  },
-                  child: const Text(
-                    "تأكيد",
-                    style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.w600,
-                      color: Colors.white,
-                    ),
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
-      isScrollControlled: true,
-    );
-  }
- */
+
 
 
   void createAccount() {
@@ -497,9 +397,15 @@ class RegisterController extends GetxController {
   }
 
   DateTime selectedDate = DateTime.now();
-
+  Dio dio = Dio(BaseOptions(
+    baseUrl: 'https://esteraha.ly/api/',
+    headers: {
+      'Accept': 'application/json',
+    },
+  ));
+  RxBool isLoading = false.obs;
   Future<void> fillProfileSubmit({required String status}) async {
-    final isValid = fillFormKey.currentState!.validate();
+    final isValid = fillFormKey.currentState?.validate() ?? false;
     Get.focusScope?.unfocus();
 
     if (!isValid) {
@@ -507,29 +413,59 @@ class RegisterController extends GetxController {
     }
 
     try {
-      // حفظ البيانات في SharedPreferences فقط
       final prefs = await SharedPreferences.getInstance();
-      await prefs.setString('userName', nameController.text);
-      await prefs.setString('userPhone', phoneController.text);
-      await prefs.setString('userMobile', mobileNumberController.text);
-
-      // يمكنك إضافة المزيد من الحقول حسب الحاجة
-      // await prefs.setString('userGender', selectedGender);
-      // await prefs.setString('userBirthDate', dateController.text);
-
-      // التنقل بناءً على الحالة
-      if (status == 'update') {
-        Get.back();
-        Get.snackbar('نجاح', 'تم تحديث الملف الشخصي بنجاح');
-      } else {
-        Get.offNamedUntil("/bottomBar", (route) => false);
+      final token = prefs.getString('token') ?? '';
+      isLoading.value = true;
+      if (token.isEmpty) {
+        Get.snackbar('خطأ', 'التوكن غير موجود، يرجى تسجيل الدخول');
+        return;
       }
 
+      // إرسال البيانات إلى API تحديث الملف الشخصي
+      final response = await dio.post(
+        '/update-user',
+        data: {
+          'name': nameController.text,
+          'phone': phoneController.text,
+          'mobile': mobileNumberController.text,
+
+          //'password': passwordController.text,
+          //'password_confirmation': passwordController.text, // ✅ مهم جداً
+
+          'gender': "ذكر",
+          // أضف أي حقول أخرى حسب API
+        },
+        options: Options(
+          headers: {
+            'Authorization': 'Bearer $token',
+          },
+        ),
+      );
+      isLoading.value = false; // انتهاء التحميل
+
+      if (response.statusCode == 200) {
+        // حفظ البيانات في SharedPreferences فقط بعد نجاح التحديث
+        await prefs.setString('userName', nameController.text);
+        await prefs.setString('userPhone', phoneController.text);
+        await prefs.setString('userMobile', mobileNumberController.text);
+
+        if (status == 'update') {
+          Get.back();
+          Get.snackbar('نجاح', 'تم تحديث الملف الشخصي بنجاح');
+        } else {
+          Get.offNamedUntil("/bottomBar", (route) => false);
+        }
+      } else {
+        Get.snackbar('خطأ', 'فشل تحديث الملف الشخصي: ${response.statusMessage}');
+      }
     } catch (e) {
-      Get.snackbar('خطأ', 'حدث خطأ أثناء حفظ البيانات: ${e.toString()}');
+      isLoading.value = false;
+      print("${e.toString()}");
+      Get.snackbar('خطأ', 'حدث خطأ أثناء تحديث الملف الشخصي: ',backgroundColor: Colors.red);
     }
   }
 }
+
 
 Future<void> _storeData(String token, User user) async {
   final SharedPreferences prefs = await SharedPreferences.getInstance();

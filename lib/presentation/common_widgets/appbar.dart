@@ -4,7 +4,7 @@ import 'package:get/get.dart';
 import 'package:hotel_booking/core/constants/my_colors.dart';
 import 'package:hotel_booking/core/constants/my_images.dart';
 import 'package:hotel_booking/core/themes/themes_controller.dart';
-
+import 'dart:math' as math;
 class CustomFullAppBar extends StatelessWidget implements PreferredSizeWidget {
   final String title;
   final List<Widget>? action;
@@ -30,12 +30,14 @@ class CustomFullAppBar extends StatelessWidget implements PreferredSizeWidget {
               Navigator.pop(context);
             },
             child: SvgPicture.asset(
+              width: 20,
               MyImages.backArrow,
               colorFilter: ColorFilter.mode(
-                  themeController.isDarkMode.value
-                      ? MyColors.white
-                      : MyColors.black,
-                  BlendMode.srcIn),
+                themeController.isDarkMode.value
+                    ? MyColors.white
+                    : MyColors.black,
+                BlendMode.srcIn,
+              ),
             ),
           ),
         ],

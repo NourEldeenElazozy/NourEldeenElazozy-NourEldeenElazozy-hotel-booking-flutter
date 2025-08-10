@@ -19,6 +19,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:table_calendar/table_calendar.dart'; // <--- استورد مكتبة Dio
 import 'package:intl/intl.dart' as intl  ;
 import 'package:url_launcher/url_launcher.dart'; // أضف هذا
+import 'dart:math' as math;
 part 'google_map_screen.dart';
 part 'hotel_detail_controller.dart';
 part 'hotel_details.dart';

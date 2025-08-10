@@ -60,6 +60,7 @@ class Detail {
   String? idProofType;
   double? eidDaysPrice;
   String?virtual_tour_link;
+  String?google_maps_location;
   // الصور
  // List<String> detailsImages = []; // صور التفاصيل
   List<String> detailsImages = []; // صور إضافية
@@ -116,6 +117,8 @@ class Detail {
     well = json['well'] == 1;
     powerGenerator = json['power_generator'] == 1;
     OutdoorBathroom = json['outdoor_bathroom'] == 1;
+    google_maps_location=json['google_maps_location'];
+    virtual_tour_link=json['resthouse_requests'];
     // معالجة الصور
 
     if (json['details_images'] != null) {
@@ -172,6 +175,7 @@ class Detail {
       well: well,
       powerGenerator: powerGenerator,
       OutdoorBathroom: OutdoorBathroom,
+
 
     ));
   }

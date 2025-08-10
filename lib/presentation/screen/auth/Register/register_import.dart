@@ -18,6 +18,7 @@ import 'package:hotel_booking/presentation/common_widgets/custom_button.dart';
 import 'package:hotel_booking/presentation/common_widgets/dropdown_button_form_field.dart';
 import 'package:hotel_booking/presentation/common_widgets/textformfield.dart';
 import 'package:get/get.dart';
+import 'package:hotel_booking/presentation/screen/auth/OtpVerificationPage.dart';
 import 'package:hotel_booking/presentation/screen/auth/login/login_import.dart';
 import 'package:hotel_booking/utils/validations.dart';
 import 'package:image_picker/image_picker.dart';
