@@ -36,7 +36,7 @@ class HomeController extends GetxController {
         fetchRecentlyBooked(); // جلب البيانات عند بدء التطبيق
         getReservations();
         getRestAreas();
-        _loadFavoritesFromPrefs();
+        loadFavoritesFromPrefs();
       super.onInit();
    }
    void toggleFavorite(int id) {
@@ -56,14 +56,16 @@ class HomeController extends GetxController {
      // SharedPreferences لا يدعم List<int> مباشرة، فنحولها إلى List<String>
      List<String> favsAsString = favoriteIds.map((e) => e.toString()).toList();
      await prefs.setStringList('favorite_ids', favsAsString);
+     print("donee");
    }
 
-   Future<void> _loadFavoritesFromPrefs() async {
+   Future<void> loadFavoritesFromPrefs() async {
      final prefs = await SharedPreferences.getInstance();
      List<String>? favsAsString = prefs.getStringList('favorite_ids');
      if (favsAsString != null) {
        favoriteIds.value = favsAsString.map((e) => int.tryParse(e) ?? 0).where((e) => e != 0).toSet();
      }
+     print("favorite_ids ${favoriteIds.value}");
    }
 
    static Map<String, String> facilitiesMap = {
@@ -388,7 +390,7 @@ class HomeController extends GetxController {
 
 
 
-   Future<void> getRestAreas({
+   Future<List<dynamic>> getRestAreas({
      String? areaTypes,
      int? priceMin,
      int? priceMax,
@@ -396,93 +398,76 @@ class HomeController extends GetxController {
      int? hostId,
      int? rating,
      String? sortBy,
-     String? geoArea ,
-     int? maxGuests, // إضافة معامل عدد الأفراد
-     List<String>? selectedFacilities, // إضافة هذا المعامل
+     String? geoArea,
+     int? maxGuests,
+     List<String>? selectedFacilities,
+     List<int>? favoriteIds,
    }) async {
      try {
        isLoading.value = true;
 
-       // إعداد معلمات الطلب
        final queryParameters = <String, dynamic>{};
 
-       // إضافة area_type إذا كان موجودًا
-       if (areaTypes != "" && areaTypes!=null) {
-         print("areaTypes $areaTypes");
+       if (areaTypes != "" && areaTypes != null) {
          queryParameters['area_type[]'] = areaTypes;
        }
-
-       // إضافة price_min إذا كان موجودًا
        if (priceMin != null && priceMin > 0) {
          queryParameters['price_min'] = priceMin;
        }
-
-       // إضافة price_max إذا كان موجودًا
        if (priceMax != null && priceMax > 0) {
          queryParameters['price_max'] = priceMax;
        }
-
-       // إضافة city_id إذا كان موجودًا
        if (cityId != null && cityId > 0) {
          queryParameters['city_id'] = cityId;
        }
-       // إضافة host_id إذا كان موجودًا
        if (hostId != null && hostId >= 0) {
          queryParameters['host_id'] = hostId;
        }
-       // إضافة rating إذا كان موجودًا
-       if ( rating != -1 && rating!=null && rating != 0) {
+       if (rating != -1 && rating != null && rating != 0) {
          queryParameters['rating'] = rating;
        }
-       // إضافة max_guests إذا كان موجودًا
        if (maxGuests != null && maxGuests > 0) {
-         queryParameters['max_guests'] = maxGuests; // إضافة معامل عدد الأفراد
+         queryParameters['max_guests'] = maxGuests;
        }
-
-       // إضافة نوع الترتيب إذا كان موجودًا
        if (sortBy != null) {
          queryParameters["sort_by"] = sortBy;
        }
        if (geoArea != null) {
          queryParameters["geo_area"] = geoArea;
        }
-
-       // إضافة المرافق المختارة
+       if (favoriteIds != null && favoriteIds.isNotEmpty) {
+         queryParameters['ids[]'] = favoriteIds;
+       }
        if (selectedFacilities != null) {
          for (String facility in selectedFacilities) {
            if (facilitiesMap.containsKey(facility)) {
-             queryParameters[facilitiesMap[facility].toString()] = 1; // أو يمكنك استخدام القيمة المناسبة
+             queryParameters[facilitiesMap[facility].toString()] = 1;
            }
          }
        }
 
-       // طباعة المعاملات
        print("Query Parameters: $queryParameters");
 
-
-       // إجراء الطلب
        final response = await Dio().get(
          'https://esteraha.ly/api/rest-areas/filter',
          queryParameters: queryParameters,
        );
-       restAreas.clear();
-       if (response.statusCode == 200) {
-         restAreas.value = response.data; // تخزين البيانات في المتغير
-         print(restAreas.value);
-         print("Query all: ${restAreas.value}");
-        // print("Query all: ${restAreas[0]['google_maps_location']}");
-         print("response: ${response}");
-       } else {
-         restAreas.clear();
 
+       if (response.statusCode == 200) {
+         // بدلًا من حفظ البيانات هنا، أرجعها
+         return response.data;
+       } else {
+         return [];
        }
      } catch (e) {
        Get.snackbar('خطأ', 'حدث خطأ أثناء جلب البيانات: ');
        print('حدث خطأ أثناء جلب س: $e');
+       return [];
      } finally {
        isLoading.value = false;
      }
    }
+
    Future<void> fetchRecentlyBooked({String? filter,bool isHost=false}) async {
      isLoading.value = true;
      final SharedPreferences prefs = await SharedPreferences.getInstance();

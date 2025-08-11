@@ -126,7 +126,7 @@ PreferredSizeWidget homeAppBar(BuildContext context,String title, bool status, b
                       ),
                     ),
                     const SizedBox(width: 5),
-               /*
+
                     InkWell(
                       onTap: () {
                         Get.toNamed("/bookMark");
@@ -140,7 +140,7 @@ PreferredSizeWidget homeAppBar(BuildContext context,String title, bool status, b
                             width: 25),
                       ),
                     ),
-                */
+
                   ],
                 ),
               const SizedBox(width: 15), // Padding on the right

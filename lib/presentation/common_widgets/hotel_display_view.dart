@@ -29,6 +29,7 @@ class _VerticalViewState extends State<VerticalView> {
 
   @override
   Widget build(BuildContext context) {
+
     return Column(
       children: [
         InkWell(

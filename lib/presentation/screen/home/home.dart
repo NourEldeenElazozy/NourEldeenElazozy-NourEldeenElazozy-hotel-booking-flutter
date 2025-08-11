@@ -62,6 +62,7 @@ class _HomeState extends State<Home> {
   Widget build(BuildContext context) {
     //controller.getRestAreas(cityId: 1);
 
+    controller.loadFavoritesFromPrefs();
     _loaduserType();
    //controller.getReservations();
    controller.fetchRecentlyBooked();
@@ -400,20 +401,16 @@ class _HomeState extends State<Home> {
                                   ),
                                 ),
 
-                                GestureDetector(
-                                  onTap: () {
-                                    controller.toggleFavorite(id);
-                                    setState(() {
-
-                                    });
-                                  },
+                                Obx(() => GestureDetector(
+                                  onTap: () => controller.toggleFavorite(id),
                                   child: SvgPicture.asset(
-                                    isFav ? MyImages.selectedBookMarkBlack : MyImages.unSelectBookMark,
+                                    controller.favoriteIds.contains(id)
+                                        ? MyImages.selectedBookMarkBlack
+                                        : MyImages.unSelectBookMark,
                                     width: 25,
                                     height: 25,
-
                                   ),
-                                ),
+                                )),
 
                               ],
                             ),
