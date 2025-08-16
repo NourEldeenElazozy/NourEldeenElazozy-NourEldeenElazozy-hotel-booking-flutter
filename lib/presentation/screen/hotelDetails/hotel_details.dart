@@ -125,6 +125,7 @@ class _HotelDetailState extends State<HotelDetail> {
                 "/dateTimeSelect",
                 arguments: {
                   'restAreaId': controller.detail.id,
+                  'id_proof_type': controller.detail.idProofType,
                 },
               );
             },

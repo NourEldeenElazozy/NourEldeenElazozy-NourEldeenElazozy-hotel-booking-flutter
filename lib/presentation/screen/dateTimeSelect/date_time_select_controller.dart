@@ -7,6 +7,7 @@ class DateTimeSelectController extends GetxController {
   RxBool isSubmitted = false.obs;
   final GlobalKey<FormState> dateTimeKey = GlobalKey<FormState>();
   var reservedDates = <DateTime>[].obs;
+  var isTermsAccepted = false.obs;
   Rx<TextEditingController> checkInDateController = TextEditingController().obs;
   Rx<TextEditingController> checkOutDateController = TextEditingController().obs;
 

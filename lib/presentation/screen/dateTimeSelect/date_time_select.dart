@@ -8,7 +8,6 @@ class DateTimeSelect extends StatefulWidget {
 }
 
 class _DateTimeSelectState extends State<DateTimeSelect> {
-
   late DateTimeSelectController controller;
 
   CalendarFormat _calendarFormat = CalendarFormat.month;
@@ -25,12 +24,24 @@ class _DateTimeSelectState extends State<DateTimeSelect> {
 
     super.initState();
   }
+
   Future<String?> _loadToken() async {
     final prefs = await SharedPreferences.getInstance();
     return prefs.getString('token');
   }
+
   final restId = Get.arguments['restAreaId'];
-  Future<void> _selectDate(BuildContext context, bool isFromDate, int restAreaId) async {
+  final id_proof_type = Get.arguments['id_proof_type'];
+  final proofTypes = {
+    'valid_passport': ' جواز سفر ساري',
+    'family_book': 'كتاب عائلة',
+    'marriage_certificate': 'وثيقة زواج',
+  };
+
+
+
+  Future<void> _selectDate(
+      BuildContext context, bool isFromDate, int restAreaId) async {
     // جلب الأيام المحجوزة من API
     await controller.fetchReservedDates(restId);
 
@@ -75,93 +86,106 @@ class _DateTimeSelectState extends State<DateTimeSelect> {
 
   @override
   Widget build(BuildContext context) {
-
+    print("id_proof_type ${id_proof_type}");
+    String proofTypeText = proofTypes[id_proof_type.toString()] ?? 'غير محدد';
     controller.fetchReservedDates(restId);
     return FutureBuilder(
       future: _loadToken(),
       builder: (context, snapshot) {
-    if (snapshot.connectionState == ConnectionState.waiting) {
-      return Center(child: CircularProgressIndicator());
-    } else if (snapshot.hasError) {
-      return Center(child: Text("Error: ${snapshot.error}"));
-    } else if (!snapshot.hasData || snapshot.data == null) {
-      // توجيه المستخدم إلى صفحة تسجيل الدخول إذا لم يوجد توكن
-      Future.microtask(() => Get.offNamed('/loginOptionScreen'));
-      return Container();  // العودة بواجهة فارغة مؤقتاً
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return Center(child: CircularProgressIndicator());
+        } else if (snapshot.hasError) {
+          return Center(child: Text("Error: ${snapshot.error}"));
+        } else if (!snapshot.hasData || snapshot.data == null) {
+          // توجيه المستخدم إلى صفحة تسجيل الدخول إذا لم يوجد توكن
+          Future.microtask(() => Get.offNamed('/loginOptionScreen'));
+          return Container(); // العودة بواجهة فارغة مؤقتاً
+        } else {
+          return Directionality(
+            textDirection: TextDirection.rtl,
+            child: Scaffold(
+                appBar: const CustomFullAppBar(title: MyString.selectDate),
+                bottomNavigationBar: Container(
+                  height: 90,
+                  padding: const EdgeInsets.all(15),
+                  child: Obx(
+                    () => controller.isLoading.value
+                        ? Center(
+                            child:
+                                CircularProgressIndicator()) // عرض دائرة التحميل
+                        : Button(
+                            onpressed: () async {
+                              controller.isSubmitted.value = true;
+                              print(controller.selectedType.value);
 
-    }else{
+                              if (controller.selectedType.value.isEmpty ||
+                                  controller.selectedType.value == '') {
+                                _showErrorSnackBar(
+                                    context, "يرجى اختيار نوع الإقامة");
+                                return;
+                              }
+                              if (controller.isTermsAccepted.value==false
+                                 ) {
+                                _showErrorSnackBar(
+                                    context, "يرجي الموافقة علي الشروط قبل الإستمرار");
+                                return;
+                              }
 
+                              if (controller.dateTimeKey.currentState!
+                                  .validate()) {
+                                bool isTypeAllowZero =
+                                    (controller.selectedType.value ==
+                                        "مناسبات");
 
-        return  Directionality(
-          textDirection: TextDirection.rtl,
-          child: Scaffold(
+                                if (!isTypeAllowZero &&
+                                    controller.adult.value == 0) {
+                                  _showErrorSnackBar(context,
+                                      "لا يمكن أن يكون عدد البالغين صفر");
+                                  return;
+                                }
 
-              appBar: const CustomFullAppBar(
-                  title: MyString.selectDate
-              ),
-              bottomNavigationBar: Container(
-                height: 90,
-                padding: const EdgeInsets.all(15),
-                child: Obx(() => controller.isLoading.value
-                    ? Center(child: CircularProgressIndicator()) // عرض دائرة التحميل
-                    : Button(
+                                // لو النوع لا يسمح بصفر أطفال، نجبر الأطفال على 0
+                                if (!isTypeAllowZero &&
+                                    controller.children.value > 0) {
+                                  controller.children.value = 0;
+                                }
 
-                  onpressed: () async {
-                    controller.isSubmitted.value = true;
-                    print(controller.selectedType.value);
+                                // استدعاء دالة الحجز
+                                print(controller.adult.value);
+                                print(controller.children.value);
 
-                    if (controller.selectedType.value.isEmpty || controller.selectedType.value == '') {
-                      _showErrorSnackBar(context, "يرجى اختيار نوع الإقامة");
-                      return;
-                    }
-
-                    if (controller.dateTimeKey.currentState!.validate()) {
-                      bool isTypeAllowZero = (controller.selectedType.value == "مناسبات");
-
-                      if (!isTypeAllowZero && controller.adult.value == 0) {
-                        _showErrorSnackBar(context, "لا يمكن أن يكون عدد البالغين صفر");
-                        return;
-                      }
-
-                      // لو النوع لا يسمح بصفر أطفال، نجبر الأطفال على 0
-                      if (!isTypeAllowZero && controller.children.value > 0) {
-                        controller.children.value = 0;
-                      }
-
-                      // استدعاء دالة الحجز
-                      print(controller.adult.value);
-                      print(controller.children.value);
-
-
-                      // معالجة التاريخ
-                      String dateText = controller.checkInDateController.value.text;
-                      DateTime date = intl.DateFormat("yyyy-MM-dd").parse(dateText);
-                      String formattedDate = intl.DateFormat("dd/MM/yyyy").format(date);
-                      print("Formatted Date: $formattedDate");
-                      controller.makeReservation(restId);
-
-                    } else {
-                      _showErrorSnackBar(context, "يرجى ملء جميع الحقول المطلوبة");
-                    }
-                  },
-                  text: "إرسال طلب",
-                  textSize: 16,
-                  fontBold: FontWeight.w700,
-                  textColor: MyColors.white,
+                                // معالجة التاريخ
+                                String dateText =
+                                    controller.checkInDateController.value.text;
+                                DateTime date = intl.DateFormat("yyyy-MM-dd")
+                                    .parse(dateText);
+                                String formattedDate =
+                                    intl.DateFormat("dd/MM/yyyy").format(date);
+                                print("Formatted Date: $formattedDate");
+                                controller.makeReservation(restId);
+                              } else {
+                                _showErrorSnackBar(
+                                    context, "يرجى ملء جميع الحقول المطلوبة");
+                              }
+                            },
+                            text: "إرسال طلب",
+                            textSize: 16,
+                            fontBold: FontWeight.w700,
+                            textColor: MyColors.white,
+                          ),
+                  ),
                 ),
-                ),
-              ),
-
-              body: SingleChildScrollView(
-                child: Obx(() => Padding(
-                    padding: const EdgeInsets.all(15),
-                    child: Form(
-                      key: controller.dateTimeKey,
-                      child: Column(
-                        children: [
-                          Container(
-                            padding: const EdgeInsets.all(10),
-                            /*
+                body: SingleChildScrollView(
+                  child: Obx(
+                    () => Padding(
+                        padding: const EdgeInsets.all(15),
+                        child: Form(
+                          key: controller.dateTimeKey,
+                          child: Column(
+                            children: [
+                              Container(
+                                padding: const EdgeInsets.all(10),
+                                /*
                             decoration: BoxDecoration(
                               color: controller.themeController.isDarkMode.value ? MyColors.darkTextFieldColor : Colors.green.shade50,
                               borderRadius: BorderRadius.circular(15),
@@ -221,109 +245,161 @@ class _DateTimeSelectState extends State<DateTimeSelect> {
                           },
                         ),
                          */
-                          ),
-                          const SizedBox(height: 15),
-                          Row(
-                            children: [
-                              Expanded(
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    const Text("تاريخ الوصول", style: TextStyle(fontWeight: FontWeight.w700)),
-                                    const SizedBox(height: 7),
-                                    Obx(() => InkWell(
-                                      onTap: () {
-                                        _selectDate(context, true,restId);
-                                      },
-                                      child: AbsorbPointer(
-                                        child: SizedBox(
-                                          child: TextFormField(
-                                            validator:  (value) {
-    if (value == null || value.isEmpty) {
-    return 'يرجى اختيار تاريخ الوصول';
-    }
-    return null;
+                              ),
+                              const SizedBox(height: 15),
+                              Row(
+                                children: [
+                                  Expanded(
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        const Text("تاريخ الوصول",
+                                            style: TextStyle(
+                                                fontWeight: FontWeight.w700)),
+                                        const SizedBox(height: 7),
+                                        Obx(
+                                          () => InkWell(
+                                            onTap: () {
+                                              _selectDate(
+                                                  context, true, restId);
                                             },
-                                            controller: controller.checkInDateController.value,
-                                            style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 14),
-                                            decoration: InputDecoration(
-                                              filled: true,
-                                              fillColor: controller.themeController.isDarkMode.value ? MyColors.darkTextFieldColor : MyColors.disabledTextFieldColor,
-                                              border: OutlineInputBorder(
-                                                borderRadius: BorderRadius.circular(15),
-                                                borderSide: BorderSide.none,
+                                            child: AbsorbPointer(
+                                              child: SizedBox(
+                                                child: TextFormField(
+                                                  validator: (value) {
+                                                    if (value == null ||
+                                                        value.isEmpty) {
+                                                      return 'يرجى اختيار تاريخ الوصول';
+                                                    }
+                                                    return null;
+                                                  },
+                                                  controller: controller
+                                                      .checkInDateController
+                                                      .value,
+                                                  style: const TextStyle(
+                                                      fontWeight:
+                                                          FontWeight.w600,
+                                                      fontSize: 14),
+                                                  decoration: InputDecoration(
+                                                    filled: true,
+                                                    fillColor: controller
+                                                            .themeController
+                                                            .isDarkMode
+                                                            .value
+                                                        ? MyColors
+                                                            .darkTextFieldColor
+                                                        : MyColors
+                                                            .disabledTextFieldColor,
+                                                    border: OutlineInputBorder(
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              15),
+                                                      borderSide:
+                                                          BorderSide.none,
+                                                    ),
+                                                    hintText: "تاريخ الوصول",
+                                                    hintStyle: const TextStyle(
+                                                        color: Colors.grey,
+                                                        fontWeight:
+                                                            FontWeight.w400,
+                                                        fontSize: 13),
+                                                    suffixIcon: Padding(
+                                                      padding:
+                                                          const EdgeInsets.all(
+                                                              15),
+                                                      child: SvgPicture.asset(
+                                                          MyImages.datePicker),
+                                                    ),
+                                                  ),
+                                                ),
                                               ),
-                                              hintText: "تاريخ الوصول",
-                                              hintStyle: const TextStyle(color: Colors.grey, fontWeight: FontWeight.w400, fontSize: 13),
-                                              suffixIcon: Padding(
-                                                padding: const EdgeInsets.all(15),
-                                                child: SvgPicture.asset(MyImages.datePicker),
+                                            ),
+                                          ),
+                                        )
+                                      ],
+                                    ),
+                                  ),
+                                  const SizedBox(width: 10),
+                                  Column(
+                                    children: [
+                                      const SizedBox(height: 20),
+                                      SvgPicture.asset(MyImages.dateTimeArrow),
+                                    ],
+                                  ),
+                                  const SizedBox(width: 10),
+                                  Expanded(
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        const Text("تاريخ المغادرة",
+                                            style: TextStyle(
+                                                fontWeight: FontWeight.w700)),
+                                        const SizedBox(height: 7),
+                                        InkWell(
+                                          onTap: () {
+                                            _selectDate(context, false, restId);
+                                          },
+                                          child: AbsorbPointer(
+                                            child: SizedBox(
+                                              child: TextFormField(
+                                                validator: (value) {
+                                                  if (value == null ||
+                                                      value.isEmpty) {
+                                                    return 'يرجى اختيار تاريخ المغادرة';
+                                                  }
+                                                  return null;
+                                                },
+                                                readOnly: true,
+                                                controller: controller
+                                                    .checkOutDateController
+                                                    .value,
+                                                style: const TextStyle(
+                                                    fontWeight: FontWeight.w600,
+                                                    fontSize: 14),
+                                                decoration: InputDecoration(
+                                                  filled: true,
+                                                  fillColor: controller
+                                                          .themeController
+                                                          .isDarkMode
+                                                          .value
+                                                      ? MyColors
+                                                          .darkTextFieldColor
+                                                      : MyColors
+                                                          .disabledTextFieldColor,
+                                                  border: OutlineInputBorder(
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            15),
+                                                    borderSide: BorderSide.none,
+                                                  ),
+                                                  hintText: "تاريخ المغادرة",
+                                                  hintStyle: const TextStyle(
+                                                      color: Colors.grey,
+                                                      fontWeight:
+                                                          FontWeight.w400,
+                                                      fontSize: 13),
+                                                  suffixIcon: Padding(
+                                                    padding:
+                                                        const EdgeInsets.all(
+                                                            15),
+                                                    child: SvgPicture.asset(
+                                                        MyImages.datePicker),
+                                                  ),
+                                                ),
                                               ),
                                             ),
                                           ),
                                         ),
-                                      ),
-                                    ),)
-                                  ],
-                                ),
-                              ),
-                              const SizedBox(width: 10),
-                              Column(
-                                children: [
-                                  const SizedBox(height: 20),
-                                  SvgPicture.asset(MyImages.dateTimeArrow),
+                                      ],
+                                    ),
+                                  ),
                                 ],
                               ),
-                              const SizedBox(width: 10),
-                              Expanded(
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    const Text("تاريخ المغادرة", style: TextStyle(fontWeight: FontWeight.w700)),
-                                    const SizedBox(height: 7),
-                                    InkWell(
-                                      onTap: () {
-                                        _selectDate(context, false,restId);
-                                      },
-                                      child: AbsorbPointer(
-                                        child: SizedBox(
-                                          child: TextFormField(
-                                            validator:  (value) {
-                                              if (value == null || value.isEmpty) {
-                                                return 'يرجى اختيار تاريخ المغادرة';
-                                              }
-                                              return null;
-                                            },
-                                            readOnly: true,
-                                            controller: controller.checkOutDateController.value,
-                                            style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 14),
-                                            decoration: InputDecoration(
-                                              filled: true,
-                                              fillColor: controller.themeController.isDarkMode.value ? MyColors.darkTextFieldColor : MyColors.disabledTextFieldColor,
-                                              border: OutlineInputBorder(
-                                                borderRadius: BorderRadius.circular(15),
-                                                borderSide: BorderSide.none,
-                                              ),
-                                              hintText: "تاريخ المغادرة",
-                                              hintStyle: const TextStyle(color: Colors.grey, fontWeight: FontWeight.w400, fontSize: 13),
-                                              suffixIcon: Padding(
-                                                padding: const EdgeInsets.all(15),
-                                                child: SvgPicture.asset(MyImages.datePicker),
-                                              ),
-                                            ),
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ],
-                          ),
-                          const SizedBox(height: 20),
+                              const SizedBox(height: 20),
 
-
-                        /*
+                              /*
                           Row(
                             children: [
                               Expanded(
@@ -410,202 +486,353 @@ class _DateTimeSelectState extends State<DateTimeSelect> {
                             ],
                           ),
                          */
-                          const SizedBox(height: 20),
-                          Row(
-                            children: [
-                              Expanded(
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    const Text("عدد النزلاء (البالغين)", style: TextStyle(fontWeight: FontWeight.w700)),
-                                    const SizedBox(height: 7),
-                                    Container(
-                                      padding: const EdgeInsets.symmetric(horizontal: 12),
-                                      height: 50,
-                                      decoration: BoxDecoration(
-                                        color: controller.themeController.isDarkMode.value ? MyColors.darkTextFieldColor : Colors.transparent,
-                                        borderRadius: BorderRadius.circular(12),
-                                        border: Border.all(color: controller.themeController.isDarkMode.value ? Colors.grey.shade700 : Colors.black.withOpacity(0.2)),
-                                      ),
-                                      child: Row(
-                                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                        children: [
-                                          InkWell(
-                                            onTap: () {
-                                              return controller.adultDecrement();
-                                            },
-                                            child: Container(
-                                              alignment: Alignment.center,
-                                              height: 30,
-                                              width: 30,
-                                              decoration: BoxDecoration(
-                                                color: controller.themeController.isDarkMode.value ? Colors.grey.shade700 :  Colors.black.withOpacity(0.2),
-                                                borderRadius: BorderRadius.circular(8),
-                                              ),
-                                              child: const Text("-", style: TextStyle(fontWeight: FontWeight.w500, fontSize: 20)),
-                                            ),
+                              const SizedBox(height: 20),
+                              Row(
+                                children: [
+                                  Expanded(
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        const Text("عدد النزلاء (البالغين)",
+                                            style: TextStyle(
+                                                fontWeight: FontWeight.w700)),
+                                        const SizedBox(height: 7),
+                                        Container(
+                                          padding: const EdgeInsets.symmetric(
+                                              horizontal: 12),
+                                          height: 50,
+                                          decoration: BoxDecoration(
+                                            color: controller.themeController
+                                                    .isDarkMode.value
+                                                ? MyColors.darkTextFieldColor
+                                                : Colors.transparent,
+                                            borderRadius:
+                                                BorderRadius.circular(12),
+                                            border: Border.all(
+                                                color: controller
+                                                        .themeController
+                                                        .isDarkMode
+                                                        .value
+                                                    ? Colors.grey.shade700
+                                                    : Colors.black
+                                                        .withOpacity(0.2)),
                                           ),
-                                          Text("${controller.adult.value}", style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 24)),
-                                          InkWell(
-                                            onTap: () {
-                                              return controller.adultIncrement();
-                                            },
-                                            child: Container(
-                                              alignment: Alignment.center,
-                                              height: 30,
-                                              width: 30,
-                                              decoration: BoxDecoration(
-                                                color: controller.themeController.isDarkMode.value ? Colors.grey.shade700 : Colors.black.withOpacity(0.2),
-                                                borderRadius: BorderRadius.circular(8),
+                                          child: Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.spaceBetween,
+                                            children: [
+                                              InkWell(
+                                                onTap: () {
+                                                  return controller
+                                                      .adultDecrement();
+                                                },
+                                                child: Container(
+                                                  alignment: Alignment.center,
+                                                  height: 30,
+                                                  width: 30,
+                                                  decoration: BoxDecoration(
+                                                    color: controller
+                                                            .themeController
+                                                            .isDarkMode
+                                                            .value
+                                                        ? Colors.grey.shade700
+                                                        : Colors.black
+                                                            .withOpacity(0.2),
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            8),
+                                                  ),
+                                                  child: const Text("-",
+                                                      style: TextStyle(
+                                                          fontWeight:
+                                                              FontWeight.w500,
+                                                          fontSize: 20)),
+                                                ),
                                               ),
-                                              child: const Text("+", style: TextStyle(fontWeight: FontWeight.w500, fontSize: 20)),
+                                              Text("${controller.adult.value}",
+                                                  style: const TextStyle(
+                                                      fontWeight:
+                                                          FontWeight.w700,
+                                                      fontSize: 24)),
+                                              InkWell(
+                                                onTap: () {
+                                                  return controller
+                                                      .adultIncrement();
+                                                },
+                                                child: Container(
+                                                  alignment: Alignment.center,
+                                                  height: 30,
+                                                  width: 30,
+                                                  decoration: BoxDecoration(
+                                                    color: controller
+                                                            .themeController
+                                                            .isDarkMode
+                                                            .value
+                                                        ? Colors.grey.shade700
+                                                        : Colors.black
+                                                            .withOpacity(0.2),
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            8),
+                                                  ),
+                                                  child: const Text("+",
+                                                      style: TextStyle(
+                                                          fontWeight:
+                                                              FontWeight.w500,
+                                                          fontSize: 20)),
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                  const SizedBox(width: 30),
+                                  Expanded(
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        const Text("عدد النزلاء (الأطفال)",
+                                            style: TextStyle(
+                                                fontWeight: FontWeight.w700)),
+                                        const SizedBox(height: 7),
+                                        Container(
+                                          padding: const EdgeInsets.symmetric(
+                                              horizontal: 12),
+                                          height: 50,
+                                          decoration: BoxDecoration(
+                                            color: controller.themeController
+                                                    .isDarkMode.value
+                                                ? MyColors.darkTextFieldColor
+                                                : Colors.transparent,
+                                            borderRadius:
+                                                BorderRadius.circular(12),
+                                            border: Border.all(
+                                                color: controller
+                                                        .themeController
+                                                        .isDarkMode
+                                                        .value
+                                                    ? Colors.grey.shade700
+                                                    : Colors.black
+                                                        .withOpacity(0.2)),
+                                          ),
+                                          child: Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.spaceBetween,
+                                            children: [
+                                              InkWell(
+                                                onTap: () {
+                                                  return controller
+                                                      .childrenDecrement();
+                                                },
+                                                child: Container(
+                                                  alignment: Alignment.center,
+                                                  height: 30,
+                                                  width: 30,
+                                                  decoration: BoxDecoration(
+                                                    color: controller
+                                                            .themeController
+                                                            .isDarkMode
+                                                            .value
+                                                        ? Colors.grey.shade700
+                                                        : Colors.black
+                                                            .withOpacity(0.2),
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            8),
+                                                  ),
+                                                  child: const Text("-",
+                                                      style: TextStyle(
+                                                          fontWeight:
+                                                              FontWeight.w500,
+                                                          fontSize: 20)),
+                                                ),
+                                              ),
+                                              Text(
+                                                  "${controller.children.value}",
+                                                  style: const TextStyle(
+                                                      fontWeight:
+                                                          FontWeight.w700,
+                                                      fontSize: 24)),
+                                              InkWell(
+                                                onTap: () {
+                                                  return controller
+                                                      .childrenIncrement();
+                                                },
+                                                child: Container(
+                                                  alignment: Alignment.center,
+                                                  height: 30,
+                                                  width: 30,
+                                                  decoration: BoxDecoration(
+                                                    color: controller
+                                                            .themeController
+                                                            .isDarkMode
+                                                            .value
+                                                        ? Colors.grey.shade700
+                                                        : Colors.black
+                                                            .withOpacity(0.2),
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            8),
+                                                  ),
+                                                  child: const Text("+",
+                                                      style: TextStyle(
+                                                          fontWeight:
+                                                              FontWeight.w500,
+                                                          fontSize: 20)),
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  )
+                                ],
+                              ),
+                              const SizedBox(height: 20),
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                children: [
+                                  Flexible(
+                                    child: RadioListTile<String>(
+                                      title: Text(
+                                        "عائلات",
+                                        overflow: TextOverflow.ellipsis,
+                                        style: TextStyle(
+                                          color: controller.themeController
+                                                  .isDarkMode.value
+                                              ? Colors.white
+                                              : Colors.black,
+                                        ),
+                                      ),
+                                      value: "عائلات",
+                                      groupValue: controller.selectedType.value,
+                                      onChanged: (value) {
+                                        controller.selectedType.value = value!;
+                                      },
+                                      contentPadding: EdgeInsets.zero,
+                                      dense: true,
+                                    ),
+                                  ),
+                                  Flexible(
+                                    child: RadioListTile<String>(
+                                      title: Text(
+                                        "شباب",
+                                        overflow: TextOverflow.ellipsis,
+                                        style: TextStyle(
+                                          color: controller.themeController
+                                                  .isDarkMode.value
+                                              ? Colors.white
+                                              : Colors.black,
+                                        ),
+                                      ),
+                                      value: "شباب",
+                                      groupValue: controller.selectedType.value,
+                                      onChanged: (value) {
+                                        controller.selectedType.value = value!;
+                                      },
+                                      contentPadding: EdgeInsets.zero,
+                                      dense: true,
+                                    ),
+                                  ),
+                                  Flexible(
+                                    child: RadioListTile<String>(
+                                      title: Text(
+                                        "مناسبات",
+                                        overflow: TextOverflow.ellipsis,
+                                        style: TextStyle(
+                                          color: controller.themeController
+                                                  .isDarkMode.value
+                                              ? Colors.white
+                                              : Colors.black,
+                                        ),
+                                      ),
+                                      value: "مناسبات",
+                                      groupValue: controller.selectedType.value,
+                                      onChanged: (value) {
+                                        controller.selectedType.value = value!;
+                                      },
+                                      contentPadding: EdgeInsets.zero,
+                                      dense: true,
+                                    ),
+                                  ),
+
+                                ],
+                              ),
+                              Card(
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(16),
+                                ),
+                                elevation: 4,
+                                margin: const EdgeInsets.all(12),
+                                child: Padding(
+                                  padding: const EdgeInsets.all(16),
+                                  child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      const Text(
+                                        "إثبات الهوية المطلوب:",
+                                        style: TextStyle(
+                                          fontSize: 18,
+                                          fontWeight: FontWeight.w500,
+                                          color: Colors.black54,
+                                        ),
+                                      ),
+                                      const SizedBox(height: 8),
+                                      Row(
+                                        children: [
+                                          const Icon(Icons.perm_identity, color: Colors.teal, size: 28),
+                                          const SizedBox(width: 12),
+                                          Text(
+                                            proofTypeText,
+                                            style: const TextStyle(
+                                              fontSize: 18,
+                                              fontWeight: FontWeight.bold,
+                                              color: Colors.black87,
                                             ),
                                           ),
                                         ],
                                       ),
-                                    ),
-                                  ],
+
+                                    ],
+                                  ),
                                 ),
                               ),
-                              const SizedBox(width: 30),
-                              Expanded(
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    const Text("عدد النزلاء (الأطفال)", style: TextStyle(fontWeight: FontWeight.w700)),
-                                    const SizedBox(height: 7),
-                                    Container(
-                                      padding: const EdgeInsets.symmetric(horizontal: 12),
-                                      height: 50,
-                                      decoration: BoxDecoration(
-                                        color: controller.themeController.isDarkMode.value ? MyColors.darkTextFieldColor : Colors.transparent,
-                                        borderRadius: BorderRadius.circular(12),
-                                        border: Border.all(color: controller.themeController.isDarkMode.value ? Colors.grey.shade700 : Colors.black.withOpacity(0.2)),
-                                      ),
-                                      child: Row(
-                                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                        children: [
-                                          InkWell(
-                                            onTap: () {
-                                              return controller.childrenDecrement();
-                                            },
-                                            child: Container(
-                                              alignment: Alignment.center,
-                                              height: 30,
-                                              width: 30,
-                                              decoration: BoxDecoration(
-                                                color: controller.themeController.isDarkMode.value ? Colors.grey.shade700 : Colors.black.withOpacity(0.2),
-                                                borderRadius: BorderRadius.circular(8),
-                                              ),
-                                              child: const Text("-", style: TextStyle(fontWeight: FontWeight.w500, fontSize: 20)),
-                                            ),
-                                          ),
-                                          Text("${controller.children.value}", style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 24)),
-                                          InkWell(
-                                            onTap: () {
-                                              return controller.childrenIncrement();
-                                            },
-                                            child: Container(
-                                              alignment: Alignment.center,
-                                              height: 30,
-                                              width: 30,
-                                              decoration: BoxDecoration(
-                                                color: controller.themeController.isDarkMode.value ? Colors.grey.shade700 : Colors.black.withOpacity(0.2),
-                                                borderRadius: BorderRadius.circular(8),
-                                              ),
-                                              child: const Text("+", style: TextStyle(fontWeight: FontWeight.w500, fontSize: 20)),
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                  ],
+                              Obx(() => CheckboxListTile(
+
+                                value: controller.isTermsAccepted.value,
+                                onChanged: (value) {
+                                  controller.isTermsAccepted.value = value ?? false;
+                                },
+                                activeColor: Colors.teal,
+                                title: const Text(
+                                  "على الضيوف الكرام الالتزام بمواعيد الحضور والمغادرة، "
+                                      "المحافظة على نظافة المكان، "
+                                      "عدم الإضرار بالممتلكات الخاصة، "
+                                      "والسباحة بالملابس الخاصة بالسباحة.",
+                                  style: TextStyle(fontSize: 14, color: Colors.black87),
                                 ),
-                              )
+                                controlAffinity: ListTileControlAffinity.leading,
+                              )),
+                              const SizedBox(height: 12),
+
+
                             ],
                           ),
-                          const SizedBox(height: 20),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            children: [
-                              Flexible(
-                                child: RadioListTile<String>(
-                                  title: Text(
-                                    "عائلات",
-                                    overflow: TextOverflow.ellipsis,
-                                    style: TextStyle(
-                                      color: controller.themeController.isDarkMode.value
-                                          ? Colors.white
-                                          : Colors.black,
-                                    ),
-                                  ),
-                                  value: "عائلات",
-                                  groupValue: controller.selectedType.value,
-                                  onChanged: (value) {
-                                    controller.selectedType.value = value!;
-                                  },
-                                  contentPadding: EdgeInsets.zero,
-                                  dense: true,
-                                ),
-                              ),
-                              Flexible(
-                                child: RadioListTile<String>(
-                                  title: Text(
-                                    "شباب",
-                                    overflow: TextOverflow.ellipsis,
-                                    style: TextStyle(
-                                      color: controller.themeController.isDarkMode.value
-                                          ? Colors.white
-                                          : Colors.black,
-                                    ),
-                                  ),
-                                  value: "شباب",
-                                  groupValue: controller.selectedType.value,
-                                  onChanged: (value) {
-                                    controller.selectedType.value = value!;
-                                  },
-                                  contentPadding: EdgeInsets.zero,
-                                  dense: true,
-                                ),
-                              ),
-                              Flexible(
-                                child: RadioListTile<String>(
-                                  title: Text(
-                                    "مناسبات",
-                                    overflow: TextOverflow.ellipsis,
-                                    style: TextStyle(
-                                      color: controller.themeController.isDarkMode.value
-                                          ? Colors.white
-                                          : Colors.black,
-                                    ),
-                                  ),
-                                  value: "مناسبات",
-                                  groupValue: controller.selectedType.value,
-                                  onChanged: (value) {
-                                    controller.selectedType.value = value!;
-                                  },
-                                  contentPadding: EdgeInsets.zero,
-                                  dense: true,
-                                ),
-                              ),
-                            ],
-                          )
-
-
-
-                        ],
-                      ),
-                    )
-                ),),
-              )
-          ),
-        );
-    }
+                        )),
+                  ),
+                )),
+          );
+        }
       },
-
     );
   }
 }
+
 void _showErrorSnackBar(BuildContext context, String message) {
   ScaffoldMessenger.of(context).showSnackBar(
     SnackBar(
