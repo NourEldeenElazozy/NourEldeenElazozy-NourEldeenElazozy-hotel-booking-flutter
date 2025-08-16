@@ -12,12 +12,12 @@ class ProfileController extends GetxController {
   }
 
 //---------------------------------------- profileNotification_screen -----------------------------------
-    RxBool generalNotification = false.obs;
-    RxBool sound = false.obs;
-    RxBool vibrate = false.obs;
-    RxBool appUpdates = false.obs;
-    RxBool serviceAvailable = false.obs;
-    RxBool tipsAvailable = false.obs;
+    RxBool generalNotification = true.obs;
+    RxBool sound = true.obs;
+    RxBool vibrate = true.obs;
+    RxBool appUpdates = true.obs;
+    RxBool serviceAvailable = true.obs;
+    RxBool tipsAvailable = true.obs;
 
 //---------------------------------------- Language_screen -----------------------------------
     int selectLanguage = 0;

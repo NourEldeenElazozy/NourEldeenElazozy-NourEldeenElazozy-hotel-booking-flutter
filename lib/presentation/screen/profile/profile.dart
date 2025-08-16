@@ -366,53 +366,7 @@ class _ProfileState extends State<Profile> {
                   controller.isDarkMode.value,
                 ),
               ),
-              if(userType.value.isNotEmpty)
-              InkWell(
-                onTap: () {
-                  // عرض دايلوج تأكيد الحذف
-                  Get.defaultDialog(
-                    title: 'تأكيد الحذف',
-                    titleStyle: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                      fontFamily: 'Tajawal',
-                    ),
-                    middleText: 'هل أنت متأكد أنك تريد حذف الحساب؟ هذا الإجراء لا يمكن التراجع عنه.',
-                    middleTextStyle: TextStyle(
-                      fontSize: 16,
-                      fontFamily: 'Tajawal',
-                    ),
-                    textConfirm: 'نعم، حذف',
-                    textCancel: 'إلغاء',
-                    confirmTextColor: Colors.white,
-                    buttonColor: Colors.redAccent,
-                    cancelTextColor: Colors.black,
-                    onConfirm: () {
-                      Get.back(); // إغلاق الديالوج
-                      Get.snackbar(
-                        'تم الحذف',
-                        'تم حذف حسابك بنجاح.',
-                        backgroundColor: Colors.redAccent,
-                        colorText: Colors.white,
-                      );
-                    },
-                    onCancel: () {},
-                  );
-                },
-                child: ListTile(
-                  leading: SvgPicture.asset(MyImages.canceled, height: 20, width: 20),
-                  title: Text(
-                    'حذف حسابي',
-                    style: TextStyle(
-                      color: Colors.redAccent, // لون النص أحمر
-                      fontSize: 16,
-                      fontWeight: FontWeight.w600,
-                      fontFamily: 'Tajawal',
-                    ),
-                  ),
 
-                ),
-              ),
               if(userType.value.isNotEmpty)
               ListTile(
                 onTap: () {
@@ -427,12 +381,12 @@ class _ProfileState extends State<Profile> {
                         },
                         text1: MyString.cancel,
                         buttonColor1: controller.isDarkMode.value
-                            ? MyColors.dividerDarkTheme
-                            : MyColors.skipButtonColor,
+                            ? MyColors.white
+                            : MyColors.white,
                         shadowColor1: Colors.transparent,
                         textColor1: controller.isDarkMode.value
                             ? MyColors.white
-                            : MyColors.primaryColor,
+                            : MyColors.white,
                         onpressed2: () async {
                           SharedPreferences prefs = await SharedPreferences.getInstance();
                           await prefs.clear(); // حذف جميع الحقول
@@ -453,9 +407,57 @@ class _ProfileState extends State<Profile> {
                 title: const Text(MyString.logout),
                 titleTextStyle: const TextStyle(
                     color: MyColors.errorColor,
-                    fontWeight: FontWeight.w500,
-                    fontSize: 16),
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                  fontFamily: 'Tajawal',),
               ),
+              if(userType.value.isNotEmpty)
+                InkWell(
+                  onTap: () {
+                    // عرض دايلوج تأكيد الحذف
+                    Get.defaultDialog(
+                      title: 'تأكيد الحذف',
+                      titleStyle: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                        fontFamily: 'Tajawal',
+                      ),
+                      middleText: 'هل أنت متأكد أنك تريد حذف الحساب؟ هذا الإجراء لا يمكن التراجع عنه.',
+                      middleTextStyle: TextStyle(
+                        fontSize: 16,
+                        fontFamily: 'Tajawal',
+                      ),
+                      textConfirm: 'نعم، حذف',
+                      textCancel: 'إلغاء',
+                      confirmTextColor: Colors.white,
+                      buttonColor: Colors.redAccent,
+                      cancelTextColor: Colors.black,
+                      onConfirm: () {
+                        Get.back(); // إغلاق الديالوج
+                        Get.snackbar(
+                          'تم الحذف',
+                          'تم حذف حسابك بنجاح.',
+                          backgroundColor: Colors.redAccent,
+                          colorText: Colors.white,
+                        );
+                      },
+                      onCancel: () {},
+                    );
+                  },
+                  child: ListTile(
+                    leading: SvgPicture.asset(MyImages.canceled, height: 20, width: 20),
+                    title: Text(
+                      'حذف حسابي',
+                      style: TextStyle(
+                        color: Colors.redAccent, // لون النص أحمر
+                        fontSize: 16,
+                        fontWeight: FontWeight.w600,
+                        fontFamily: 'Tajawal',
+                      ),
+                    ),
+
+                  ),
+                ),
             ],
           ),
         )),
