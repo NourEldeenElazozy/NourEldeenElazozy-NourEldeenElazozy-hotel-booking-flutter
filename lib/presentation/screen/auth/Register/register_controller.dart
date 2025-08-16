@@ -420,27 +420,31 @@ class RegisterController extends GetxController {
         Get.snackbar('خطأ', 'التوكن غير موجود، يرجى تسجيل الدخول');
         return;
       }
+      print("Select Gender ${selectedGender.toString()}");
+      final Map<String, dynamic> data = {
+        'name': nameController.text,
+        'phone': phoneController.text,
+        'mobile': mobileNumberController.text,
+        'gender': selectedGender.toString(),
+      };
+      if (passwordController.text.isNotEmpty) {
+        data['password'] = passwordController.text;
+        data['password_confirmation'] = passwordController.text;
+      }
 
       // إرسال البيانات إلى API تحديث الملف الشخصي
       final response = await dio.post(
         '/update-user',
-        data: {
-          'name': nameController.text,
-          'phone': phoneController.text,
-          'mobile': mobileNumberController.text,
+        data: data,
 
-          //'password': passwordController.text,
-          //'password_confirmation': passwordController.text, // ✅ مهم جداً
-
-          'gender': "ذكر",
-          // أضف أي حقول أخرى حسب API
-        },
         options: Options(
           headers: {
             'Authorization': 'Bearer $token',
           },
         ),
+
       );
+
       isLoading.value = false; // انتهاء التحميل
 
       if (response.statusCode == 200) {
@@ -448,6 +452,8 @@ class RegisterController extends GetxController {
         await prefs.setString('userName', nameController.text);
         await prefs.setString('userPhone', phoneController.text);
         await prefs.setString('userMobile', mobileNumberController.text);
+        print(" response.statusCode ${response.data}");
+
 
         if (status == 'update') {
           Get.back();

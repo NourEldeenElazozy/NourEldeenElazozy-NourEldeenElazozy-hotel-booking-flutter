@@ -55,7 +55,7 @@ class MyString {
   static const String continueButton = "استمرار";
   static List<String> genderSelect = [
     "ذكر",
-    "أنثى",
+    "انثى",
 
   ];
 
@@ -104,8 +104,8 @@ class MyString {
   static const String notification = "الإشعارات";
 
 //-----------------------------------filterBottomSheet------------------------------
-  static const String filterHotel = "تصفية الفنادق";
-  static const String country = "البلد";
+  static const String filterHotel = "تصفية الإستراحات";
+  static const String country = "المدينة";
   static const String reset = "إعادة ضبط";
   static const String applyFilter = "تطبيق التصفية";
   static List countryName = [
@@ -127,9 +127,9 @@ class MyString {
   static const String availabilityTime = "التوافر حسب الوقت";
   static List selectedTime = [
     "للعائلات",
-    "للعائلات أو الشباب",
+    "للشباب",
     "للمناسبات",
-    "لكل الاستخدامات",
+
   ];
 /*
   static List selectedTimeRange = [
@@ -229,7 +229,7 @@ class MyString {
   static const String later = "لاحقًا";
 
 //----------------------------------- GalleryPhoto ------------------------------
-  static const String galleryHotelPhotos = "صور فندق المعرض";
+  static const String galleryHotelPhotos = "معرض الصور";
 
 //----------------------------------- GoogleMap ------------------------------
   static const String hotelLocation = "موقع الإستراحة";
@@ -359,14 +359,14 @@ class MyString {
   static const String viewTicketButton = "عرض التذكرة";
   static const String completed = "تهانينا، لقد أكملت الحجز!";
   static const String confirmed = "هذ الحجز مؤكد";
-  static const String canceled = "لقد قمت بإلغاء هذا الحجز الفندقي";
+  static const String canceled = "لقد قمت بإلغاء هذا الحجز ";
 
 //----------------------------------- CancelBooking ------------------------------
   static const String cancelBooking = "إلغاء الحجز";
-  static const String cancelBookingSubTitle = "هل أنت متأكد أنك تريد إلغاء حجزك الفندقي؟";
+  static const String cancelBookingSubTitle = "هل أنت متأكد أنك تريد إلغاء حجزك ؟";
   static const String cancelBookingDescription = "يمكنك استرداد 80% فقط من المبلغ المدفوع وفقًا لسياساتنا";
   static const String yesContinue = "نعم، استمرار";
-  static const String cancelHotelBooking = "إلغاء الحجز الفندقي";
+  static const String cancelHotelBooking = "إلغاء الحجز ";
   static const String refundDescription = "يرجى اختيار طريقة استرداد الدفع (سيتم استرداد 80% فقط).";
   static const String confirmCancel = "تأكيد الإلغاء";
   static const String successFull = "تم بنجاح!";

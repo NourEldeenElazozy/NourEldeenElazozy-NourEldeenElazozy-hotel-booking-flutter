@@ -45,26 +45,7 @@ class _ReviewState extends State<Review> {
         body: Column( // <--- أزل Obx من هنا (حول الـ Column)
           children: [
 
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20),
-              child: Obx(() => Row( // <--- أضف Obx هنا لملخص التقييم
-                children: [
-                  const Text(MyString.rating, style: TextStyle(fontSize: 14)),
-                  const Spacer(),
-                  SvgPicture.asset(MyImages.yellowStar, width: 14),
-                  const SizedBox(width: 5),
-                  Text(
-                    controller.overallRating.value.toStringAsFixed(1), // تقييم إجمالي
-                    style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 12),
-                  ),
-                  const SizedBox(width: 5),
-                  Text(
-                    "(${controller.totalReviewsCount.value} reviews)", // عدد المراجعات
-                    style: const TextStyle(fontWeight: FontWeight.w400, fontSize: 10),
-                  ),
-                ],
-              )), // <--- أغلق Obx هنا
-            ),
+
             const SizedBox(height: 20),
             Expanded(
               child: Obx(() { // <--- احتفظ بـ Obx هنا لقائمة المراجعات

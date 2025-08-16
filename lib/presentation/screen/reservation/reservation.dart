@@ -28,9 +28,13 @@ class _ReservationState extends State<Reservation> {
   @override
   Widget build(BuildContext context) {
     final reservation = widget.reservationData['reservations'][0]; // Assuming only one reservation for this page
+   print("///////////////");
+    print(widget.reservationData['reservations'][0]);
+    print("///////////////");
     final user = reservation['user'];
     final restArea = reservation['rest_area'];
     final reservationStatus = reservation['status'] ?? 'unknown'; // Get the reservation status
+
 
     // Helper to format date
     String formatDate(String dateString) {
@@ -86,7 +90,7 @@ class _ReservationState extends State<Reservation> {
                         ClipRRect(
                           borderRadius: BorderRadius.circular(10),
                           child: Image.network(
-                           "https://esteraha.ly/public/storage/${restArea['main_image']}",
+                           "https://esteraha.ly/public/${restArea['main_image']}",
 
                             height: 200,
                             width: double.infinity,

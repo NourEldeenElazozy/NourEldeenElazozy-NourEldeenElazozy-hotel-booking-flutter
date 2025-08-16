@@ -19,44 +19,47 @@ class _ProfileNotificationState extends State<ProfileNotification> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: const CustomFullAppBar(
-        title: MyString.notification
-      ),
-      body: Obx(() => Padding(
-        padding: const EdgeInsets.all(18.0),
-        child: SingleChildScrollView(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              buildSwitchRow(MyString.generalNotification, controller.generalNotification.value, (newValue) {
-                controller.generalNotification.value = newValue;
-              },),
-              const SizedBox(height: 20),
-              buildSwitchRow(MyString.sound, controller.sound.value, (newValue) {
-                controller.sound.value = newValue;
-              },),
-              const SizedBox(height: 20),
-              buildSwitchRow(MyString.vibrate, controller.vibrate.value, (newValue) {
-                controller.vibrate.value = newValue;
-              },),
-              const SizedBox(height: 20),
-              buildSwitchRow(MyString.appUpdates, controller.appUpdates.value, (newValue) {
-                controller.appUpdates.value = newValue;
-              },),
-              const SizedBox(height: 20),
-              buildSwitchRow(MyString.serviceAvailable, controller.serviceAvailable.value, (newValue) {
-                controller.serviceAvailable.value = newValue;
-              },),
-              const SizedBox(height: 20),
-              buildSwitchRow(MyString.tipsAvailable, controller.tipsAvailable.value, (newValue) {
-                controller.tipsAvailable.value = newValue;
-              },),
-            ],
-          ),
+    return Directionality(
+      textDirection: TextDirection.rtl,
+      child: Scaffold(
+        appBar: const CustomFullAppBar(
+          title: MyString.notification
         ),
-      ),)
+        body: Obx(() => Padding(
+          padding: const EdgeInsets.all(18.0),
+          child: SingleChildScrollView(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                buildSwitchRow(MyString.generalNotification, controller.generalNotification.value, (newValue) {
+                  controller.generalNotification.value = newValue;
+                },),
+                const SizedBox(height: 20),
+                buildSwitchRow(MyString.sound, controller.sound.value, (newValue) {
+                  controller.sound.value = newValue;
+                },),
+                const SizedBox(height: 20),
+                buildSwitchRow(MyString.vibrate, controller.vibrate.value, (newValue) {
+                  controller.vibrate.value = newValue;
+                },),
+                const SizedBox(height: 20),
+                buildSwitchRow(MyString.appUpdates, controller.appUpdates.value, (newValue) {
+                  controller.appUpdates.value = newValue;
+                },),
+                const SizedBox(height: 20),
+                buildSwitchRow(MyString.serviceAvailable, controller.serviceAvailable.value, (newValue) {
+                  controller.serviceAvailable.value = newValue;
+                },),
+                const SizedBox(height: 20),
+                buildSwitchRow(MyString.tipsAvailable, controller.tipsAvailable.value, (newValue) {
+                  controller.tipsAvailable.value = newValue;
+                },),
+              ],
+            ),
+          ),
+        ),)
+      ),
     );
   }
 }

@@ -1,17 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:hotel_booking/core/themes/themes_controller.dart';
+import 'package:hotel_booking/presentation/screen/auth/Register/register_import.dart';
 import 'package:hotel_booking/utils/validations.dart';
 
 import '../../core/constants/my_colors.dart';
 import '../../core/constants/my_strings.dart';
 
 commonDropdownButton(String? selectedGender, List<String> genderOptions ,bool isDarkMode) {
+  late RegisterController controller = RegisterController();
   return DropdownButtonFormField<String>(
     value: selectedGender,
     validator: Validations().genderValidation,
     onChanged: (newValue) {
       selectedGender = newValue!;
+      controller.selectedGender= selectedGender;
+      print(  controller.selectedGender);
     },
     dropdownColor: isDarkMode ? MyColors.scaffoldDarkColor : MyColors.scaffoldLightColor,
     style: TextStyle( color: isDarkMode ? Colors.white : Colors.black),

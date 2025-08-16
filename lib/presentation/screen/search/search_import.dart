@@ -5,6 +5,9 @@ import 'package:hotel_booking/core/constants/my_colors.dart';
 import 'package:hotel_booking/core/constants/my_images.dart';
 import 'package:hotel_booking/core/themes/themes_controller.dart';
 import 'package:hotel_booking/presentation/common_widgets/hotel_display_view.dart';
+import 'package:dio/dio.dart';
+import 'package:hotel_booking/presentation/screen/home/home_import.dart';
+import 'package:hotel_booking/presentation/screen/home/home_model.dart';
 
 part 'search.dart';
 part 'search_controller.dart';

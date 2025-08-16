@@ -57,7 +57,7 @@ class FilterBottomSheet extends StatelessWidget {
                           titleText(
                               MyString.country,
                               controller.themeController.isDarkMode.value,
-                              true,
+                              false,
                                   () {}),
                           const SizedBox(height: 20),
                           SizedBox(
@@ -237,6 +237,16 @@ class FilterBottomSheet extends StatelessWidget {
                                       ),
                                       items: const [
                                         DropdownMenuItem(
+                                          value: "",
+                                          child: Row(
+                                            children: [
+                                              Text("اختر المنطقة"),
+                                              SizedBox(width: 8),
+
+                                            ],
+                                          ),
+                                        ),
+                                        DropdownMenuItem(
                                           value: "مطلة على البحر",
                                           child: Row(
                                             children: [
@@ -343,6 +353,7 @@ class FilterBottomSheet extends StatelessWidget {
                           : MyColors.disabledColor,
                     )
                           ),
+                          //نوع اللإقامة
                           const SizedBox(height: 20),
                           titleText(
                               MyString.accommodationType,
@@ -642,7 +653,6 @@ class FilterBottomSheet extends StatelessWidget {
                           height: 50,
                           child: Button(
                             onpressed: () {
-
                               controller.selectedCityIndex.value = -1;
                               controller.selectedCityId=(-1).obs;
                               cityId=0;
@@ -652,6 +662,9 @@ class FilterBottomSheet extends StatelessWidget {
                               controller.selectedTime.value = 99;
                               controller.selectedRate.value = (-2);
                               controller.selectedTimeString.value ="";
+                              homecontroller.selectedGeoArea.value="";
+                              homecontroller.priceMax.value=0;
+                              homecontroller.priceMin.value=0;
                               for(int i = 0 ; i < controller.selectedAccommodationName.length ; i ++) {
                                 controller.selectedAccommodationName[i] = false;
                               }

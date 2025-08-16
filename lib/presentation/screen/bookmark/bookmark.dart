@@ -21,6 +21,9 @@ class _BookMarkState extends State<BookMark> {
 
     controller.loadFavorites();
     print("controller.restAreas.length ${controller.restAreas.length}");
+    final favorites = controller.favorites;
+    print("favorites.length ${favorites.length}");
+
     return Directionality(
       textDirection: TextDirection.rtl,
       child: Scaffold(
@@ -74,8 +77,8 @@ class _BookMarkState extends State<BookMark> {
 
           return Padding(
             padding: const EdgeInsets.all(15),
-            child: controller.selectedButton.value == 0
-                ? ListView.builder(
+            child:
+                 ListView.builder(
                   itemCount: favorites.length,
                   itemBuilder: (context, index) {
                     var favorite = favorites[index];
@@ -219,18 +222,7 @@ class _BookMarkState extends State<BookMark> {
                     );
                   },
                 )
-                : GridView.builder(
-              itemCount: favorites.length,
-              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 2,
-                crossAxisSpacing: 25,
-                mainAxisSpacing: 20,
-                mainAxisExtent: 215,
-              ),
-              itemBuilder: (context, index) {
-                return HorizontalView(index: index);
-              },
-            ),
+
           );
         }),
 

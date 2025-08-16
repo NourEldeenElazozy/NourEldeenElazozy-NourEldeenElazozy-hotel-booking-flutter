@@ -21,7 +21,7 @@ class BookMarkController extends GetxController {
     favoriteIds.value = ids.toSet();
 
     if (ids.isNotEmpty) {
-      var data = await homeController.getRestAreas(favoriteIds: ids);
+      var data = await homeController.getFavorites(favoriteIds: ids);
       restAreas.value = data;
       favorites.value = data;
     } else {

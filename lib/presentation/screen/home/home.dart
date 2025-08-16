@@ -19,6 +19,7 @@ class _HomeState extends State<Home> {
   @override
   void initState() {
     super.initState();
+    controller.getReservations();
     controller.getRestAreas();
     controller.getHomeDetail();
     controller.selectedItem.value = 0;
@@ -66,11 +67,17 @@ class _HomeState extends State<Home> {
     _loaduserType();
    //controller.getReservations();
    controller.fetchRecentlyBooked();
-  //removeToken();
+
+    print("filteredReservations");
+   print(controller.filteredReservations.length);
+     controller.getReservations();
+    //removeToken();
     debugPrint('════════ Tokens ════════', wrapWidth: 1029);
     debugPrint(Token.value , wrapWidth: 1029);
     debugPrint('═══════════════════════', wrapWidth: 1029);
    print(" usertypes ${userType.value}");
+    print(" restAreas length ${controller.restAreas.length}");
+
     print("userId ${userId.value}");
    return Directionality(
       textDirection: TextDirection.rtl,
@@ -506,18 +513,33 @@ class _HomeState extends State<Home> {
                         ],
                       )
                           : SizedBox(
-                        child: ListView.builder(
-                          physics: const NeverScrollableScrollPhysics(),
-                          shrinkWrap: true,
-                          itemCount: controller.recently.length,
-                          itemBuilder: (context, index) {
-                            return InkWell(
-                              onTap: () {},
-                              child: VerticalView(index: index),
+                        child: Obx(() {
+                          if (controller.isLoading.value) {
+                            return const Center(
+                              child: CircularProgressIndicator(),
                             );
-                          },
-                        ),
-                      ),
+                          }
+                          if (controller.filteredReservations.isEmpty) {
+                            return const Center(
+                              child: Text("لا توجد بيانات حالياً"),
+                            );
+                          }
+                          return ListView.builder(
+                            physics: const NeverScrollableScrollPhysics(),
+                            shrinkWrap: true,
+                            itemCount: controller.filteredReservations.length,
+                            itemBuilder: (context, index) {
+                              return InkWell(
+                                onTap: () {
+                                  // الإجراء عند الضغط
+                                },
+                                child: VerticalView(index: index),
+                              );
+                            },
+                          );
+                        }),
+                      )
+
                     ],
                   ),
                 ),

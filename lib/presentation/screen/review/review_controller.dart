@@ -30,7 +30,7 @@ class ReviewController extends GetxController {
       final url = 'https://esteraha.ly/api/reviews/$restAreaId'; // <--- المسار لجلب المراجعات
 
       final response = await _dio.get(url);
-
+      print('response $response');
       if (response.statusCode == 200) {
         // افترض أن الاستجابة هي:
         // {
@@ -73,6 +73,7 @@ class ReviewController extends GetxController {
         colorText: Colors.white,
       );
     } catch (e) {
+      print('err $e');
       Get.snackbar(
         "خطأ",
         "حدث خطأ غير متوقع أثناء جلب التقييمات: $e",

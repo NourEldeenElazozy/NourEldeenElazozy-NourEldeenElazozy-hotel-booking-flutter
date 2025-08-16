@@ -39,6 +39,7 @@ class Detail {
   int? tvScreens; // عدد شاشات التلفاز
   bool? freeWifi; // هل الواي فاي مجاني
   String? entertainmentGames; // ألعاب ترفيهية متاحة
+  String?gamesdetails;
   bool? outdoorSpace; // هل هناك مساحة خارجية
   bool? grassSpace; // هل هناك مساحة عشبية
   String? poolType; // نوع المسبح
@@ -102,6 +103,7 @@ class Detail {
     tvScreens = _parseInt(json['tv_screens']);
     freeWifi = json['free_wifi'] == 1;
     entertainmentGames = json['entertainment_games'];
+    gamesdetails= json['gamesdetails'];
     outdoorSpace = json['outdoor_space'] == 1;
     grassSpace = json['grass_space'] == 1;
     poolType = json['pool_type'];
@@ -160,6 +162,7 @@ class Detail {
       tvScreens: tvScreens,
       freeWifi: freeWifi,
       entertainmentGames: entertainmentGames,
+      gamesdetails: gamesdetails,
       outdoorSpace: outdoorSpace,
       grassSpace: grassSpace,
       poolType: poolType,

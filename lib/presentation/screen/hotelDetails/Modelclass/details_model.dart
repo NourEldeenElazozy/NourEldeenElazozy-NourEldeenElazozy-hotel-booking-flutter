@@ -16,6 +16,7 @@ class Details {
   int? tvScreens;
   bool? freeWifi;
   String? entertainmentGames;
+  String? gamesdetails;
   bool? outdoorSpace;
   bool? grassSpace;
   String? poolType;
@@ -54,6 +55,7 @@ class Details {
     this.tvScreens,
     this.freeWifi,
     this.entertainmentGames,
+    this.gamesdetails,
     this.outdoorSpace,
     this.grassSpace,
     this.poolType,

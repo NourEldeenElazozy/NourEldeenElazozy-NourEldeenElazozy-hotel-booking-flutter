@@ -6,6 +6,7 @@ import 'package:hotel_booking/core/constants/my_images.dart';
 import 'package:hotel_booking/presentation/common_widgets/custom_button.dart';
 import 'package:hotel_booking/presentation/screen/home/home_import.dart';
 import 'package:hotel_booking/presentation/screen/home/home_model.dart';
+import 'package:hotel_booking/presentation/screen/reservation/reservation_import.dart';
 
 class VerticalView extends StatefulWidget {
   final int index;
@@ -34,19 +35,22 @@ class _VerticalViewState extends State<VerticalView> {
       children: [
         InkWell(
           onTap: () {
-            var reservation = controller.recently[widget.index]; // الوصول إلى بيانات الحجز
-            print("----------------------");
-            print(controller.recently[widget.index]["description"]);
-            print("----------------------");
-            Detail detail = Detail.fromJson(reservation);
+            print("ssss");
+            print(widget.index);
+            print("reservation --");
+            print(controller.filteredReservations[widget.index]);
+            print("reservation --");
+            //var reservation = controller.filteredReservations[widget.index]; // الوصول إلى بيانات الحجز
+            Get.to(() => Reservation(
+              reservationData: {
+                "reservations": [controller.filteredReservations[widget.index]]
+              },
+            ));
 
-            // إضافة الكائن إلى homeDetails إذا كان ذلك مطلوبًا
-            controller.homeDetails.add(detail);
 
 
             //Get.toNamed("/hotelDetail", arguments: {'data': reservation});
-            print("reservation");
-            print(reservation);
+
           },
           child: Container(
             padding: const EdgeInsets.all(12),
@@ -71,7 +75,7 @@ class _VerticalViewState extends State<VerticalView> {
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(15),
                     image: DecorationImage(
-                      image: NetworkImage("https://esteraha.ly/storage/${controller.recently[widget.index]['rest_area']['main_image']}"),
+                      image: NetworkImage("https://esteraha.ly/public/${controller.filteredReservations[widget.index]['rest_area']['main_image'].toString()}"),
                       fit: BoxFit.cover,
                     ),
                   ),
@@ -82,14 +86,14 @@ class _VerticalViewState extends State<VerticalView> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        "${controller.recently[widget.index]['rest_area']['name']}",
+                        "${controller.filteredReservations[widget.index]['rest_area']['name']}",
                         style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 16),
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                       ),
                       const SizedBox(height: 5),
                       Text(
-                        "${controller.recently[widget.index]['rest_area']['location']}",
+                        "${controller.filteredReservations[widget.index]['rest_area']['location']}",
                         style: TextStyle(
                           color: controller.themeController.isDarkMode.value ? MyColors.switchOffColor : MyColors.textPaymentInfo,
                           fontWeight: FontWeight.w400,
@@ -104,7 +108,7 @@ class _VerticalViewState extends State<VerticalView> {
                           SvgPicture.asset(MyImages.yellowStar),
                           const SizedBox(width: 5),
                           Text(
-                            "${controller.recently[widget.index]['rest_area']['rating']}", // استخدام "rating" بدلاً من "rate"
+                            "${controller.filteredReservations[widget.index]['rest_area']['rating']}", // استخدام "rating" بدلاً من "rate"
                             style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 13),
                           ),
                           const SizedBox(width: 5),
@@ -119,7 +123,7 @@ class _VerticalViewState extends State<VerticalView> {
                   crossAxisAlignment: CrossAxisAlignment.end,
                   children: [
                     Text(
-                      "${controller.recently[widget.index]['rest_area']['price']} د.ل",
+                      "${controller.filteredReservations[widget.index]['rest_area']['price']} د.ل",
                       style: TextStyle(
                         color: controller.themeController.isDarkMode.value ? MyColors.white : MyColors.primaryColor,
                         fontWeight: FontWeight.w700,
@@ -128,9 +132,11 @@ class _VerticalViewState extends State<VerticalView> {
                     ),
 
                     const SizedBox(height: 12),
+                  /*
                     InkWell(
                       onTap: () {
                         setState(() {
+                          controller.toggleFavorite(controller.filteredReservations[widget.index]['rest_area']['id']);
                           controller.bookMark.value = !controller.bookMark.value;
                         });
                       },
@@ -150,6 +156,7 @@ class _VerticalViewState extends State<VerticalView> {
                         ),
                       ),
                     ),
+                   */
                   ],
                 ),
               ],
@@ -191,6 +198,7 @@ class _HorizontalViewState extends State<HorizontalView> {
         Get.toNamed("/hotelDetail", arguments: {'data' : controller.homeDetails[widget.index]});
       },
       child: Container(
+
         padding: const EdgeInsets.all(15),
         decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(20),
@@ -209,12 +217,12 @@ class _HorizontalViewState extends State<HorizontalView> {
               width: MediaQuery.of(context).size.width,
               decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(15),
-                  image: DecorationImage(image: NetworkImage("${controller.recently[widget.index].mainImage}"), fit: BoxFit.cover)
+                  image: DecorationImage(image: NetworkImage("${controller.filteredReservations[widget.index].mainImage}"), fit: BoxFit.cover)
               ),
             ),
             const SizedBox(height: 8),
             Flexible(
-              child: Text("${controller.recently[widget.index].name}", style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 16),
+              child: Text("${controller.filteredReservations[widget.index].name}", style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 16),
                 maxLines: 1,overflow: TextOverflow.ellipsis,),
             ),
             const SizedBox(height: 5),
@@ -222,10 +230,10 @@ class _HorizontalViewState extends State<HorizontalView> {
               children: [
                 SvgPicture.asset(MyImages.yellowStar),
                 const SizedBox(width: 3),
-                Text("${controller.recently[widget.index].rating}", style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 12)),
+                Text("${controller.filteredReservations[widget.index].rating}", style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 12)),
                 const SizedBox(width: 5),
                 Flexible(
-                  child: Text("${controller.recently[widget.index].location}",
+                  child: Text("${controller.filteredReservations[widget.index].location}",
                     style: TextStyle(
                       color: controller.themeController.isDarkMode.value ? MyColors.switchOffColor : MyColors.textPaymentInfo,
                       fontWeight: FontWeight.w400,
@@ -238,7 +246,7 @@ class _HorizontalViewState extends State<HorizontalView> {
             const SizedBox(height: 5),
             Row(
               children: [
-                Text("${controller.recently[widget.index].price}", style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 18),),
+                Text("${controller.filteredReservations[widget.index].price}", style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 18),),
                 Text(" / night", style: TextStyle(color: controller.themeController.isDarkMode.value ? MyColors.switchOffColor : MyColors.textPaymentInfo, fontWeight: FontWeight.w400, fontSize: 10),),
                 const Spacer(),
                 InkWell(

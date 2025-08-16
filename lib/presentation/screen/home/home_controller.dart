@@ -20,7 +20,7 @@ class HomeController extends GetxController {
    RxList<dynamic> filteredReservations = <dynamic>[].obs;
    RxList<Detail> homeDetails = <Detail>[].obs;
    var filterListView = [].obs; // القائمة التي ستُعرض في واجهة المستخدم
-   var selectedGeoArea = "وسط البلاد".obs; // قيمة افتراضية
+   var selectedGeoArea = "".obs; // قيمة افتراضية
    var recentlyBooked = [].obs;
    var recently = [].obs;
    String? token;
@@ -30,6 +30,7 @@ class HomeController extends GetxController {
    //Map<int, bool> paymentStatusMap = {};
    RxList<bool> selectedFacilities = List.generate(MyString.facilities.length, (index) => false).obs;
    var restAreas = [].obs; // تخزين البيانات هنا
+   var fav = [].obs; // تخزين البيانات هنا
     @override
     void onInit() {
         //getRecentlyBooked();
@@ -388,7 +389,50 @@ class HomeController extends GetxController {
 
 
 
+   Future<List<dynamic>> getFavorites({
 
+
+
+     List<int>? favoriteIds,
+   }) async {
+     try {
+       isLoading.value = true;
+
+       final queryParameters = <String, dynamic>{};
+       if (favoriteIds != null && favoriteIds.isNotEmpty) {
+         queryParameters['ids[]'] = favoriteIds;
+       }
+
+
+       print("Query Parameters fav: $queryParameters");
+
+       final response = await Dio().get(
+         'https://esteraha.ly/api/rest-areas/filter',
+         queryParameters: queryParameters,
+       );
+
+       fav.clear();
+       if (response.statusCode == 200) {
+         fav.value = response.data; // تخزين البيانات في المتغير
+         print(fav.value);
+         print("Query all fav: ${fav.value}");
+         // print("Query all: ${restAreas[0]['google_maps_location']}");
+         print("response fav : ${response}");
+         return response.data;
+       } else {
+         fav.clear();
+         return response.data;
+       }
+     } catch (e) {
+       Get.snackbar('خطأ', 'حدث خطأ أثناء جلب البيانات: ');
+       print('حدث خطأ أثناء جلب س: $e');
+       return [];
+     } finally {
+       print("response.data fav");
+
+       isLoading.value = false;
+     }
+   }
 
    Future<List<dynamic>> getRestAreas({
      String? areaTypes,
@@ -401,7 +445,7 @@ class HomeController extends GetxController {
      String? geoArea,
      int? maxGuests,
      List<String>? selectedFacilities,
-     List<int>? favoriteIds,
+
    }) async {
      try {
        isLoading.value = true;
@@ -432,12 +476,10 @@ class HomeController extends GetxController {
        if (sortBy != null) {
          queryParameters["sort_by"] = sortBy;
        }
-       if (geoArea != null) {
+       if (geoArea != null && geoArea!="") {
          queryParameters["geo_area"] = geoArea;
        }
-       if (favoriteIds != null && favoriteIds.isNotEmpty) {
-         queryParameters['ids[]'] = favoriteIds;
-       }
+
        if (selectedFacilities != null) {
          for (String facility in selectedFacilities) {
            if (facilitiesMap.containsKey(facility)) {
@@ -453,17 +495,25 @@ class HomeController extends GetxController {
          queryParameters: queryParameters,
        );
 
+       restAreas.clear();
        if (response.statusCode == 200) {
-         // بدلًا من حفظ البيانات هنا، أرجعها
+         restAreas.value = response.data; // تخزين البيانات في المتغير
+         print(restAreas.value);
+         print("Query all: ${restAreas.value}");
+         // print("Query all: ${restAreas[0]['google_maps_location']}");
+         print("response: ${response}");
          return response.data;
        } else {
-         return [];
+         restAreas.clear();
+         return response.data;
        }
      } catch (e) {
        Get.snackbar('خطأ', 'حدث خطأ أثناء جلب البيانات: ');
        print('حدث خطأ أثناء جلب س: $e');
        return [];
      } finally {
+       print("response.data");
+
        isLoading.value = false;
      }
    }

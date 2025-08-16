@@ -19,7 +19,7 @@ class AllReviews {
     return AllReviews(
       id: json['id'] as int?,
       reviewerName: json['user']['name'] as String?, // افترض أن اسم المراجع يأتي من كائن User nested
-      rating: (json['rating'] as num?)?.toDouble(),
+      rating: double.tryParse(json['rating'].toString()) ?? 0.0, // <-- تحويل String الى double
       comment: json['comment'] as String?,
       imageUrl: json['user']['image_url'] as String?, // افترض أن الصورة تأتي من كائن User nested
       reviewDate: json['created_at'] as String?, // تاريخ الإنشاء من Laravel

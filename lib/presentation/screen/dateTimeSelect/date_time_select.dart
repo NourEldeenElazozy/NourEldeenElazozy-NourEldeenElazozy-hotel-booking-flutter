@@ -144,7 +144,7 @@ class _DateTimeSelectState extends State<DateTimeSelect> {
                       _showErrorSnackBar(context, "يرجى ملء جميع الحقول المطلوبة");
                     }
                   },
-                  text: MyString.continueButton,
+                  text: "إرسال طلب",
                   textSize: 16,
                   fontBold: FontWeight.w700,
                   textColor: MyColors.white,
@@ -525,65 +525,73 @@ class _DateTimeSelectState extends State<DateTimeSelect> {
                             ],
                           ),
                           const SizedBox(height: 20),
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.start,
                             children: [
-                              const Text("نوع الإقامة", style: TextStyle(fontWeight: FontWeight.w700)),
-
-                              Obx(() => Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Row(
-                                    children: [
-                                      Expanded(
-                                        child: RadioListTile<String>(
-                                          title: const Text("عائلات"),
-                                          value: "عائلات",
-                                          groupValue: controller.selectedType.value,
-                                          onChanged: (value) {
-                                            controller.selectedType.value = value!;
-                                          },
-                                          contentPadding: EdgeInsets.zero,
-                                        ),
-                                      ),
-                                      Expanded(
-                                        child: RadioListTile<String>(
-                                          title: const Text("شباب"),
-                                          value: "شباب",
-                                          groupValue: controller.selectedType.value,
-                                          onChanged: (value) {
-                                            controller.selectedType.value = value!;
-                                          },
-                                          contentPadding: EdgeInsets.zero,
-                                        ),
-                                      ),
-                                      Expanded(
-                                        child: RadioListTile<String>(
-                                          title: const Text("مناسبات"),
-                                          value: "مناسبات",
-                                          groupValue: controller.selectedType.value,
-                                          onChanged: (value) {
-                                            controller.selectedType.value = value!;
-                                          },
-                                          contentPadding: EdgeInsets.zero,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-
-                                  // شرط الفلديشن: عرض رسالة إذا لم يتم اختيار نوع الإقامة
-                                  if (controller.isSubmitted.value && controller.selectedType.value.isEmpty)
-                                    const Padding(
-                                      padding: EdgeInsets.only(right: 12.0, top: 4),
-                                      child: Text(
-                                        "يرجى اختيار نوع الإقامة",
-                                        style: TextStyle(color: Colors.red, fontSize: 12),
-                                      ),
+                              Flexible(
+                                child: RadioListTile<String>(
+                                  title: Text(
+                                    "عائلات",
+                                    overflow: TextOverflow.ellipsis,
+                                    style: TextStyle(
+                                      color: controller.themeController.isDarkMode.value
+                                          ? Colors.white
+                                          : Colors.black,
                                     ),
-                                ],
-                              )),
+                                  ),
+                                  value: "عائلات",
+                                  groupValue: controller.selectedType.value,
+                                  onChanged: (value) {
+                                    controller.selectedType.value = value!;
+                                  },
+                                  contentPadding: EdgeInsets.zero,
+                                  dense: true,
+                                ),
+                              ),
+                              Flexible(
+                                child: RadioListTile<String>(
+                                  title: Text(
+                                    "شباب",
+                                    overflow: TextOverflow.ellipsis,
+                                    style: TextStyle(
+                                      color: controller.themeController.isDarkMode.value
+                                          ? Colors.white
+                                          : Colors.black,
+                                    ),
+                                  ),
+                                  value: "شباب",
+                                  groupValue: controller.selectedType.value,
+                                  onChanged: (value) {
+                                    controller.selectedType.value = value!;
+                                  },
+                                  contentPadding: EdgeInsets.zero,
+                                  dense: true,
+                                ),
+                              ),
+                              Flexible(
+                                child: RadioListTile<String>(
+                                  title: Text(
+                                    "مناسبات",
+                                    overflow: TextOverflow.ellipsis,
+                                    style: TextStyle(
+                                      color: controller.themeController.isDarkMode.value
+                                          ? Colors.white
+                                          : Colors.black,
+                                    ),
+                                  ),
+                                  value: "مناسبات",
+                                  groupValue: controller.selectedType.value,
+                                  onChanged: (value) {
+                                    controller.selectedType.value = value!;
+                                  },
+                                  contentPadding: EdgeInsets.zero,
+                                  dense: true,
+                                ),
+                              ),
                             ],
-                          ),
+                          )
+
+
 
                         ],
                       ),

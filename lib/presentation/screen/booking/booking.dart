@@ -582,7 +582,7 @@ class _BookingState extends State<Booking> with SingleTickerProviderStateMixin {
                                                     fit: BoxFit.cover,
                                                     image: NetworkImage(
 
-                                                        "https://esteraha.ly/storage/${Hocontroller.filteredReservations[index]['rest_area']['main_image']}"))),
+                                                        "https://esteraha.ly/public/${Hocontroller.filteredReservations[index]['rest_area']['main_image']}"))),
                                           ),
                                           const SizedBox(width: 10),
                                           Column(
@@ -942,6 +942,7 @@ class _BookingState extends State<Booking> with SingleTickerProviderStateMixin {
                                   // indicating which specific reservation was tapped.
                                   // If this onTap is inside a ListView.builder, 'index' would be the builder's index.
                                   if (Hocontroller.filteredReservations.isNotEmpty) {
+
                                     Get.to(() => Reservation(
                                       reservationData: {
                                         "reservations": [Hocontroller.filteredReservations[index]]

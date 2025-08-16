@@ -6,6 +6,7 @@ import 'package:hotel_booking/presentation/screen/home/home_import.dart';
 
 import '../../../core/constants/my_strings.dart';
 import '../../common_widgets/appbar.dart';
-
+import 'package:photo_view/photo_view_gallery.dart';
+import 'package:photo_view/photo_view.dart';
 part 'gallery_photo_screen.dart';
 part 'gallery_photo_controller.dart';

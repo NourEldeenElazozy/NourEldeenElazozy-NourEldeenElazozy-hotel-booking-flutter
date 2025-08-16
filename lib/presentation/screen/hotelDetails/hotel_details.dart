@@ -502,12 +502,20 @@ class _HotelDetailState extends State<HotelDetail> {
                               ),
                             ),
                           const SizedBox(height: 10),
-                          titleText(MyString.galleryPhotos,
-                              controller.isDarkMode, true, () {
-                            Get.toNamed("/galleryPhoto", arguments: {
-                              'galleryPhoto': controller.detail.galleryPhotos
-                            });
-                          }),
+                          titleText(
+                            MyString.galleryPhotos,
+                            controller.isDarkMode,
+                            true,
+                                () {
+                              Get.toNamed(
+                                "/galleryPhoto",
+                                arguments: {
+                                  'galleryPhoto': controller.detail.detailsImages, // القائمة الكاملة
+                                },
+                              );
+                            },
+                          )
+
                         ],
                       ),
                     ),
@@ -529,19 +537,84 @@ class _HotelDetailState extends State<HotelDetail> {
                                   showDialog(
                                     context: context,
                                     builder: (context) {
-                                      return Dialog(
-                                        child: Container(
-                                          width: double.infinity,
-                                          height:
-                                              400, // يمكنك تعديل الارتفاع حسب الحاجة
-                                          decoration: BoxDecoration(
-                                            image: DecorationImage(
-                                              image: NetworkImage(
-                                                  "https://esteraha.ly/public/${controller.detail.detailsImages[index].toString()}"),
-                                              fit: BoxFit.cover,
+                                      PageController pageController = PageController(initialPage: index);
+                                      int totalImages = controller.detail.detailsImages.length;
+
+                                      return StatefulBuilder(
+                                        builder: (context, setState) {
+                                          int currentPage = index;
+
+                                          pageController.addListener(() {
+                                            setState(() {
+                                              currentPage = pageController.page?.round() ?? 0;
+                                            });
+                                          });
+
+                                          return Dialog(
+                                            insetPadding: const EdgeInsets.all(10),
+                                            child: Container(
+                                              color: Colors.black,
+                                              child: Stack(
+                                                children: [
+                                                  PageView.builder(
+                                                    controller: pageController,
+                                                    itemCount: totalImages,
+                                                    itemBuilder: (context, pageIndex) {
+                                                      return InteractiveViewer(
+                                                        child: Image.network(
+                                                          "https://esteraha.ly/public/${controller.detail.detailsImages[pageIndex]}",
+                                                          fit: BoxFit.contain,
+                                                        ),
+                                                      );
+                                                    },
+                                                  ),
+
+                                                  // زر إغلاق
+                                                  Positioned(
+                                                    top: 10,
+                                                    right: 10,
+                                                    child: IconButton(
+                                                      icon: const Icon(Icons.close, color: Colors.white, size: 28),
+                                                      onPressed: () => Navigator.of(context).pop(),
+                                                    ),
+                                                  ),
+
+                                                  // زر السابق
+
+                                                    Positioned(
+                                                      left: 10,
+                                                      top: MediaQuery.of(context).size.height * 0.4,
+                                                      child: IconButton(
+                                                        icon: const Icon(Icons.arrow_back_ios, color: Colors.white, size: 32),
+                                                        onPressed: () {
+                                                          pageController.previousPage(
+                                                            duration: const Duration(milliseconds: 300),
+                                                            curve: Curves.easeInOut,
+                                                          );
+                                                        },
+                                                      ),
+                                                    ),
+
+                                                  // زر التالي
+
+                                                    Positioned(
+                                                      right: 10,
+                                                      top: MediaQuery.of(context).size.height * 0.4,
+                                                      child: IconButton(
+                                                        icon: const Icon(Icons.arrow_forward_ios, color: Colors.white, size: 32),
+                                                        onPressed: () {
+                                                          pageController.nextPage(
+                                                            duration: const Duration(milliseconds: 300),
+                                                            curve: Curves.easeInOut,
+                                                          );
+                                                        },
+                                                      ),
+                                                    ),
+                                                ],
+                                              ),
                                             ),
-                                           ),
-                                        ),
+                                          );
+                                        },
                                       );
                                     },
                                   );
@@ -553,12 +626,14 @@ class _HotelDetailState extends State<HotelDetail> {
                                     borderRadius: BorderRadius.circular(15),
                                     image: DecorationImage(
                                       image: NetworkImage(
-                                          "https://esteraha.ly/public/${controller.detail.detailsImages[index].toString()}"),
+                                        "https://esteraha.ly/public/${controller.detail.detailsImages[index]}",
+                                      ),
                                       fit: BoxFit.cover,
                                     ),
                                   ),
                                 ),
                               ),
+
                               const SizedBox(width: 15),
                             ],
                           );
@@ -621,6 +696,11 @@ class _HotelDetailState extends State<HotelDetail> {
                                       : "غير متوفر",
                                 },
                                 {
+                                  "icon": Icons.kitchen,
+                                  "label": "معدات المطبخ",
+                                  "value": controller.detail.details[0].kitchenContents
+                                },
+                                {
                                   "icon": Icons.bathtub,
                                   "label": "حمامات داخلية",
                                   "value":
@@ -672,14 +752,16 @@ class _HotelDetailState extends State<HotelDetail> {
                                 margin: const EdgeInsets.all(
                                     8), // إضافة هوامش بين العناصر
                                 decoration: BoxDecoration(
-                                  color: Colors.white, // لون الخلفية
-                                  borderRadius: BorderRadius.circular(
-                                      10), // زوايا مستديرة
-                                  boxShadow: const [
+                                  color: controller.themeController.isDarkMode.value
+                                      ? Colors.grey[850] // لون الخلفية عند الوضع الداكن
+                                      : Colors.white,    // اللون الافتراضي للوضع العادي
+                                  borderRadius: BorderRadius.circular(12),
+                                  boxShadow: [
                                     BoxShadow(
-                                      color: Colors.black26,
-                                      blurRadius: 5,
-                                      offset: Offset(2, 2), // ظل بسيط
+                                      color: controller.themeController.isDarkMode.value
+                                          ? Colors.transparent
+                                          : Colors.grey.shade200,
+                                      blurRadius: 8,
                                     ),
                                   ],
                                 ),
@@ -814,6 +896,16 @@ class _HotelDetailState extends State<HotelDetail> {
                                       : "غير متوفر",
                                 },
                                 {
+                                  "icon": Icons.gamepad_outlined,
+                                  "label": "ألعاب ترفيهية",
+                                  "value": controller.detail.details[0]
+                                      .gamesdetails ==
+                                      null
+                                      ?"غير متوفر"
+                                      : controller.detail.details[0]
+                                      .gamesdetails.toString(),
+                                },
+                                {
                                   "icon": Icons
                                       .outdoor_grill, // أيقونة المطبخ الخارجي
                                   "label": "مطبخ خارجي",
@@ -866,14 +958,16 @@ class _HotelDetailState extends State<HotelDetail> {
                                 margin: const EdgeInsets.all(
                                     8), // إضافة هوامش بين العناصر
                                 decoration: BoxDecoration(
-                                  color: Colors.white, // لون الخلفية
-                                  borderRadius: BorderRadius.circular(
-                                      10), // زوايا مستديرة
-                                  boxShadow: const [
+                                  color: controller.themeController.isDarkMode.value
+                                      ? Colors.grey[850] // لون الخلفية عند الوضع الداكن
+                                      : Colors.white,    // اللون الافتراضي للوضع العادي
+                                  borderRadius: BorderRadius.circular(12),
+                                  boxShadow: [
                                     BoxShadow(
-                                      color: Colors.black26,
-                                      blurRadius: 5,
-                                      offset: Offset(2, 2), // ظل بسيط
+                                      color: controller.themeController.isDarkMode.value
+                                          ? Colors.transparent
+                                          : Colors.grey.shade200,
+                                      blurRadius: 8,
                                     ),
                                   ],
                                 ),
@@ -1180,6 +1274,19 @@ class _HotelDetailState extends State<HotelDetail> {
                                       second: 0,
                                       millisecond: 0,
                                       microsecond: 0),
+                                  daysOfWeekStyle: DaysOfWeekStyle(
+                                    weekdayStyle: TextStyle(
+                                      fontSize: 10, // حجم الخط لأيام الأسبوع العادية
+                                      fontWeight: FontWeight.normal,
+                                      color: Colors.black,
+                                    ),
+                                    weekendStyle: TextStyle(
+                                      fontSize: 10 ,// حجم الخط لأيام نهاية الأسبوع
+                                      fontWeight: FontWeight.normal,
+                                      color: Colors.red,
+                                    ),
+                                  ),
+
                                   lastDay: DateTime(DateTime.now().year, 12, 31),
                                   focusedDay: controller.focusedDay.value,
                                   calendarFormat: controller.calendarFormat.value,
@@ -1191,6 +1298,7 @@ class _HotelDetailState extends State<HotelDetail> {
                                   eventLoader: _getEventsForDay,
                                   startingDayOfWeek: StartingDayOfWeek.sunday,
                                   calendarStyle: CalendarStyle(
+
                                     outsideDaysVisible: false,
                                     weekendTextStyle: const TextStyle(color: Colors.black),
                                     selectedDecoration: BoxDecoration(
@@ -1260,6 +1368,7 @@ class _HotelDetailState extends State<HotelDetail> {
                           ),
 
                           const SizedBox(height: 15),
+                      /*
                           SizedBox(
                             height: 50,
                             child: ElevatedButton(
@@ -1290,6 +1399,7 @@ class _HotelDetailState extends State<HotelDetail> {
                                   ],
                                 )),
                           ),
+                       */
                         ],
                       ),
                     ),
