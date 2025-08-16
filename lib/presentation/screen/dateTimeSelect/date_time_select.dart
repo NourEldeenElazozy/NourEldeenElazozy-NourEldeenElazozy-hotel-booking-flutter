@@ -802,22 +802,76 @@ class _DateTimeSelectState extends State<DateTimeSelect> {
                                   ),
                                 ),
                               ),
-                              Obx(() => CheckboxListTile(
-
-                                value: controller.isTermsAccepted.value,
-                                onChanged: (value) {
-                                  controller.isTermsAccepted.value = value ?? false;
-                                },
-                                activeColor: Colors.teal,
-                                title: const Text(
-                                  "على الضيوف الكرام الالتزام بمواعيد الحضور والمغادرة، "
-                                      "المحافظة على نظافة المكان، "
-                                      "عدم الإضرار بالممتلكات الخاصة، "
-                                      "والسباحة بالملابس الخاصة بالسباحة.",
-                                  style: TextStyle(fontSize: 14, color: Colors.black87),
+                              const SizedBox(height: 12),
+                              Card(
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(16),
                                 ),
-                                controlAffinity: ListTileControlAffinity.leading,
-                              )),
+                                elevation: 4,
+                                margin: const EdgeInsets.all(12),
+                                child: Padding(
+                                  padding: const EdgeInsets.only(top: 16,right: 16),
+
+                                  child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+
+                                      // عنوان الشروط
+                                      const Text(
+                                        "شروط الإقامة",
+                                        textAlign: TextAlign.start,
+                                        style: TextStyle(
+                                          fontSize: 18,
+                                          fontWeight: FontWeight.w500,
+                                          color: Colors.black54,
+                                          fontFamily: "Tajawal",
+                                        ),
+                                      ),
+                                      const SizedBox(height: 12),
+
+                                      // نص الشروط مع Checkbox
+                                      Obx(
+                                            () => CheckboxListTile(
+                                          value: controller.isTermsAccepted.value,
+                                          onChanged: (value) {
+                                            controller.isTermsAccepted.value = value ?? false;
+                                          },
+                                          activeColor: Colors.teal,
+                                          title: RichText(
+
+                                            text: const TextSpan(
+                                              style: TextStyle(
+                                                fontSize: 15,
+
+                                                color: Colors.black87,
+                                                fontFamily: "Tajawal",
+                                              ),
+                                              children: [
+                                                TextSpan(
+                                                  text: "نرجو من ضيوفنا الكرام\n",
+                                                  style: TextStyle(fontWeight: FontWeight.bold),
+                                                ),
+                                                TextSpan(
+                                                  text:
+                                                  "الالتزام بمواعيد الحضور والمغادرة المحددة، والمحافظة على نظافة المكان وممتلكاته وعدم إحداث أي أضرار بالأثاث أو المرافق، مع ارتداء الملابس المخصصة عند استخدام المسبح ومراقبة الأطفال لضمان سلامتهم. كما يُرجى تجنب إصدار الأصوات الصاخبة أو إزعاج الجيران أو إيقاف السيارات أمام منازلهم، وعدم التدخين في الأماكن المغلقة أو استخدام الاستراحة في أنشطة مخالفة للقانون أو الآداب العامة. في حال حدوث أي أضرار، يتحمل الضيف تكاليف الإصلاح كاملة، ويُعفى صاحب الاستراحة من المسؤولية عن فقدان المقتنيات الشخصية، وله الحق في إنهاء الإقامة عند مخالفة هذه الشروط دون استرداد المبلغ المدفوع.",
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                          controlAffinity: ListTileControlAffinity.leading,
+                                        ),
+                                      ),
+                                      const SizedBox(height: 16),
+
+                                      // زر التواصل على الواتس
+
+                                    ],
+                                  ),
+                                ),
+                              ),
+
+
+
                               const SizedBox(height: 12),
 
 

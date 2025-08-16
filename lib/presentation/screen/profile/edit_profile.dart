@@ -40,11 +40,20 @@ class _EditProfileState extends State<EditProfile> {
     setState(() {
       controller.nameController.text = prefs.getString('userName') ?? '';
     });
+    String gender = prefs.getString('gender') ?? '';
+
+    if (gender.isNotEmpty && genderList.contains(gender)) {
+      controller.selectedGender = gender;
+    }
+    print("gender $gender");
+    print("userName ${prefs.getString('userName')}");
   }
+
 
   @override
   Widget build(BuildContext context) {
     //controller.selectedGender = genderList[0];
+   
     return Directionality(
       textDirection: TextDirection.rtl,
       child: Scaffold(
@@ -165,13 +174,13 @@ class _EditProfileState extends State<EditProfile> {
                     const SizedBox(height: 5),
                     Align(
                       alignment: Alignment.centerRight,
-                      child: commonDropdownButton(
+                      child: Obx(() => commonDropdownButton(
                         controller.selectedGender,
-
                         MyString.genderSelect,
                         controller.themeController.isDarkMode.value,
-                      ),
+                      )),
                     ),
+
                   ],
                 ),
               ),

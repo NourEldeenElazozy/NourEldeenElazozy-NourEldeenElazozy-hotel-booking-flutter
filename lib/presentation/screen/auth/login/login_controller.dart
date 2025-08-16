@@ -11,7 +11,7 @@ class LoginController extends GetxController {
   TextEditingController passwordController =TextEditingController();
   var isLoading = false.obs;
   var token = ''.obs;
-  var user = User(id: 0, name: '', phone: '',userType: "").obs;
+  var user = User(id: 0, name: '', phone: '',userType: "",gender: "").obs;
 
   Future<String?> getDeviceToken() async {
     try {
@@ -33,7 +33,7 @@ class LoginController extends GetxController {
       );
 
       if (response.statusCode == 200) {
-
+        print('response.data: ${response.data}');
         LoginResponse loginResponse = LoginResponse.fromJson(response.data);
         String ttoken = response.data['token'];
 
@@ -112,6 +112,7 @@ class LoginController extends GetxController {
     await prefs.setString('userName', user.name);
     await prefs.setString('userPhone', user.phone);
     await prefs.setString('user_type', user.userType);
+    await prefs.setString('gender', user.gender);
     await prefs.setInt('user_id', user.id);
   }
 }

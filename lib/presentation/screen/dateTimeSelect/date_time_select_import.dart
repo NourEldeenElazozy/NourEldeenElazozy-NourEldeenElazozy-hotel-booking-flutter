@@ -11,6 +11,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:table_calendar/table_calendar.dart';
 import 'package:dio/dio.dart' as Dio;
 import 'package:get/get.dart';
+import 'package:url_launcher/url_launcher.dart';
 import '../../../core/constants/my_colors.dart';
 import '../../../core/constants/my_images.dart';
 import 'package:intl/intl.dart' as intl;
