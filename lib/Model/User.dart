@@ -3,8 +3,10 @@ class User {
   final String name;
   final String phone;
   final String userType;
+  final String gender;
 
-  User({required this.id, required this.name, required this.phone, required this.userType});
+
+  User({required this.id, required this.name, required this.phone, required this.userType,required this.gender});
 
   factory User.fromJson(Map<String, dynamic> json) {
     return User(
@@ -12,6 +14,8 @@ class User {
       name: json['name'],
       phone: json['phone'],
       userType: json['user_type'],
+      gender: json['gender'],
+
     );
   }
 }

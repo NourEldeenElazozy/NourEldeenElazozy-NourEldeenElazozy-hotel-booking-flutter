@@ -19,7 +19,7 @@ class RegisterController extends GetxController {
   TextEditingController cityController=TextEditingController();
 
   var token = ''.obs;
-  var user = User(id: 0, name: '', phone: '',userType: "").obs;
+  var user = User(id: 0, name: '', phone: '',userType: "",gender: "").obs;
   /*
   void submit() {
     final isValid = formKey.currentState!.validate();
@@ -450,8 +450,11 @@ class RegisterController extends GetxController {
       if (response.statusCode == 200) {
         // حفظ البيانات في SharedPreferences فقط بعد نجاح التحديث
         await prefs.setString('userName', nameController.text);
+        await prefs.setString('userName', nameController.text);
         await prefs.setString('userPhone', phoneController.text);
         await prefs.setString('userMobile', mobileNumberController.text);
+        await prefs.setString('gender',    gender.value.toString());
+
         print(" response.statusCode ${response.data}");
 
 
@@ -480,5 +483,6 @@ Future<void> _storeData(String token, User user) async {
   await prefs.setString('userName', user.name);
   await prefs.setString('userPhone', user.phone);
   await prefs.setString('user_type', user.userType);
+  await prefs.setString('gender', user.gender);
   await prefs.setInt('user_id', user.id);
 }
