@@ -345,14 +345,19 @@ class HomeController extends GetxController {
              'Accept': 'application/json',
            },
          ),
-         data: {
+
+         queryParameters: {
            'type': isHost ? 'host' : 'user',
          },
        );
-
+       print("Request Query: ${{
+         'type': isHost ? 'host' : 'user'
+       }}");
        if (response.statusCode == 200) {
          print("response.data5");
          print(response.data);
+         print("response.data5");
+
          _allReservations = response.data['reservations']; // تخزين في القائمة الأصلية
 
          // **الجزء المعدل: استخراج الاستراحات الفريدة من الحجوزات باستخدام Map**
