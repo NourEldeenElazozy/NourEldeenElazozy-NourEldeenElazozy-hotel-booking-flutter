@@ -68,207 +68,210 @@ class _PackagesScreenState extends State<PackagesScreen> {
   Widget build(BuildContext context) {
 
     controller.fetchPackages();
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text(
-          'اختر الباقة المناسبة',
-          style: TextStyle(
-            fontSize: 20,
-            fontWeight: FontWeight.bold,
-            fontFamily: 'Tajawal',
+    return Directionality(
+      textDirection: TextDirection.rtl,
+      child: Scaffold(
+        appBar: AppBar(
+          title: const Text(
+            'اختر الباقة المناسبة',
+            style: TextStyle(
+              fontSize: 20,
+              fontWeight: FontWeight.bold,
+              fontFamily: 'Tajawal',
 
+            ),
           ),
+          centerTitle: true,
+          backgroundColor: MyColors.primaryColor,
+          elevation: 0,
         ),
-        centerTitle: true,
-        backgroundColor: MyColors.primaryColor,
-        elevation: 0,
-      ),
-      body: Obx(() {
-        if (controller.isLoading.value) {
-          return const Center(child: CircularProgressIndicator());
-        }
+        body: Obx(() {
+          if (controller.isLoading.value) {
+            return const Center(child: CircularProgressIndicator());
+          }
 
-        return Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
-            children: [
-              const Text(
-                'الباقات',
-                style: TextStyle(
-                  fontSize: 24,
-                  fontWeight: FontWeight.bold,
-                  fontFamily: 'Tajawal',
-                  color: Colors.black,
+          return Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Column(
+              children: [
+                const Text(
+                  'الباقات',
+                  style: TextStyle(
+                    fontSize: 24,
+                    fontWeight: FontWeight.bold,
+                    fontFamily: 'Tajawal',
+                    color: Colors.black,
+                  ),
                 ),
-              ),
-              const SizedBox(height: 16),
-              Expanded(
-                child: ListView.builder(
-                  itemCount: controller.packages.length,
-                  itemBuilder: (context, index) {
-                    final pkg = controller.packages[index];
-                    double totalForPackage = 0;
+                const SizedBox(height: 16),
+                Expanded(
+                  child: ListView.builder(
+                    itemCount: controller.packages.length,
+                    itemBuilder: (context, index) {
+                      final pkg = controller.packages[index];
+                      double totalForPackage = 0;
 
-                    double price=0;
-                    for (var item in unpaidData) {
-                      double price = double.parse(item['price'].toString());
-                      double singleTotal = calculateTotalPrice(price, pkg.duration, double.parse(pkg.percentage));
-                      totalForPackage += singleTotal;
-                    }
+                      double price=0;
+                      for (var item in unpaidData) {
+                        double price = double.parse(item['price'].toString());
+                        double singleTotal = calculateTotalPrice(price, pkg.duration, double.parse(pkg.percentage));
+                        totalForPackage += singleTotal;
+                      }
 
-                    final isSelected = selectedIndex == index;
+                      final isSelected = selectedIndex == index;
 
 
-                    return GestureDetector(
-                      onTap: () {
-                        selectedIndex.value = index; // تحديث
+                      return GestureDetector(
+                        onTap: () {
+                          selectedIndex.value = index; // تحديث
 
-                        total = totalForPackage; // التوتال النهائي
-                        print("calculateTotalPrice $total ");
-                        // يمكنك إضافة منطق إضافي هنا عند اختيار باقة
-                      },
-                      child: AnimatedContainer(
-                        duration: const Duration(milliseconds: 300),
-                        margin: const EdgeInsets.symmetric(vertical: 8),
-                        padding: const EdgeInsets.all(12),
-                        decoration: BoxDecoration(
-                          gradient: LinearGradient(
-                            colors: isSelected
-                                ? [MyColors.primaryColor, MyColors.primaryColor]
-                                : [MyColors.tealColor, MyColors.tealColor],
-                            begin: Alignment.topRight,
-                            end: Alignment.bottomLeft,
+                          total = totalForPackage; // التوتال النهائي
+                          print("calculateTotalPrice $total ");
+                          // يمكنك إضافة منطق إضافي هنا عند اختيار باقة
+                        },
+                        child: AnimatedContainer(
+                          duration: const Duration(milliseconds: 300),
+                          margin: const EdgeInsets.symmetric(vertical: 8),
+                          padding: const EdgeInsets.all(12),
+                          decoration: BoxDecoration(
+                            gradient: LinearGradient(
+                              colors: isSelected
+                                  ? [MyColors.primaryColor, MyColors.primaryColor]
+                                  : [MyColors.tealColor, MyColors.tealColor],
+                              begin: Alignment.topRight,
+                              end: Alignment.bottomLeft,
+                            ),
+                            borderRadius: BorderRadius.circular(16),
+                            border: isSelected
+                                ? Border.all(color: MyColors.primaryColor, width: 2)
+                                : null,
+                            boxShadow: [
+                              const BoxShadow(
+                                color: Colors.black12,
+                                blurRadius: 0.50,
+                                offset: Offset(0, 2),
+                              ),
+                            ],
                           ),
-                          borderRadius: BorderRadius.circular(16),
-                          border: isSelected
-                              ? Border.all(color: MyColors.primaryColor, width: 2)
-                              : null,
-                          boxShadow: [
-                            const BoxShadow(
-                              color: Colors.black12,
-                              blurRadius: 0.50,
-                              offset: Offset(0, 2),
-                            ),
-                          ],
-                        ),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            Text(
-                              pkg.name,
-                              style: TextStyle(
-                                fontSize: 20,
-                                fontWeight: FontWeight.bold,
-                                fontFamily: 'Tajawal',
-                                color: isSelected ? Colors.blueGrey : Colors.white,
-                              ),
-                              textAlign: TextAlign.right,
-                            ),
-                            const SizedBox(height: 6),
-                           // Text('السعر: \$${pkg.price.toStringAsFixed(2)}', style: TextStyle(color: Colors.white)),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-
-                              Text('المدة: ${_getDurationText(pkg.duration)}', style: const TextStyle(color: Colors.white)),
-                                const SizedBox(width: 5),
-                                const Icon(Icons.access_time, color: Colors.white),
-                            ],),
-
-
-
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-
-
-                                Text(' عمولة إشتراك: ${pkg.percentage}', style: const TextStyle(color: Colors.white)),
-                                const SizedBox(width: 5),
-                                const Icon(Icons.percent, color: Colors.white),
-                              ],
-                            ),
-                            Container(
-                              margin: const EdgeInsets.symmetric(vertical: 8),
-                              padding: const EdgeInsets.all(10),
-                              decoration: BoxDecoration(
-                                color: Colors.white,
-                                borderRadius: BorderRadius.circular(12),
-                              ),
-                              child: Text(
-                                'إجمالي الدفع: ${totalForPackage.toStringAsFixed(2)} د.ل',
-                                style: const TextStyle(
-                                  fontSize: 14,
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              Text(
+                                pkg.name,
+                                style: TextStyle(
+                                  fontSize: 20,
                                   fontWeight: FontWeight.bold,
                                   fontFamily: 'Tajawal',
+                                  color: isSelected ? Colors.blueGrey : Colors.white,
+                                ),
+                                textAlign: TextAlign.right,
+                              ),
+                              const SizedBox(height: 6),
+                             // Text('السعر: \$${pkg.price.toStringAsFixed(2)}', style: TextStyle(color: Colors.white)),
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
 
+                                Text('المدة: ${_getDurationText(pkg.duration)}', style: const TextStyle(color: Colors.white)),
+                                  const SizedBox(width: 5),
+                                  const Icon(Icons.access_time, color: Colors.white),
+                              ],),
+
+
+
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+
+
+                                  Text(' عمولة إشتراك: ${pkg.percentage}', style: const TextStyle(color: Colors.white)),
+                                  const SizedBox(width: 5),
+                                  const Icon(Icons.percent, color: Colors.white),
+                                ],
+                              ),
+                              Container(
+                                margin: const EdgeInsets.symmetric(vertical: 8),
+                                padding: const EdgeInsets.all(10),
+                                decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  borderRadius: BorderRadius.circular(12),
+                                ),
+                                child: Text(
+                                  'إجمالي الدفع: ${totalForPackage.toStringAsFixed(2)} د.ل',
+                                  style: const TextStyle(
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.bold,
+                                    fontFamily: 'Tajawal',
+
+                                  ),
                                 ),
                               ),
-                            ),
-                          ],
+                            ],
+                          ),
                         ),
-                      ),
-                    );
-                  },
+                      );
+                    },
+                  ),
                 ),
-              ),
-              const SizedBox(height: 16),
+                const SizedBox(height: 16),
 
-              ElevatedButton(
-                onPressed: selectedIndex.value != null
-                    ? () {
-                  final selectedPkg = controller.packages[selectedIndex.value!];
-                  Get.toNamed("/paymentChoice");
-                  // تنفيذ الدفع أو الانتقال للخطوة التالية
-                  print('تم اختيار الباقة: ${selectedPkg.id}');
+                ElevatedButton(
+                  onPressed: selectedIndex.value != null
+                      ? () {
+                    final selectedPkg = controller.packages[selectedIndex.value!];
+                    Get.toNamed("/paymentChoice");
+                    // تنفيذ الدفع أو الانتقال للخطوة التالية
+                    print('تم اختيار الباقة: ${selectedPkg.id}');
 
-                }
-                    : null,
-                style: ElevatedButton.styleFrom(
+                  }
+                      : null,
+                  style: ElevatedButton.styleFrom(
 
+                  ),
+                  child: const Text(
+                    'متابعة الدفع',
+                    style: TextStyle(fontFamily: 'Tajawal', fontWeight: FontWeight.bold, color: Colors.white),
+                  ),
                 ),
-                child: const Text(
-                  'متابعة الدفع',
-                  style: TextStyle(fontFamily: 'Tajawal', fontWeight: FontWeight.bold, color: Colors.white),
-                ),
-              ),
-            ],
+              ],
+            ),
+          );
+        }),
+
+
+
+
+
+        floatingActionButton: selectedIndex != null
+            ? FloatingActionButton.extended(
+          onPressed: () {
+            MyString.duration = 0;
+            MyString.commission_rate= 0;
+            MyString.packageId= 0;
+
+
+
+
+            final selectedPkg = controller.packages[selectedIndex.value!];
+            final durationKey = selectedPkg.duration;
+            // تنفيذ الدفع أو الانتقال للخطوة التالية
+            print('السعر الإجمالي: $total');
+            MyString.commission_rate= double.parse(selectedPkg.percentage);
+            MyString.packageId= selectedPkg.id;
+            MyString.duration = daysInMonth[durationKey] ?? 0;
+            Get.toNamed("/paymentChoice",arguments: {'data': total,'unpaidData': unpaidData});
+            print('تم اختيار الباقةs: ${MyString.duration}');
+          },
+          label: const Text(
+            'متابعة الدفع',
+            style: TextStyle(fontFamily: 'Tajawal', fontWeight: FontWeight.bold,color: MyColors.tealColor),
           ),
-        );
-      }),
-
-
-
-
-
-  floatingActionButton: selectedIndex != null
-          ? FloatingActionButton.extended(
-        onPressed: () {
-          MyString.duration = 0;
-          MyString.commission_rate= 0;
-          MyString.packageId= 0;
-
-
-
-
-          final selectedPkg = controller.packages[selectedIndex.value!];
-          final durationKey = selectedPkg.duration;
-          // تنفيذ الدفع أو الانتقال للخطوة التالية
-          print('السعر الإجمالي: $total');
-          MyString.commission_rate= double.parse(selectedPkg.percentage);
-          MyString.packageId= selectedPkg.id;
-          MyString.duration = daysInMonth[durationKey] ?? 0;
-          Get.toNamed("/paymentChoice",arguments: {'data': total,'unpaidData': unpaidData});
-          print('تم اختيار الباقةs: ${MyString.duration}');
-        },
-        label: const Text(
-          'متابعة الدفع',
-          style: TextStyle(fontFamily: 'Tajawal', fontWeight: FontWeight.bold,color: MyColors.tealColor),
-        ),
-        icon: const Icon(Icons.payment),
-        backgroundColor: MyColors.primaryColor,
-      )
-          : null,
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
+          icon: const Icon(Icons.payment),
+          backgroundColor: MyColors.primaryColor,
+        )
+            : null,
+        floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
+      ),
     );
   }
 }
@@ -385,4 +388,6 @@ double calculateTotalPrice(double price, String duration, double percentage) {
 
   // حساب السعر الإجمالي
   return price * percentageDecimal * days;
+
+
 }

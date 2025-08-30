@@ -10,7 +10,8 @@ import 'package:hotel_booking/presentation/screen/profile/profile_import.dart';
 import 'package:hotel_booking/presentation/screen/search/search_import.dart';
 
 class BottomBar extends StatefulWidget {
-  const BottomBar({super.key});
+  final int initialIndex;
+  const BottomBar({super.key, this.initialIndex = 0});
 
   @override
   State<BottomBar> createState() => _BottomBarState();
@@ -23,6 +24,7 @@ class _BottomBarState extends State<BottomBar> {
   @override
   void initState() {
     controller = Get.put(BottomBarController());
+    controller.selectedBottomTab.value = widget.initialIndex; // هنا التهيئة
     super.initState();
   }
 

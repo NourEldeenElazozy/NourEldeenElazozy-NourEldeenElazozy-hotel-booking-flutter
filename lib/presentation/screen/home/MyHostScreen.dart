@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:hotel_booking/Model/RestAreas.dart';
 import 'package:hotel_booking/core/constants/my_colors.dart';
+import 'package:hotel_booking/presentation/common_widgets/bottom_navigation_bar.dart';
 import 'package:hotel_booking/presentation/screen/home/home_import.dart';
 import 'package:hotel_booking/presentation/screen/home/home_model.dart';
 import 'package:intl/intl.dart' as intl ;
@@ -38,7 +39,14 @@ class MySotingScreen extends StatelessWidget {
           centerTitle: true,
           backgroundColor: MyColors.primaryColor,
           elevation: 0,
+          leading: IconButton(
+            icon: const Icon(Icons.arrow_back),
+            onPressed: () {
+              Get.offAll(() => const BottomBar(initialIndex: 2));
+            },
+          ),
         ),
+
         body: FutureBuilder<int>(
           future: _loadUserId(),
           builder: (context, snapshot) {
@@ -60,7 +68,7 @@ class MySotingScreen extends StatelessWidget {
                 controller.paymentStatusMap.value = await controller.checkPaymentStatus(ids);
               }),
               builder: (context, snapshot) {
-                if (controller.isLoading.value) {
+                if (controller.isLoading2.value) {
                   return const Center(child: CircularProgressIndicator());
                 }
 
@@ -105,7 +113,7 @@ class MySotingScreen extends StatelessWidget {
                                         ClipRRect(
                                           borderRadius: BorderRadius.circular(12),
                                           child: Image.network(
-                                            "https://esteraha.ly/storage/${restArea["main_image"]}",
+                                            "https://esteraha.ly/public/${restArea["main_image"]}",
                                             width: 100,
                                             height: 100,
                                             fit: BoxFit.cover,
@@ -154,7 +162,32 @@ class MySotingScreen extends StatelessWidget {
                                                 ),
                                               ),
                                               const SizedBox(height: 8), // مسافة بين الأزرار
+                                              if (!isPaid) // يظهر فقط إذا كانت الاستراحة غير مدفوعة
+                                                Align(
+                                                  alignment: Alignment.centerLeft,
+                                                  child: ElevatedButton.icon(
+                                                    onPressed: () {
+                                                      // استدعاء دالة الحذف
+                                                      controller.deleteRestArea(restArea["id"] as int);
+                                                    },
+                                                    icon: const Icon(Icons.delete, color: Colors.white, size: 20),
+                                                    label: const Text(
+                                                      'حذف',
+                                                      style: TextStyle(
+                                                        color: Colors.white,
+                                                        fontSize: 12,
+                                                        fontFamily: 'Tajawal',
+                                                      ),
+                                                    ),
+                                                    style: ElevatedButton.styleFrom(
+                                                      backgroundColor: Colors.red, // لون أحمر للحذف
+                                                      padding: const EdgeInsets.symmetric(horizontal: 50, vertical: 8),
+                                                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                                                    ),
+                                                  ),
+                                                ),
                                               if (isPaid)
+                                             /*
                                               Align(
                                                 alignment: Alignment.centerLeft,
                                                 child: OutlinedButton.icon(
@@ -177,6 +210,7 @@ class MySotingScreen extends StatelessWidget {
                                                   ),
                                                 ),
                                               ),
+                                              */
                                               const SizedBox(height: 8),
                                               if (isPaid)
                                                 Align(

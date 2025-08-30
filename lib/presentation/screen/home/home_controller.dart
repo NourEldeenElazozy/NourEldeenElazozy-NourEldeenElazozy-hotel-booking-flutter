@@ -9,7 +9,10 @@ class HomeController extends GetxController {
    RxInt selectedButton = 0.obs;
    RxBool bookMark = false.obs;
    RxInt selectedItem = 0.obs;
+   RxBool isLoading2 = true.obs;
    RxBool isLoading = true.obs;
+   RxBool isbookLoading = false.obs;
+
    var passingStatus = ''.obs; // لتخزين الفلتر الحالي
    var reservations = [].obs; // متغير لتخزين الحجوزات
    //var filteredReservations = [].obs;
@@ -36,7 +39,7 @@ class HomeController extends GetxController {
         //getRecentlyBooked();
         fetchRecentlyBooked(); // جلب البيانات عند بدء التطبيق
         getReservations();
-        getRestAreas();
+        //getRestAreas();
         loadFavoritesFromPrefs();
       super.onInit();
    }
@@ -51,7 +54,38 @@ class HomeController extends GetxController {
      print(favoriteIds);
    }
 
+   Future<void> deleteRestArea(int restAreaId) async {
+     try {
+       isLoading.value = true;
+       final SharedPreferences prefs = await SharedPreferences.getInstance();
+       token = prefs.getString('token');
 
+       final response = await Dio().delete(
+         'https://esteraha.ly/api/rest_areas/$restAreaId', // ✅ استبدل هذا بعنوان URL الصحيح للحذف
+         options: Options(
+           headers: {
+             'Authorization': 'Bearer $token',
+             'Accept': 'application/json',
+           },
+         ),
+       );
+
+       if (response.statusCode == 200) {
+         // 1. إزالة الاستراحة من القائمة المحلية
+         restAreas.removeWhere((item) => item["id"] == restAreaId);
+         // 2. إزالة حالة الدفع من Map
+         paymentStatusMap.remove(restAreaId);
+
+         Get.snackbar("تم بنجاح", "تم حذف الاستراحة بنجاح.");
+       } else {
+         Get.snackbar("خطأ", "فشل في حذف الاستراحة: ${response.statusCode}");
+       }
+     } catch (e) {
+       Get.snackbar("خطأ", "حدث خطأ أثناء الحذف: $e");
+     } finally {
+       isLoading.value = false;
+     }
+   }
    Future<void> _saveFavoritesToPrefs() async {
      final prefs = await SharedPreferences.getInstance();
      // SharedPreferences لا يدعم List<int> مباشرة، فنحولها إلى List<String>
@@ -326,7 +360,7 @@ class HomeController extends GetxController {
    */
    Future<void> getReservations({bool isHost = false}) async {
      try {
-       isLoading.value = true;
+       isbookLoading.value = true;
        final SharedPreferences prefs = await SharedPreferences.getInstance();
        token = prefs.getString('token');
        String? userType = prefs.getString('user_type');
@@ -387,7 +421,7 @@ class HomeController extends GetxController {
      } catch (e) {
        print('حدث خطأ أثناء جلب البيانات: $e');
      } finally {
-       isLoading.value = false;
+       isbookLoading.value = false;
      }
    }
 
@@ -453,7 +487,7 @@ class HomeController extends GetxController {
 
    }) async {
      try {
-       isLoading.value = true;
+       isLoading2.value = true;
 
        final queryParameters = <String, dynamic>{};
 
@@ -519,7 +553,7 @@ class HomeController extends GetxController {
      } finally {
        print("response.data");
 
-       isLoading.value = false;
+       isLoading2.value = false;
      }
    }
 
@@ -551,7 +585,7 @@ class HomeController extends GetxController {
        recently.value =response.data;
 
        print("recently booked: $recently");
-       print(recently[0]['name']);
+       //print(recently[0]['name']);
      } catch (e) {
        print("Error fetching recently booked: $e");
      } finally {

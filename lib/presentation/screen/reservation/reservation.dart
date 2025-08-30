@@ -69,9 +69,11 @@ class _ReservationState extends State<Reservation> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               // Rest Area Details
+
               Card(
                 elevation: 8,
                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+
                 child: Padding(
                   padding: const EdgeInsets.all(20.0),
                   child: Column(
@@ -108,7 +110,7 @@ class _ReservationState extends State<Reservation> {
                       const SizedBox(height: 15),
                       _buildDetailRow(
                         icon: Icons.location_on,
-                        label: 'الموقع',
+                        label: 'العنوان او اقرب نقطة دالة',
                         value: restArea['location'],
                       ),
                       _buildDetailRow(
@@ -209,6 +211,8 @@ class _ReservationState extends State<Reservation> {
                                   ? 'مكتملة'
                                   : reservationStatus == 'canceled'
                                   ? 'ملغاة'
+                                  : reservationStatus == 'confirmed'
+                                  ? 'مؤكد'
                                   : 'غير معروف',
                               style: const TextStyle(
                                 color: Colors.white,
@@ -226,6 +230,7 @@ class _ReservationState extends State<Reservation> {
               const SizedBox(height: 25),
 
               // User Details
+              if (reservation['accommodation_type'] != 'حجز خارجي')
               Card(
                 elevation: 8,
                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
@@ -246,18 +251,18 @@ class _ReservationState extends State<Reservation> {
                       _buildDetailRow(
                         icon: Icons.person_outline,
                         label: 'الاسم',
-                        value: user['name'],
+                        value: user?['name'] ?? 'غير متوفر',
                       ),
                       _buildDetailRow(
                         iswatss: true,
                         icon: Icons.phone,
                         label: 'رقم الهاتف',
-                        value: user['phone'],
+                        value: user?['phone']?? 'غير متوفر',
                       ),
                       _buildDetailRow(
                         icon: Icons.location_city,
                         label: 'المدينة',
-                        value: user['city'] ?? 'غير متوفر',
+                        value: user?['city'] ?? 'غير متوفر',
                       ),
                       _buildDetailRow(
                         icon: Icons.cake,

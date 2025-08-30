@@ -25,78 +25,84 @@ class _PaymentChoiceState extends State<PaymentChoice> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: const CustomFullAppBar(title: MyString.payment),
-      bottomNavigationBar: Container(
-        height: 90,
-        padding: const EdgeInsets.all(15),
-        child:
-        Button(
-          onpressed: () {
+    return Directionality(
+      textDirection: TextDirection.rtl,
+      child: Scaffold(
+        appBar: const CustomFullAppBar(title: MyString.payment),
+        bottomNavigationBar: Container(
+          height: 90,
+          padding: const EdgeInsets.all(15),
+          child:
+          Button(
+            onpressed: () {
 
-            controller.price.value=double.parse(args['data'].toString());
+              controller.price.value = double.parse(args['data'].toString()).roundToDouble();
 
-            print("objects ${controller.price.value}");
-            if (args != null && args['unpaidData'] != null) {
-              controller.unpaidData = List<Map<String, dynamic>>.from(args['unpaidData']);
-              print('Received unpaid data: ${ controller.unpaidData}');
-            }
-            return controller.paymentContinue(context);
-          },
-          text: MyString.continueButton,
-          shadowColor: controller.themeController.isDarkMode.value ? Colors.transparent : MyColors.buttonShadowColor,
+              print("objects ${controller.price.value}");
+
+              if (args != null && args['unpaidData'] != null) {
+                controller.unpaidData = List<Map<String, dynamic>>.from(args['unpaidData']);
+                print('Received unpaid data: ${controller.unpaidData}');
+              }
+
+              return controller.paymentContinue(context);
+
+            },
+            text: MyString.continueButton,
+            shadowColor: controller.themeController.isDarkMode.value ? Colors.transparent : MyColors.buttonShadowColor,
+          ),
         ),
-      ),
-      body: Padding(
-        padding: const EdgeInsets.all(15),
-        child: Column(
-          children: [
+        body: Padding(
+          padding: const EdgeInsets.all(15),
+          child: Column(
+            children: [
 
-            const SizedBox(height: 30),
-            commonCancelBooking(1, MyImages.money, MyString.cash, controller.themeController.isDarkMode.value),
-            const SizedBox(height: 20),
-            commonCancelBooking(2, MyImages.tlync, MyString.tlync, controller.themeController.isDarkMode.value),
-            const SizedBox(height: 20),
-     /*
-            InkWell(
-              onTap: () {
-                controller.selectPayment.value = 3;
-                controller.paymentImage.value = MyImages.applePay;
-                controller.paymentType.value = MyString.applePay;
-              },
-              child: Container(
-                padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
-                decoration: BoxDecoration(
-                  color: controller.themeController.isDarkMode.value ? MyColors.darkTextFieldColor : MyColors.white,
-                  borderRadius: BorderRadius.circular(15),
-                ),
-                child: Row(
-                  children: [
-                    SvgPicture.asset(MyImages.applePay, colorFilter: ColorFilter.mode(controller.themeController.isDarkMode.value ? MyColors.white : MyColors.black , BlendMode.srcIn),),
-                    const SizedBox(width: 12),
-                    const Text(MyString.applePay, style: TextStyle(fontWeight: FontWeight.w700, fontSize: 16)),
-                    const Spacer(),
-                    Obx(() => Radio(
-                      value: 3,
-                      groupValue: controller.selectPayment.value,
-                      activeColor: controller.themeController.isDarkMode.value ? Colors.white : Colors.black,
-                      fillColor: MaterialStatePropertyAll(controller.themeController.isDarkMode.value ? Colors.white : Colors.black),
-                      onChanged: (value) {
-                        controller.selectPayment.value = value!;
-                        controller.paymentImage.value = MyImages.applePay;
-                        controller.paymentType.value = MyString.applePay;
-                      },
-                    ),),
-                  ],
+              const SizedBox(height: 30),
+              commonCancelBooking(1, MyImages.money, MyString.cash, controller.themeController.isDarkMode.value),
+              const SizedBox(height: 20),
+              commonCancelBooking(2, MyImages.tlync, MyString.tlync, controller.themeController.isDarkMode.value),
+              const SizedBox(height: 20),
+       /*
+              InkWell(
+                onTap: () {
+                  controller.selectPayment.value = 3;
+                  controller.paymentImage.value = MyImages.applePay;
+                  controller.paymentType.value = MyString.applePay;
+                },
+                child: Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
+                  decoration: BoxDecoration(
+                    color: controller.themeController.isDarkMode.value ? MyColors.darkTextFieldColor : MyColors.white,
+                    borderRadius: BorderRadius.circular(15),
+                  ),
+                  child: Row(
+                    children: [
+                      SvgPicture.asset(MyImages.applePay, colorFilter: ColorFilter.mode(controller.themeController.isDarkMode.value ? MyColors.white : MyColors.black , BlendMode.srcIn),),
+                      const SizedBox(width: 12),
+                      const Text(MyString.applePay, style: TextStyle(fontWeight: FontWeight.w700, fontSize: 16)),
+                      const Spacer(),
+                      Obx(() => Radio(
+                        value: 3,
+                        groupValue: controller.selectPayment.value,
+                        activeColor: controller.themeController.isDarkMode.value ? Colors.white : Colors.black,
+                        fillColor: MaterialStatePropertyAll(controller.themeController.isDarkMode.value ? Colors.white : Colors.black),
+                        onChanged: (value) {
+                          controller.selectPayment.value = value!;
+                          controller.paymentImage.value = MyImages.applePay;
+                          controller.paymentType.value = MyString.applePay;
+                        },
+                      ),),
+                    ],
+                  ),
                 ),
               ),
-            ),
-            const SizedBox(height: 30),
-            commonTitle(MyString.payDebitCreditCard, MyString.changeCard, controller.themeController.isDarkMode.value),
-            const SizedBox(height: 30),
-            commonCancelBooking(4, MyImages.cardTypeSvg, MyString.cardNumberShow, controller.themeController.isDarkMode.value),
-      */
-          ],
+              const SizedBox(height: 30),
+              commonTitle(MyString.payDebitCreditCard, MyString.changeCard, controller.themeController.isDarkMode.value),
+              const SizedBox(height: 30),
+              commonCancelBooking(4, MyImages.cardTypeSvg, MyString.cardNumberShow, controller.themeController.isDarkMode.value),
+        */
+            ],
+          ),
         ),
       ),
     );

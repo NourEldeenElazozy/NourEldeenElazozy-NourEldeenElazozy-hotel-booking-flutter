@@ -160,9 +160,12 @@ if (args != null && args['isEdit'] == true && args['restAreaData'] != null) {
   _restArea.location = data["location"] ?? "";
   _restArea.description = data["description"] ?? "";
   _restArea.price = double.tryParse(data["price"].toString()) ?? 0.0;
-  _restArea.totalSpace = data["total_space"] ?? 0;
-  _restArea.internalSpace = data["internal_space"] ?? 0;
-  _restArea.maxGuests = data["max_guests"] ?? 0;
+  _restArea.totalSpace = int.tryParse(data["total_space"]?.toString() ?? "0") ?? 0;
+
+
+  _restArea.internalSpace = int.tryParse(data["internal_space"]?.toString() ?? "0") ?? 0;
+  _restArea.maxGuests = int.tryParse(data["maxGuests"]?.toString() ?? "0") ?? 0;
+
 
   // 🔴🔴🔴 إضافة طباعة تصحيح هنا 🔴�🔴
   debugPrint('DEBUG: Data from args["restAreaData"] for num_bedrooms: ${data["num_bedrooms"]}');
@@ -202,13 +205,14 @@ if (args != null && args['isEdit'] == true && args['restAreaData'] != null) {
   } else {
     _hasPool = false;
   }
+  _restArea.numDoubleBeds = int.tryParse(data["num_double_beds"]?.toString() ?? "0") ?? 0;
+  _restArea.numSingleBeds = int.tryParse(data["num_single_beds"]?.toString() ?? "0") ?? 0;
+  _restArea.numBedrooms = int.tryParse(data["numBedrooms"]?.toString() ?? "0") ?? 0;
+  _restArea.numFloors = int.tryParse(data["num_floors"]?.toString() ?? "0") ?? 0;
+  _restArea.numBathroomsIndoor = int.tryParse(data["num_bathrooms_indoor"]?.toString() ?? "0") ?? 0;
+  _restArea.numBathroomsOutdoor = int.tryParse(data["num_bathrooms_outdoor"]?.toString() ?? "0") ?? 0;
 
-  _restArea.numDoubleBeds = data["num_double_beds"] ?? 0;
-  _restArea.numSingleBeds = data["num_single_beds"] ?? 0;
-  _restArea.numBedrooms = data["num_bedrooms"] ?? 0;
-  _restArea.numFloors = data["num_floors"] ?? 0;
-  _restArea.numBathroomsIndoor = data["num_bathrooms_indoor"] ?? 0;
-  _restArea.numBathroomsOutdoor = data["num_bathrooms_outdoor"] ?? 0;
+
 
   // 🔴🔴🔴 إضافة طباعة تصحيح هنا بعد تعيين القيم لـ _restArea 🔴🔴🔴
   debugPrint('DEBUG: _restArea.numBedrooms after assignment: ${_restArea.numBedrooms}');
@@ -222,8 +226,8 @@ if (args != null && args['isEdit'] == true && args['restAreaData'] != null) {
   _restArea.entertainmentGames = _parseStringList(data["entertainment_games"]);
   _restArea.otherSpecs = data["other_specs"] ?? "";
   _restArea.gamesdetails = data["gamesdetails"] ?? "";
+  _restArea.cityId = int.tryParse(data["city_id"]?.toString() ?? "0") ?? 0;
 
-  _restArea.cityId = data["city_id"] ?? 0; // تأكد من أن city_id هو int
   _restArea.checkInTime = data["check_in_time"] ?? "00:00";
   _restArea.checkOutTime = data["check_out_time"] ?? "00:00";
   _restArea.googleMapsLocation = data["google_maps_location"] ?? "";
@@ -339,7 +343,7 @@ controller = Get.put(RestAreaController());
             centerTitle: true,
             backgroundColor: MyColors.primaryColor,
             elevation: 0,
-            iconTheme: IconThemeData(color: MyColors.primaryColor),
+           // iconTheme: IconThemeData(color: MyColors.primaryColor),
           ),
           body: Theme(
             data: Theme.of(context).copyWith(
@@ -557,7 +561,7 @@ controller = Get.put(RestAreaController());
             ),
             _buildTextFormField(
               controller: locationController,
-              'الموقع',
+              'العنوان او اقرب نقطة دالة',
               Icons.location_on,
                   (value) => _restArea.location = value!,
               validator: _requiredValidator,
@@ -568,7 +572,7 @@ controller = Get.put(RestAreaController());
               'السعر',
               Icons.attach_money,
                   (value) => _restArea.price = value,
-              validator: _requiredValidator,
+              validator: _priceValidator,
             ),
             _buildNumberField(
               controller: maxGuestsController,
@@ -954,6 +958,7 @@ controller = Get.put(RestAreaController());
           ),
           if (allDetailsImagesForDisplay.isNotEmpty) ...[ // التحقق من القائمة المدمجة
             SizedBox(height: 10),
+            //صور التفاصيل
             Wrap(
               spacing: 8,
               runSpacing: 8,
@@ -964,7 +969,7 @@ controller = Get.put(RestAreaController());
                   imageWidget = Image.file(File(imageSource.path), fit: BoxFit.cover);
                 } else if (imageSource is String && imageSource.isNotEmpty) {
                   // إذا كانت الصورة رابط URL (صورة محملة من قاعدة البيانات)
-                  imageWidget = Image.network('https://esteraha.ly/storage/$imageSource', fit: BoxFit.cover, // 🔴🔴🔴 تم التعديل هنا 🔴🔴🔴
+                  imageWidget = Image.network('https://esteraha.ly/public/$imageSource', fit: BoxFit.cover, // 🔴🔴🔴 تم التعديل هنا 🔴🔴🔴
                     errorBuilder: (context, error, stackTrace) =>
                     const Icon(Icons.broken_image, size: 40, color: Colors.red), // fallback في حالة فشل تحميل الصورة
                   );
@@ -1247,12 +1252,12 @@ controller = Get.put(RestAreaController());
           child: pickedImageFile != null // إذا كان هناك ملف XFile (صورة جديدة مختارة)
               ? Image.file(File(pickedImageFile.path), fit: BoxFit.cover)
               : (initialImageUrl != null && initialImageUrl.isNotEmpty) // وإلا، إذا كان هناك رابط URL أولي
-              ? Image.network('https://esteraha.ly/storage/$initialImageUrl', fit: BoxFit.cover,
+              ? Image.network('https://esteraha.ly/public/$initialImageUrl', fit: BoxFit.cover,
             errorBuilder: (context, error, stackTrace) => // في حالة فشل تحميل الصورة من الرابط
             Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Text("https://esteraha.ly/storage/$initialImageUrl"),
+                Text("https://esteraha.ly/public/$initialImageUrl"),
                 const Icon(Icons.broken_image, size: 40, color: Colors.red),
                 const SizedBox(height: 8),
                 Text('فشل تحميل الصورة', style: TextStyle(color: Colors.red, fontFamily: 'Tajawal')),
@@ -1350,7 +1355,26 @@ controller = Get.put(RestAreaController());
     }
     return null;
   }
+  String? _priceValidator(String? value) {
+    // التحقق من أن الحقل ليس فارغًا
+    if (value == null || value.isEmpty) {
+      return 'هذا الحقل مطلوب';
+    }
 
+    // التحقق من أن القيمة المدخلة رقمية وتحويلها
+    final price = int.tryParse(value);
+    if (price == null) {
+      return 'أدخل سعرًا صحيحًا';
+    }
+
+    // التحقق من أن القيمة ضمن النطاق المطلوب
+    if (price < 50 || price > 10000) {
+      return 'يجب أن يكون السعر بين 50 و 10,000';
+    }
+
+    // إذا كانت كل الشروط صحيحة، لا توجد أخطاء
+    return null;
+  }
   Future<void> _submitForm() async {
     if (_formKey.currentState!.validate()) {
       _formKey.currentState!.save();

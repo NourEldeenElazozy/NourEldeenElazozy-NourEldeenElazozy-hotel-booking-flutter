@@ -16,39 +16,42 @@ class CustomFullAppBar extends StatelessWidget implements PreferredSizeWidget {
 
   @override
   Widget build(BuildContext context) {
+
     ThemeController themeController = Get.put(ThemeController());
 
-    return AppBar(
-      // backgroundColor: Colors.transparent,
-      scrolledUnderElevation: 0,
-      leadingWidth: 43,
-      leading: Row(
-        children: [
-          const SizedBox(width: 15),
-          InkWell(
-            onTap: () {
-              Navigator.pop(context);
-            },
-            child: SvgPicture.asset(
-              width: 20,
-              MyImages.backArrow,
-              colorFilter: ColorFilter.mode(
-                themeController.isDarkMode.value
-                    ? MyColors.white
-                    : MyColors.black,
-                BlendMode.srcIn,
+    return SafeArea(
+      child: AppBar(
+        // backgroundColor: Colors.transparent,
+        scrolledUnderElevation: 0,
+        leadingWidth: 43,
+        leading: Row(
+          children: [
+            const SizedBox(width: 15),
+            InkWell(
+              onTap: () {
+                Navigator.pop(context);
+              },
+              child: SvgPicture.asset(
+                width: 20,
+                MyImages.backArrow,
+                colorFilter: ColorFilter.mode(
+                  themeController.isDarkMode.value
+                      ? MyColors.white
+                      : MyColors.black,
+                  BlendMode.srcIn,
+                ),
               ),
             ),
-          ),
-        ],
+          ],
+        ),
+        title: Text(
+          title,
+          style: const TextStyle(   fontSize: 20,
+            fontWeight: FontWeight.bold,
+            fontFamily: 'Tajawal',),
+        ),
+        actions: action,
       ),
-      title: Text(
-        title,
-        style: const TextStyle(   fontSize: 20,
-          fontWeight: FontWeight.bold,
-          fontFamily: 'Tajawal',),
-      ),
-      actions: action,
     );
   }
 }
@@ -60,6 +63,8 @@ PreferredSizeWidget homeAppBar(BuildContext context,String title, bool status, b
 }
 
     ) {
+  final screenWidth = MediaQuery.of(context).size.width;
+  final screenHeight = MediaQuery.of(context).size.height;
   return PreferredSize(
     preferredSize: const Size.fromHeight(kToolbarHeight),
     child: SizedBox(
@@ -90,10 +95,10 @@ PreferredSizeWidget homeAppBar(BuildContext context,String title, bool status, b
                 )
               else
                 Container( // Original app icon container if no back button
-                  width: 50,
+                  width: screenWidth * 0.12, // مثال: 12% من عرض الشاشة
                   //margin: const EdgeInsets.only(left: 15),
 
-                  height: 50,
+                  height: screenHeight * 0.05, // مثال: 5% من ارتفاع الشاشة
                   padding: const EdgeInsets.all(8),
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(10),
@@ -146,7 +151,7 @@ PreferredSizeWidget homeAppBar(BuildContext context,String title, bool status, b
               const SizedBox(width: 15), // Padding on the right
             ],
           ),
-          const SizedBox(height: 10), // Space below the row
+          //const SizedBox(height: 8), // Space below the row
         ],
       ),
     ),
