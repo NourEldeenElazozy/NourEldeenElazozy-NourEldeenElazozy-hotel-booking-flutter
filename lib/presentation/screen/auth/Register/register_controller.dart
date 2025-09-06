@@ -322,7 +322,8 @@ class RegisterController extends GetxController {
         Get.snackbar('خطأ', parsedData['message'] ?? 'فشل إرسال رمز التحقق', backgroundColor: Colors.red);
       }
     } catch (e) {
-      Get.back();
+      //Get.back();
+      print('حدث خطأ غير متوقع: ${e.toString()}');
       Get.snackbar('خطأ', 'حدث خطأ غير متوقع: ${e.toString()}', backgroundColor: Colors.red);
     }
   }
