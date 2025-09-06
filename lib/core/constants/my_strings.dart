@@ -88,16 +88,22 @@ class MyString {
   static const String profile = "الملف الشخصي";
 
 //-----------------------------------Home_Screen------------------------------
-  static List itemSelect = [
-    "موصى به",
-    "شائع",
-    "رائج",
-    "وصل حديثًا",
+  static List<String> itemSelect = [
+    "عرض الكل",     // ✅ الخيار الجديد أول عنصر
+    "موصى به",     // index 0 -> most_popular
+    "شائع",        // index 1 -> highest_rating
+    "رائج",        // index 2 -> trending
+    "وصل حديثًا",  // index 3 -> newest
+    "الأعلي سعراً", // index 4 -> highest_price
+    "الأقل سعراً",  // index 5 -> lowest_price
   ];
+
   static const String recommended = "موصى به";
   static const String popular = "شائع";
   static const String trending = "رائج";
   static const String recentlyBooked = "تم حجزه مؤخرًا";
+  static const String lowest_price = "الأقل سعراً";
+  static const String hights_price =  "الأعلي سعراً";
   static const String seeAll = "عرض الكل";
 
 //-----------------------------------Notification_Screen------------------------------

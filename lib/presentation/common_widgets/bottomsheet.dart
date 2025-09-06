@@ -115,6 +115,8 @@ class FilterBottomSheet extends StatelessWidget {
                           ),
 
 
+                       /* ترتيب النتائج
+
                           const SizedBox(height: 20),
                           titleText(
                               MyString.sortResults,
@@ -200,6 +202,7 @@ class FilterBottomSheet extends StatelessWidget {
                               },
                             ),
                           ),
+                        */
                           Padding(
                             padding: const EdgeInsets.all(16.0),
                             child: Column(
@@ -653,6 +656,7 @@ class FilterBottomSheet extends StatelessWidget {
                           height: 50,
                           child: Button(
                             onpressed: () {
+                              homecontroller.selectedItem.value = 0;
                               controller.selectedCityIndex.value = -1;
                               controller.selectedCityId=(-1).obs;
                               cityId=0;
@@ -688,6 +692,7 @@ class FilterBottomSheet extends StatelessWidget {
                           height: 50,
                           child: Button(
                             onpressed: () {
+                              homecontroller.selectedItem.value = 0;
                               int? maxGuests = int.tryParse(guestController.text);
                               if (maxGuests != null) {
                                 // استخدم maxGuests في دالة getRestAreas

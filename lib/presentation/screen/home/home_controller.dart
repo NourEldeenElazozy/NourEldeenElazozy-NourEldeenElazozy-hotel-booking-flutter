@@ -547,7 +547,7 @@ class HomeController extends GetxController {
          return response.data;
        }
      } catch (e) {
-       Get.snackbar('خطأ', 'حدث خطأ أثناء جلب البيانات: ');
+       //Get.snackbar('خطأ', 'حدث خطأ أثناء جلب البيانات: ');
        print('حدث خطأ أثناء جلب س: $e');
        return [];
      } finally {

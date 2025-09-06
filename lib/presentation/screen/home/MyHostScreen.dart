@@ -145,21 +145,58 @@ class MySotingScreen extends StatelessWidget {
                                               Align(
                                                 alignment: Alignment.centerLeft,
                                                 child: OutlinedButton.icon(
-                                                  onPressed: () {
-                                                    Get.toNamed("/AddRestAreaScreen", arguments: {
-                                                      'isEdit': true,
-                                                      'restAreaData': restArea,
-                                                    });
+                                                  onPressed: () async {
+                                                    int restAreaId = restArea["id"];
+
+
+                                                    try {
+                                                      // استدعاء API
+                                                      final response = await GetConnect().get(
+                                                        "https://esteraha.ly/api/rest-areas/$restAreaId/check-pending",
+                                                        headers: {
+                                                          "Authorization": "Bearer ${controller.token}", // لو عندك توكن
+                                                        },
+                                                      );
+
+                                                      if (response.statusCode == 200) {
+
+                                                        bool hasPending = response.body == true; // API يرجع true أو false
+
+                                                        if (hasPending) {
+                                                          Get.snackbar(
+                                                            "تنبيه",
+                                                            "هذه الاستراحة قيد التعديل بالفعل، انتظر الموافقة.",
+                                                            snackPosition: SnackPosition.TOP,
+                                                            backgroundColor: Colors.orange.shade100,
+                                                            colorText: Colors.black,
+                                                          );
+                                                        } else {
+                                                          // لا يوجد تعديل قيد الانتظار → افتح شاشة التعديل
+                                                          Get.toNamed("/AddRestAreaScreen", arguments: {
+                                                            'isEdit': true,
+                                                            'restAreaData': restArea,
+                                                          });
+                                                        }
+                                                      } else {
+                                                        Get.snackbar("خطأ", "تعذر التحقق من حالة الاستراحة");
+                                                      }
+                                                    } catch (e) {
+                                                      Get.snackbar("خطأ", "حدث خطأ أثناء الاتصال بالخادم");
+                                                    }
                                                   },
                                                   icon: const Icon(Icons.edit, size: 20),
-                                                  label: const Text('تعديل', style: TextStyle(fontSize: 12, fontFamily: 'Tajawal')),
+                                                  label: const Text(
+                                                    'تعديل',
+                                                    style: TextStyle(fontSize: 12, fontFamily: 'Tajawal'),
+                                                  ),
                                                   style: OutlinedButton.styleFrom(
-                                                    foregroundColor: Colors.blue, // لون الأيقونة والنص
-                                                    side: const BorderSide(color: Colors.blue), // حدود الزر
-                                                    padding: const EdgeInsets.symmetric(horizontal: 50, vertical: 8), // زيادة المساحة الأفقية قليلاً
+                                                    foregroundColor: Colors.blue,
+                                                    side: const BorderSide(color: Colors.blue),
+                                                    padding: const EdgeInsets.symmetric(horizontal: 50, vertical: 8),
                                                     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
                                                   ),
                                                 ),
+
                                               ),
                                               const SizedBox(height: 8), // مسافة بين الأزرار
                                               if (!isPaid) // يظهر فقط إذا كانت الاستراحة غير مدفوعة

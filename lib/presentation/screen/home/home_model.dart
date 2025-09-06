@@ -102,7 +102,7 @@ class Detail {
     hasACHeating = json['has_ac_heating'] == 1;
     tvScreens = _parseInt(json['tv_screens']);
     freeWifi = json['free_wifi'] == 1;
-    entertainmentGames = json['entertainment_games'];
+    //entertainmentGames = json['entertainment_games'];
     gamesdetails= json['gamesdetails'];
     outdoorSpace = json['outdoor_space'] == 1;
     grassSpace = json['grass_space'] == 1;

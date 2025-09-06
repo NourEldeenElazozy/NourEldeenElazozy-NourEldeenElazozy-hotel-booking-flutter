@@ -105,7 +105,7 @@ class _HotelDetailState extends State<HotelDetail> {
   Widget build(BuildContext context) {
     _createMarkerImageFromAsset(context);
     print("//////////////////");
-
+    print("photos : ${controller.detail.detailsImages}");
     controller.fetchReservedDates(int.parse(controller.detail.id.toString()));
     print(controller.detail.virtual_tour_link);
     print(controller.reservedDates);
@@ -784,11 +784,16 @@ class _HotelDetailState extends State<HotelDetail> {
                                     ),
                                     const SizedBox(height: 5),
                                     Text(
-                                      detailsData[index]['value'],
+                                      (detailsData[index]['value'] == null || detailsData[index]['value'].toString().isEmpty)
+                                          ? "غير متوفر"
+                                          : detailsData[index]['value'].toString(),
                                       style: const TextStyle(
-                                          fontSize: 12, color: Colors.grey),
+                                        fontSize: 12,
+                                        color: Colors.grey,
+                                      ),
                                       textAlign: TextAlign.center,
                                     ),
+
                                   ],
                                 ),
                               );

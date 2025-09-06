@@ -21,7 +21,7 @@ class _HomeState extends State<Home> {
   Future<void> _handleRefresh() async {
 
 
-
+    controller.selectedItem.value = 0;
     // استدعاء جميع الدوال التي تقوم بتحديث البيانات
     await controller.getRestAreas();
     await controller.getReservations();
@@ -236,21 +236,41 @@ class _HomeState extends State<Home> {
                                 Obx(() => InkWell(
                                   onTap: () async {
                                     controller.selectedItem.value = index;
-                                    switch (index) {
-                                      case 0:
-                                        controller.passingStatus.value = 'Recommended';
-                                        break;
-                                      case 1:
-                                        controller.passingStatus.value = 'Popular';
-                                        break;
-                                      case 2:
-                                        controller.passingStatus.value = 'Trending';
-                                        break;
-                                      default:
-                                        controller.passingStatus.value = 'New Arrive';
+
+                                    if (index == 0) {
+                                      // ✅ إذا اختار "عرض الكل" يتم إلغاء أي فلترة
+                                      controller.passingStatus.value = '';
+                                      await controller.getRestAreas(); // بدون براميترز
+                                      return;
                                     }
-                                   // controller.filterList(controller.passingStatus.value);
+
+                                    switch (index) {
+                                      case 1: // موصى به = الأكثر حجزاً
+                                        controller.passingStatus.value = 'most_popular';
+                                        break;
+                                      case 2: // شائع = الأعلى تقييماً
+                                        controller.passingStatus.value = 'highest_rating';
+                                        break;
+                                      case 3: // رائج = الأكثر حجزاً آخر 30 يوم
+                                        controller.passingStatus.value = 'trending';
+                                        break;
+                                      case 4: // وصل حديثاً = الأحدث
+                                        controller.passingStatus.value = 'newest';
+                                        break;
+                                      case 5: // الأعلى سعراً
+                                        controller.passingStatus.value = 'highest_price';
+                                        break;
+                                      case 6: // الأقل سعراً
+                                        controller.passingStatus.value = 'lowest_price';
+                                        break;
+                                    }
+
+                                    // ✅ استدعاء الفلترة بالبراميترز
+                                    await controller.getRestAreas(sortBy: controller.passingStatus.value);
                                   },
+
+
+
                                   child: Container(
                                     alignment: Alignment.center,
                                     decoration: BoxDecoration(

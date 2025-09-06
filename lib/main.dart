@@ -6,6 +6,7 @@ import 'package:firebase_remote_config/firebase_remote_config.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:hotel_booking/BootLogoScreen.dart';
 import 'package:hotel_booking/core/force_update/force_update_service.dart';
 import 'package:hotel_booking/core/force_update/force_update_utils.dart';
 import 'package:hotel_booking/core/themes/app_themes.dart';
@@ -231,6 +232,9 @@ Future<void> main() async {
     final hasSeenOnboarding = prefs.getBool('onboarding') ?? false;
     final initialRoute = hasSeenOnboarding ? "/bottomBar" : "/onboarding";
 
+
+    runApp(MyApp(initialRoute: initialRoute));
+
     debugPrint('Firebase initialization error: $e');
     // في حالة حدوث خطأ في تهيئة Firebase
     runApp(MyApp(initialRoute: initialRoute));
@@ -273,9 +277,11 @@ class _MyAppState extends State<MyApp> {
           supportedLocales: const [Locale('ar', 'SA')], // تحديد اللغة العربية كلغة مدعومة
           debugShowCheckedModeBanner: false,
           theme: themeController.darkMode.value ? Themes.darkTheme : Themes.lightTheme,
-          initialRoute: widget.initialRoute, // ✅ هنا التعديل, // تم تعيين initialRoute هنا
-          //initialRoute: "/onboarding", // تم تعيين initialRoute هنا
-          getPages: Routes.navigator, // تم تعيين getPages هنا
+          initialRoute: "/bootLogo", // ✅ البداية من BootLogo دائمًا
+          getPages: [
+            GetPage(name: "/bootLogo", page: () => const BootLogoScreen()),
+            ...Routes.navigator,
+          ],
         ));
       },
     );

@@ -150,7 +150,7 @@ class RestAreas {
       'has_ac_heating': hasAcHeating== true ? 1 : 0, // تحويل إلى 1 أو 0,
       'tv_screens': tvScreens== true ? 1 : 0, // تحويل إلى 1 أو 0,
       'free_wifi': freeWifi== true ? 1 : 0, // تحويل إلى 1 أو 0,
-      'entertainment_games': entertainmentGames.join(','),
+      //'entertainment_games': entertainmentGames.join(','),
       'outdoor_space': outdoorSpace== true ? 1 : 0, // تحويل إلى 1 أو 0,,
       'grass_space': grassSpace== true ? 1 : 0, // تحويل إلى 1 أو 0,,
       'pool_type': poolType,

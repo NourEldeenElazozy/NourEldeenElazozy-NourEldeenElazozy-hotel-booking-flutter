@@ -18,7 +18,7 @@ class MyImages {
   static const String money = "${path}money.png";
   static const String welcome = "${path}welcome.png";
   static const String logo = "${path}logo.jpg";
-
+  static const String logo2 = "${path}logo2.png";
   static const String appIcon = "${path}logo.jpg";
   static const String dateTimeArrow = "${path}datetimearrow.svg";
   static const String timePicker = "${path}timePicker.svg";

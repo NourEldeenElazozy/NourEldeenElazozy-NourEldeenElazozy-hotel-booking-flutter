@@ -223,7 +223,7 @@ if (args != null && args['isEdit'] == true && args['restAreaData'] != null) {
 
   _restArea.id = data["id"] ?? 0; // تأكد من أن city_id هو int
   _restArea.kitchenContents = _parseStringList(data["kitchen_contents"]);
-  _restArea.entertainmentGames = _parseStringList(data["entertainment_games"]);
+  //_restArea.entertainmentGames = _parseStringList(data["entertainment_games"]);
   _restArea.otherSpecs = data["other_specs"] ?? "";
   _restArea.gamesdetails = data["gamesdetails"] ?? "";
   _restArea.cityId = int.tryParse(data["city_id"]?.toString() ?? "0") ?? 0;
@@ -247,7 +247,9 @@ if (args != null && args['isEdit'] == true && args['restAreaData'] != null) {
   nameController.text = _restArea.name;
   locationController.text = _restArea.location;
   descriptionController.text = _restArea.description;
-  priceController.text = _restArea.price.toString();
+  priceController.text = (_restArea.price % 1 == 0)
+      ? _restArea.price.toInt().toString()  // إذا كان عدد صحيح، بدون كسور
+      : _restArea.price.toString();
   totalSpaceController.text = _restArea.totalSpace.toString();
   internalSpaceController.text = _restArea.internalSpace.toString();
   maxGuestsController.text = _restArea.maxGuests.toString();

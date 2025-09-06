@@ -193,7 +193,7 @@ class RestAreaController extends GetxController {
 
       Get.snackbar(
         "نجاح",
-        "تم تحديث الاستراحة بنجاح.",
+        "تم إرسال طلب تحديث الاستراحة بنجاح.",
         backgroundColor: MyColors.successColor,
         colorText: Colors.white,
       );
