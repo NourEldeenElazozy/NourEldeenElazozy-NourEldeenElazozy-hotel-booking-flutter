@@ -243,6 +243,18 @@ class _HotelDetailState extends State<HotelDetail> {
                                   fontSize: 13,
                                 ),
                               ),
+                              Text(
+                                "المنطقة الجغرافية:${controller.detail.geoArea.toString()}",
+                                style: TextStyle(
+                                  color: controller
+                                      .themeController.isDarkMode.value
+                                      ? MyColors.searchTextFieldColor
+                                      : MyColors.profileListTileColor,
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 13,
+                                ),
+                              ),
+
                               const SizedBox(height: 6),
 
                               Row(
