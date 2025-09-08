@@ -126,6 +126,7 @@ class _HotelDetailState extends State<HotelDetail> {
                 arguments: {
                   'restAreaId': controller.detail.id,
                   'id_proof_type': controller.detail.idProofType,
+                  'area_type': controller.detail.areaType,
                 },
               );
             },
