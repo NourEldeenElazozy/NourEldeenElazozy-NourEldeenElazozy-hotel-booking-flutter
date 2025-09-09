@@ -59,6 +59,7 @@ class BookingController extends GetxController {
         backgroundColor: Colors.red,
         colorText: Colors.white,
       );
+      print( e.response?.data['message']);
       throw e;
     }
   }

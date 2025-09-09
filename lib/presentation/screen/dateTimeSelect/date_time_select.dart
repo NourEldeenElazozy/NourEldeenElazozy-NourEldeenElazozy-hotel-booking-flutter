@@ -32,6 +32,9 @@ class _DateTimeSelectState extends State<DateTimeSelect> {
 
   final restId = Get.arguments['restAreaId'];
   final id_proof_type = Get.arguments['id_proof_type'];
+  final areaTypeString = Get.arguments['area_type'] ?? '';
+
+
   final proofTypes = {
     'valid_passport': ' جواز سفر ساري',
     'family_book': 'كتاب عائلة',
@@ -86,7 +89,9 @@ class _DateTimeSelectState extends State<DateTimeSelect> {
 
   @override
   Widget build(BuildContext context) {
+    final areaTypes = areaTypeString.split(','); // مثال: ["عائلات", "شباب", "مناسبات"]
     print("id_proof_type ${id_proof_type}");
+    print("area_type ${areaTypeString}");
     String proofTypeText = proofTypes[id_proof_type.toString()] ?? 'غير محدد';
     controller.fetchReservedDates(restId);
     return FutureBuilder(
@@ -696,20 +701,19 @@ class _DateTimeSelectState extends State<DateTimeSelect> {
                               const SizedBox(height: 20),
                               Row(
                                 mainAxisAlignment: MainAxisAlignment.start,
-                                children: [
-                                  Flexible(
+                                children: areaTypes.map<Widget>((type) {
+                                  return Flexible(
                                     child: RadioListTile<String>(
                                       title: Text(
-                                        "عائلات",
+                                        type,
                                         overflow: TextOverflow.ellipsis,
                                         style: TextStyle(
-                                          color: controller.themeController
-                                                  .isDarkMode.value
+                                          color: controller.themeController.isDarkMode.value
                                               ? Colors.white
                                               : Colors.black,
                                         ),
                                       ),
-                                      value: "عائلات",
+                                      value: type,
                                       groupValue: controller.selectedType.value,
                                       onChanged: (value) {
                                         controller.selectedType.value = value!;
@@ -717,52 +721,10 @@ class _DateTimeSelectState extends State<DateTimeSelect> {
                                       contentPadding: EdgeInsets.zero,
                                       dense: true,
                                     ),
-                                  ),
-                                  Flexible(
-                                    child: RadioListTile<String>(
-                                      title: Text(
-                                        "شباب",
-                                        overflow: TextOverflow.ellipsis,
-                                        style: TextStyle(
-                                          color: controller.themeController
-                                                  .isDarkMode.value
-                                              ? Colors.white
-                                              : Colors.black,
-                                        ),
-                                      ),
-                                      value: "شباب",
-                                      groupValue: controller.selectedType.value,
-                                      onChanged: (value) {
-                                        controller.selectedType.value = value!;
-                                      },
-                                      contentPadding: EdgeInsets.zero,
-                                      dense: true,
-                                    ),
-                                  ),
-                                  Flexible(
-                                    child: RadioListTile<String>(
-                                      title: Text(
-                                        "مناسبات",
-                                        overflow: TextOverflow.ellipsis,
-                                        style: TextStyle(
-                                          color: controller.themeController
-                                                  .isDarkMode.value
-                                              ? Colors.white
-                                              : Colors.black,
-                                        ),
-                                      ),
-                                      value: "مناسبات",
-                                      groupValue: controller.selectedType.value,
-                                      onChanged: (value) {
-                                        controller.selectedType.value = value!;
-                                      },
-                                      contentPadding: EdgeInsets.zero,
-                                      dense: true,
-                                    ),
-                                  ),
-
-                                ],
+                                  );
+                                }).toList(), // ✅ حل المشكلة
                               ),
+
                               Card(
                                 shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(16),

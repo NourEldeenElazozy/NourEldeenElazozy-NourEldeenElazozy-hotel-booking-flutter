@@ -50,11 +50,11 @@ class LoginController extends GetxController {
         await _storeData(loginResponse.token, loginResponse.user);
         // جلب device token
         String? deviceToken = await getDeviceToken();
-        if (deviceToken != null) {
+        if (deviceToken != null && deviceToken.isNotEmpty) {
           print("deviceToken: ${deviceToken.toString()}");
 
 
-        await Dio().post(
+        await Dio().put(
           'https://esteraha.ly/api/update-device-token',
           data: {
             'device_token': deviceToken,
@@ -67,6 +67,7 @@ class LoginController extends GetxController {
         );
         } else {
           print('Error: ${response.statusCode}');
+          print("⚠️ لم يتم جلب deviceToken");
         }
         // يمكنك تخزين التوكن أو أي معلومات أخرى هنا
       } else {
