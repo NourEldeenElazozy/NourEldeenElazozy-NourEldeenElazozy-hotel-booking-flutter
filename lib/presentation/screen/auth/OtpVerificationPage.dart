@@ -1,7 +1,11 @@
 import 'package:dio/dio.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:hotel_booking/Model/User.dart';
 import 'package:hotel_booking/core/constants/my_colors.dart';
 import 'package:pin_code_fields/pin_code_fields.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class OtpVerificationPage extends StatefulWidget {
   final String otp;
@@ -28,7 +32,8 @@ class OtpVerificationPage extends StatefulWidget {
   @override
   State<OtpVerificationPage> createState() => _OtpVerificationPageState();
 }
-
+var token = ''.obs;
+var user = User(id: 0, name: '', phone: '',userType: "",gender: "").obs;
 class _OtpVerificationPageState extends State<OtpVerificationPage> {
   final TextEditingController otpController = TextEditingController();
   bool isLoading = false;
@@ -43,8 +48,17 @@ class _OtpVerificationPageState extends State<OtpVerificationPage> {
   }
 
 
-
+  Future<String?> getDeviceToken() async {
+    try {
+      return await FirebaseMessaging.instance.getToken();
+    } catch (e) {
+      print('Failed to get device token: $e');
+      return null;
+    }
+  }
   Future<void> _completeRegistration() async {
+    String? deviceToken = await getDeviceToken();
+    print("deviceToken: ${deviceToken.toString()}");
     final response = await Dio().post(
       'https://esteraha.ly/api/register',
       data: {
@@ -55,14 +69,47 @@ class _OtpVerificationPageState extends State<OtpVerificationPage> {
         'gender': widget.gender,
         'user_type': widget.useType,
         'password': widget.password,
+        'device_token':deviceToken.toString()
       },
     );
 
     if (response.statusCode != 200) {
       throw Exception('فشل في التسجيل: ${response.statusCode}');
+    }else{
+      final loginResponse = LoginResponse.fromJson(response.data);
+      token.value = loginResponse.token;
+      user.value = loginResponse.user;
+      await _storeData(loginResponse.token, loginResponse.user);
+
+
+
     }
   }
+  Future<void> _storeData(String token, User user) async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
 
+    try {
+      await prefs.setString('token', token);
+      await prefs.setInt('userId', user.id);
+      await prefs.setString('userName', user.name);
+      await prefs.setString('userPhone', user.phone);
+      await prefs.setString('user_type', user.userType);
+      await prefs.setString('gender', user.gender);
+
+      // ✅ بعد النجاح نطبع البيانات
+      print("✅ تم تخزين بيانات المستخدم:");
+      print("token: $token");
+      print("userId: ${user.id}");
+      print("userName: ${user.name}");
+      print("userPhone: ${user.phone}");
+      print("user_type: ${user.userType}");
+      print("gender: ${user.gender}");
+
+    } catch (e) {
+      // ❌ لو صار خطأ نرمي Exception علشان ما يكمل
+      throw Exception("فشل تخزين البيانات: $e");
+    }
+  }
   Future<void> _confirmOtp() async {
     if (otpController.text != widget.otp) {
       _showSnackbar('رمز التحقق غير صحيح', isError: true);
@@ -76,6 +123,7 @@ class _OtpVerificationPageState extends State<OtpVerificationPage> {
     try {
       await _completeRegistration();
       _showSnackbar('تم التسجيل بنجاح!');
+
       Navigator.of(context).pushReplacementNamed('/bottomBar');
     } catch (e) {
       _showSnackbar('حدث خطأ أثناء التسجيل: $e', isError: true);
