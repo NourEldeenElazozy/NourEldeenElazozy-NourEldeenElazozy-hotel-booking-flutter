@@ -277,21 +277,38 @@ class RegisterScreenState extends State<RegisterScreen> with SingleTickerProvide
                   ),
                 ),
                 const SizedBox(height: 30),
-                RichText(
-                  textAlign: TextAlign.center,
-                  text: TextSpan(
-                    children: [
-                      TextSpan(
-                        text: 'من خلال التسجيل، أنت توافق على ',
-                        style: TextStyle(color: controller.themeController.isDarkMode.value ? MyColors.white : MyColors.textBlackColor, fontWeight: FontWeight.w400, fontSize: 14),
-                      ),
-                      const TextSpan(
-                        text: 'شروط الخدمة وسياسة الخصوصية.',
-                        style: TextStyle(color: MyColors.successColor, fontWeight: FontWeight.w600, fontSize: 14, height: 1.5),
-                      ),
-                    ],
+            RichText(
+              textAlign: TextAlign.center,
+              text: TextSpan(
+                children: [
+                  TextSpan(
+                    text: 'من خلال التسجيل، أنت توافق على ',
+                    style: TextStyle(
+                      color: controller.themeController.isDarkMode.value
+                          ? MyColors.white
+                          : MyColors.textBlackColor,
+                      fontWeight: FontWeight.w400,
+                      fontFamily: "Tajawal",
+                      fontSize: 14,
+                    ),
                   ),
-                ),
+                  TextSpan(
+                    text: 'شروط الخدمة وسياسة الخصوصية.',
+                    style: const TextStyle(
+                      color: MyColors.successColor,
+                      fontWeight: FontWeight.w600,
+                      fontFamily: "Tajawal",
+                      fontSize: 14,
+                      height: 1.5,
+                    ),
+                    recognizer: TapGestureRecognizer()
+                      ..onTap = () {
+                        // انتقال باستخدام GetX
+                        Get.toNamed('/PrivacyPolicy');
+                      },
+                  ),
+                ],
+              ),),
                 const SizedBox(height: 30),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
