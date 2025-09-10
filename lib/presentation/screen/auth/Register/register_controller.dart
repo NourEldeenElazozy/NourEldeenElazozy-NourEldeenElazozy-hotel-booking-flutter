@@ -479,11 +479,27 @@ class RegisterController extends GetxController {
 
 Future<void> _storeData(String token, User user) async {
   final SharedPreferences prefs = await SharedPreferences.getInstance();
-  await prefs.setString('token', token);
-  await prefs.setInt('userId', user.id);
-  await prefs.setString('userName', user.name);
-  await prefs.setString('userPhone', user.phone);
-  await prefs.setString('user_type', user.userType);
-  await prefs.setString('gender', user.gender);
-  await prefs.setInt('user_id', user.id);
+
+  try {
+    await prefs.setString('token', token);
+    await prefs.setInt('userId', user.id);
+    await prefs.setString('userName', user.name);
+    await prefs.setString('userPhone', user.phone);
+    await prefs.setString('user_type', user.userType);
+    await prefs.setString('gender', user.gender);
+
+    // ✅ بعد النجاح نطبع البيانات
+    print("✅ تم تخزين بيانات المستخدم:");
+    print("token: $token");
+    print("userId: ${user.id}");
+    print("userName: ${user.name}");
+    print("userPhone: ${user.phone}");
+    print("user_type: ${user.userType}");
+    print("gender: ${user.gender}");
+
+  } catch (e) {
+    // ❌ لو صار خطأ نرمي Exception علشان ما يكمل
+    throw Exception("فشل تخزين البيانات: $e");
+  }
 }
+

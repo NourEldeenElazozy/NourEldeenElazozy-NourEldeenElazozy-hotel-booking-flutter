@@ -22,7 +22,11 @@ class SimpleNotification {
   factory SimpleNotification.fromJson(Map<String, dynamic> json) {
     return SimpleNotification(
       id: json['id'],
-      userId: json['user_id'],
+      userId: json['user_id'] == null
+          ? null
+          : (json['user_id'] is int
+          ? json['user_id']
+          : int.tryParse(json['user_id'].toString())),
       title: json['title'] ?? '',
       body: json['body'] ?? '',
       targetType: json['target_type'],
