@@ -7,17 +7,15 @@ class Package {
   final int id;
   final String name;
   final String duration;
-
-
   final String percentage;
+  final String price; // جديد
 
   Package({
     required this.id,
     required this.name,
     required this.duration,
-
-
     required this.percentage,
+    required this.price,
   });
 }
 
@@ -111,23 +109,30 @@ class _PackagesScreenState extends State<PackagesScreen> {
                       final pkg = controller.packages[index];
                       double totalForPackage = 0;
 
-                      double price=0;
-                      for (var item in unpaidData) {
-                        double price = double.parse(item['price'].toString());
-                        double singleTotal = calculateTotalPrice(price, pkg.duration, double.parse(pkg.percentage));
-                        totalForPackage += singleTotal;
+                      if (double.parse(pkg.percentage) > 0) {
+                        // 🟢 باقة تعتمد على النسبة
+                        for (var item in unpaidData) {
+                          double basePrice = double.parse(item['price'].toString());
+                          double singleTotal = calculateTotalPrice(
+                            basePrice,
+                            pkg.duration,
+                            double.parse(pkg.percentage),
+                          );
+                          totalForPackage += singleTotal;
+                        }
+                      } else {
+                        // 🟢 باقة سعر ثابت × عدد الاستراحات
+                        double fixedPrice = double.parse(pkg.price);
+                        totalForPackage = fixedPrice * unpaidData.length;
                       }
 
                       final isSelected = selectedIndex == index;
 
-
                       return GestureDetector(
                         onTap: () {
-                          selectedIndex.value = index; // تحديث
-
-                          total = totalForPackage; // التوتال النهائي
+                          selectedIndex.value = index;
+                          total = totalForPackage;
                           print("calculateTotalPrice $total ");
-                          // يمكنك إضافة منطق إضافي هنا عند اختيار باقة
                         },
                         child: AnimatedContainer(
                           duration: const Duration(milliseconds: 300),
@@ -145,8 +150,8 @@ class _PackagesScreenState extends State<PackagesScreen> {
                             border: isSelected
                                 ? Border.all(color: MyColors.primaryColor, width: 2)
                                 : null,
-                            boxShadow: [
-                              const BoxShadow(
+                            boxShadow: const [
+                              BoxShadow(
                                 color: Colors.black12,
                                 blurRadius: 0.50,
                                 offset: Offset(0, 2),
@@ -167,24 +172,24 @@ class _PackagesScreenState extends State<PackagesScreen> {
                                 textAlign: TextAlign.right,
                               ),
                               const SizedBox(height: 6),
-                             // Text('السعر: \$${pkg.price.toStringAsFixed(2)}', style: TextStyle(color: Colors.white)),
                               Row(
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
-
-                                Text('المدة: ${_getDurationText(pkg.duration)}', style: const TextStyle(color: Colors.white)),
+                                  Text(
+                                    'المدة: ${_getDurationText(pkg.duration)}',
+                                    style: const TextStyle(color: Colors.white),
+                                  ),
                                   const SizedBox(width: 5),
                                   const Icon(Icons.access_time, color: Colors.white),
-                              ],),
-
-
-
+                                ],
+                              ),
                               Row(
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
-
-
-                                  Text(' عمولة إشتراك: ${pkg.percentage}', style: const TextStyle(color: Colors.white)),
+                                  Text(
+                                    ' عمولة إشتراك: ${pkg.percentage}',
+                                    style: const TextStyle(color: Colors.white),
+                                  ),
                                   const SizedBox(width: 5),
                                   const Icon(Icons.percent, color: Colors.white),
                                 ],
@@ -202,7 +207,6 @@ class _PackagesScreenState extends State<PackagesScreen> {
                                     fontSize: 14,
                                     fontWeight: FontWeight.bold,
                                     fontFamily: 'Tajawal',
-
                                   ),
                                 ),
                               ),
@@ -213,6 +217,7 @@ class _PackagesScreenState extends State<PackagesScreen> {
                     },
                   ),
                 ),
+
                 const SizedBox(height: 16),
 
                 ElevatedButton(
