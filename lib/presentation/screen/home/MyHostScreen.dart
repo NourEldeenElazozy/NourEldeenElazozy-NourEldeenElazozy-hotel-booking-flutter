@@ -85,240 +85,237 @@ class MySotingScreen extends StatelessWidget {
                             final double restAreaPrice = (double.parse(restArea["price"]))?.toDouble() ?? 0.0; // افتراضي 0.0 إذا null
                             final bool isPaid = controller.paymentStatusMap[restArea["id"]] ?? false; // الافتراضي يكون false إذا غير مدفوع
 
-                            return Opacity(
-                              opacity: isPaid ? 1.0 : 0.4,
-                              child: Card(
-                                color: isPaid ? Colors.white : Colors.grey[300],
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(16),
-                                ),
-                                elevation: 4,
-                                margin: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 16.0),
-                                child: InkWell(
-                                  onTap: () {
-                                    if (!isPaid) {
-                                      Get.snackbar("تنبيه", "هذه الاستراحة غير مفعلة بسبب عدم الدفع");
-                                      return;
-                                    }
+                            return Card(
+                              color: isPaid ? Colors.white : Colors.grey[300],
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(16),
+                              ),
+                              elevation: 4,
+                              margin: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 16.0),
+                              child: InkWell(
+                                onTap: () {
+                                  if (!isPaid) {
+                                    Get.snackbar("تنبيه", "هذه الاستراحة غير مفعلة بسبب عدم الدفع");
+                                    return;
+                                  }
 
-                                    Detail detail = Detail.fromJson(restArea);
-                                    controller.homeDetails.add(detail);
+                                  Detail detail = Detail.fromJson(restArea);
+                                  controller.homeDetails.add(detail);
 
-                                    Get.toNamed("/hotelDetail", arguments: {'data': restArea});
-                                  },
-                                  child: Container(
-                                    padding: const EdgeInsets.all(12),
-                                    child: Row(
-                                      children: [
-                                        ClipRRect(
-                                          borderRadius: BorderRadius.circular(12),
-                                          child: Image.network(
-                                            "https://esteraha.ly/public/${restArea["main_image"]}",
-                                            width: 100,
-                                            height: 100,
-                                            fit: BoxFit.cover,
-                                            errorBuilder: (BuildContext context, Object error, StackTrace? stackTrace) {
-                                              return Image.asset(
-                                                'assets/logo/logo.png',
-                                                width: 100,
-                                                height: 100,
-                                                fit: BoxFit.cover,
-                                              );
-                                            },
-                                          ),
+                                  Get.toNamed("/hotelDetail", arguments: {'data': restArea});
+                                },
+                                child: Container(
+                                  padding: const EdgeInsets.all(12),
+                                  child: Row(
+                                    children: [
+                                      ClipRRect(
+                                        borderRadius: BorderRadius.circular(12),
+                                        child: Image.network(
+                                          "https://esteraha.ly/public/${restArea["main_image"]}",
+                                          width: 100,
+                                          height: 100,
+                                          fit: BoxFit.cover,
+                                          errorBuilder: (BuildContext context, Object error, StackTrace? stackTrace) {
+                                            return Image.asset(
+                                              'assets/logo/logo.png',
+                                              width: 100,
+                                              height: 100,
+                                              fit: BoxFit.cover,
+                                            );
+                                          },
                                         ),
-                                        const SizedBox(width: 12),
-                                        Expanded(
-                                          child: Column(
-                                            crossAxisAlignment: CrossAxisAlignment.end,
-                                            children: [
-                                              Text(
-                                                restArea["name"].toString(),
-                                                style: const TextStyle(
-                                                  fontSize: 18,
+                                      ),
+                                      const SizedBox(width: 12),
+                                      Expanded(
+                                        child: Column(
+                                          crossAxisAlignment: CrossAxisAlignment.end,
+                                          children: [
+                                            Text(
+                                              restArea["name"].toString(),
+                                              style: const TextStyle(
+                                                fontSize: 18,
+                                                fontWeight: FontWeight.bold,
+                                                fontFamily: 'Tajawal',
+                                              ),
+                                            ),
+                                            const SizedBox(height: 5), // مسافة بين الاسم والأزرار
+                                            // هذا هو الجزء الذي سنقوم بتعديله
+                                            Align(
+                                              alignment: Alignment.centerLeft,
+                                              child: OutlinedButton.icon(
+                                                onPressed: () async {
+                                                  int restAreaId = restArea["id"];
+
+
+                                                  try {
+                                                    // استدعاء API
+                                                    final response = await GetConnect().get(
+                                                      "https://esteraha.ly/api/rest-areas/$restAreaId/check-pending",
+                                                      headers: {
+                                                        "Authorization": "Bearer ${controller.token}", // لو عندك توكن
+                                                      },
+                                                    );
+
+                                                    if (response.statusCode == 200) {
+
+                                                      bool hasPending = response.body == true; // API يرجع true أو false
+
+                                                      if (hasPending) {
+                                                        Get.snackbar(
+                                                          "تنبيه",
+                                                          "هذه الاستراحة قيد التعديل بالفعل، انتظر الموافقة.",
+                                                          snackPosition: SnackPosition.TOP,
+                                                          backgroundColor: Colors.orange.shade100,
+                                                          colorText: Colors.black,
+                                                        );
+                                                      } else {
+                                                        // لا يوجد تعديل قيد الانتظار → افتح شاشة التعديل
+                                                        Get.toNamed("/AddRestAreaScreen", arguments: {
+                                                          'isEdit': true,
+                                                          'restAreaData': restArea,
+                                                        });
+                                                      }
+                                                    } else {
+                                                      Get.snackbar("خطأ", "تعذر التحقق من حالة الاستراحة");
+                                                    }
+                                                  } catch (e) {
+                                                    Get.snackbar("خطأ", "حدث خطأ أثناء الاتصال بالخادم");
+                                                  }
+                                                },
+                                                icon: const Icon(Icons.edit, size: 20),
+                                                label: const Text(
+                                                  'تعديل',
+                                                  style: TextStyle(fontSize: 12, fontFamily: 'Tajawal'),
+                                                ),
+                                                style: OutlinedButton.styleFrom(
+                                                  foregroundColor: Colors.blue,
+                                                  side: const BorderSide(color: Colors.blue),
+                                                  padding: const EdgeInsets.symmetric(horizontal: 50, vertical: 8),
+                                                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                                                ),
+                                              ),
+
+                                            ),
+                                            const SizedBox(height: 8), // مسافة بين الأزرار
+                                            if (!isPaid) // يظهر فقط إذا كانت الاستراحة غير مدفوعة
+                                              Align(
+                                                alignment: Alignment.centerLeft,
+                                                child: ElevatedButton.icon(
+                                                  onPressed: () {
+                                                    // استدعاء دالة الحذف
+                                                    controller.deleteRestArea(restArea["id"] as int);
+                                                  },
+                                                  icon: const Icon(Icons.delete, color: Colors.white, size: 20),
+                                                  label: const Text(
+                                                    'حذف',
+                                                    style: TextStyle(
+                                                      color: Colors.white,
+                                                      fontSize: 12,
+                                                      fontFamily: 'Tajawal',
+                                                    ),
+                                                  ),
+                                                  style: ElevatedButton.styleFrom(
+                                                    backgroundColor: Colors.red, // لون أحمر للحذف
+                                                    padding: const EdgeInsets.symmetric(horizontal: 50, vertical: 8),
+                                                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                                                  ),
+                                                ),
+                                              ),
+                                            if (isPaid)
+                                           /*
+                                            Align(
+                                              alignment: Alignment.centerLeft,
+                                              child: OutlinedButton.icon(
+                                                onPressed: () {
+                                                  controller.toggleRestAreaActiveStatus(restArea["id"]);
+                                                },
+                                                icon: Icon(
+                                                  restArea["is_active"] == true ? Icons.toggle_on : Icons.toggle_off,
+                                                  size: 20,
+                                                ),
+                                                label: Text(
+                                                  restArea["is_active"] == true ? 'مفعل' : 'معطل',
+                                                  style: const TextStyle(fontSize: 12, fontFamily: 'Tajawal'),
+                                                ),
+                                                style: OutlinedButton.styleFrom(
+                                                  foregroundColor: restArea["is_active"] == true ? MyColors.tealColor : Colors.grey,
+                                                  side: BorderSide(color: restArea["is_active"] == true ? MyColors.tealColor : Colors.grey),
+                                                  padding: const EdgeInsets.symmetric(horizontal: 50, vertical: 8),
+                                                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                                                ),
+                                              ),
+                                            ),
+                                            */
+                                            const SizedBox(height: 8),
+                                            if (isPaid)
+                                              Align(
+                                                alignment: Alignment.centerLeft,
+                                                child: ElevatedButton.icon(
+                                                  onPressed: () {
+                                                    _showOfflineBookingDialog(
+                                                        context,
+                                                        restArea["id"] as int,
+                                                        restArea["name"].toString()
+                                                    );
+                                                  },
+                                                  icon: const Icon(Icons.add_task, color: Colors.white, size: 20),
+                                                  label: const Text(
+                                                    'حجز خارجي',
+                                                    style: TextStyle(
+                                                      color: Colors.white,
+                                                      fontSize: 12,
+                                                      fontFamily: 'Tajawal',
+                                                    ),
+                                                  ),
+                                                  style: ElevatedButton.styleFrom(
+
+                                                    padding: const EdgeInsets.symmetric(horizontal: 50, vertical: 8),
+                                                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                                                  ),
+                                                ),
+                                              ),
+                                            const SizedBox(height: 10), // مسافة بعد الأزرار
+                                           /*
+                                            Text(
+                                              restArea["description"].toString(),
+                                              maxLines: 2,
+                                              overflow: TextOverflow.ellipsis,
+                                              style: const TextStyle(
+                                                fontSize: 14,
+                                                fontFamily: 'Tajawal',
+                                                color: Colors.black54,
+                                              ),
+                                            ),
+                                            */
+                                            if (!isPaid)
+                                              const Text(
+                                                "غير مدفوعة",
+                                                style: TextStyle(
+                                                  color: Colors.red,
                                                   fontWeight: FontWeight.bold,
                                                   fontFamily: 'Tajawal',
                                                 ),
                                               ),
-                                              const SizedBox(height: 5), // مسافة بين الاسم والأزرار
-                                              // هذا هو الجزء الذي سنقوم بتعديله
-                                              Align(
-                                                alignment: Alignment.centerLeft,
-                                                child: OutlinedButton.icon(
-                                                  onPressed: () async {
-                                                    int restAreaId = restArea["id"];
 
 
-                                                    try {
-                                                      // استدعاء API
-                                                      final response = await GetConnect().get(
-                                                        "https://esteraha.ly/api/rest-areas/$restAreaId/check-pending",
-                                                        headers: {
-                                                          "Authorization": "Bearer ${controller.token}", // لو عندك توكن
-                                                        },
-                                                      );
-
-                                                      if (response.statusCode == 200) {
-
-                                                        bool hasPending = response.body == true; // API يرجع true أو false
-
-                                                        if (hasPending) {
-                                                          Get.snackbar(
-                                                            "تنبيه",
-                                                            "هذه الاستراحة قيد التعديل بالفعل، انتظر الموافقة.",
-                                                            snackPosition: SnackPosition.TOP,
-                                                            backgroundColor: Colors.orange.shade100,
-                                                            colorText: Colors.black,
-                                                          );
-                                                        } else {
-                                                          // لا يوجد تعديل قيد الانتظار → افتح شاشة التعديل
-                                                          Get.toNamed("/AddRestAreaScreen", arguments: {
-                                                            'isEdit': true,
-                                                            'restAreaData': restArea,
-                                                          });
-                                                        }
-                                                      } else {
-                                                        Get.snackbar("خطأ", "تعذر التحقق من حالة الاستراحة");
-                                                      }
-                                                    } catch (e) {
-                                                      Get.snackbar("خطأ", "حدث خطأ أثناء الاتصال بالخادم");
-                                                    }
-                                                  },
-                                                  icon: const Icon(Icons.edit, size: 20),
-                                                  label: const Text(
-                                                    'تعديل',
-                                                    style: TextStyle(fontSize: 12, fontFamily: 'Tajawal'),
-                                                  ),
-                                                  style: OutlinedButton.styleFrom(
-                                                    foregroundColor: Colors.blue,
-                                                    side: const BorderSide(color: Colors.blue),
-                                                    padding: const EdgeInsets.symmetric(horizontal: 50, vertical: 8),
-                                                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-                                                  ),
-                                                ),
-
+                                            const SizedBox(height: 8), // مسافة بعد الأزرار
+                                        /*
+                                            Text(
+                                              restArea["description"].toString(),
+                                              maxLines: 2,
+                                              overflow: TextOverflow.ellipsis,
+                                              style: const TextStyle(
+                                                fontSize: 14,
+                                                fontFamily: 'Tajawal',
+                                                color: Colors.black54,
                                               ),
-                                              const SizedBox(height: 8), // مسافة بين الأزرار
-                                              if (!isPaid) // يظهر فقط إذا كانت الاستراحة غير مدفوعة
-                                                Align(
-                                                  alignment: Alignment.centerLeft,
-                                                  child: ElevatedButton.icon(
-                                                    onPressed: () {
-                                                      // استدعاء دالة الحذف
-                                                      controller.deleteRestArea(restArea["id"] as int);
-                                                    },
-                                                    icon: const Icon(Icons.delete, color: Colors.white, size: 20),
-                                                    label: const Text(
-                                                      'حذف',
-                                                      style: TextStyle(
-                                                        color: Colors.white,
-                                                        fontSize: 12,
-                                                        fontFamily: 'Tajawal',
-                                                      ),
-                                                    ),
-                                                    style: ElevatedButton.styleFrom(
-                                                      backgroundColor: Colors.red, // لون أحمر للحذف
-                                                      padding: const EdgeInsets.symmetric(horizontal: 50, vertical: 8),
-                                                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-                                                    ),
-                                                  ),
-                                                ),
-                                              if (isPaid)
-                                             /*
-                                              Align(
-                                                alignment: Alignment.centerLeft,
-                                                child: OutlinedButton.icon(
-                                                  onPressed: () {
-                                                    controller.toggleRestAreaActiveStatus(restArea["id"]);
-                                                  },
-                                                  icon: Icon(
-                                                    restArea["is_active"] == true ? Icons.toggle_on : Icons.toggle_off,
-                                                    size: 20,
-                                                  ),
-                                                  label: Text(
-                                                    restArea["is_active"] == true ? 'مفعل' : 'معطل',
-                                                    style: const TextStyle(fontSize: 12, fontFamily: 'Tajawal'),
-                                                  ),
-                                                  style: OutlinedButton.styleFrom(
-                                                    foregroundColor: restArea["is_active"] == true ? MyColors.tealColor : Colors.grey,
-                                                    side: BorderSide(color: restArea["is_active"] == true ? MyColors.tealColor : Colors.grey),
-                                                    padding: const EdgeInsets.symmetric(horizontal: 50, vertical: 8),
-                                                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-                                                  ),
-                                                ),
-                                              ),
-                                              */
-                                              const SizedBox(height: 8),
-                                              if (isPaid)
-                                                Align(
-                                                  alignment: Alignment.centerLeft,
-                                                  child: ElevatedButton.icon(
-                                                    onPressed: () {
-                                                      _showOfflineBookingDialog(
-                                                          context,
-                                                          restArea["id"] as int,
-                                                          restArea["name"].toString()
-                                                      );
-                                                    },
-                                                    icon: const Icon(Icons.add_task, color: Colors.white, size: 20),
-                                                    label: const Text(
-                                                      'حجز خارجي',
-                                                      style: TextStyle(
-                                                        color: Colors.white,
-                                                        fontSize: 12,
-                                                        fontFamily: 'Tajawal',
-                                                      ),
-                                                    ),
-                                                    style: ElevatedButton.styleFrom(
+                                            ),
+                                         */
 
-                                                      padding: const EdgeInsets.symmetric(horizontal: 50, vertical: 8),
-                                                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-                                                    ),
-                                                  ),
-                                                ),
-                                              const SizedBox(height: 10), // مسافة بعد الأزرار
-                                             /*
-                                              Text(
-                                                restArea["description"].toString(),
-                                                maxLines: 2,
-                                                overflow: TextOverflow.ellipsis,
-                                                style: const TextStyle(
-                                                  fontSize: 14,
-                                                  fontFamily: 'Tajawal',
-                                                  color: Colors.black54,
-                                                ),
-                                              ),
-                                              */
-                                              if (!isPaid)
-                                                const Text(
-                                                  "غير مدفوعة",
-                                                  style: TextStyle(
-                                                    color: Colors.red,
-                                                    fontWeight: FontWeight.bold,
-                                                    fontFamily: 'Tajawal',
-                                                  ),
-                                                ),
-
-
-                                              const SizedBox(height: 8), // مسافة بعد الأزرار
-                                          /*
-                                              Text(
-                                                restArea["description"].toString(),
-                                                maxLines: 2,
-                                                overflow: TextOverflow.ellipsis,
-                                                style: const TextStyle(
-                                                  fontSize: 14,
-                                                  fontFamily: 'Tajawal',
-                                                  color: Colors.black54,
-                                                ),
-                                              ),
-                                           */
-
-                                            ],
-                                          ),
+                                          ],
                                         ),
-                                      ],
-                                    ),
+                                      ),
+                                    ],
                                   ),
                                 ),
                               ),

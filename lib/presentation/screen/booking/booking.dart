@@ -12,6 +12,7 @@ class _BookingState extends State<Booking> with SingleTickerProviderStateMixin {
   late HomeController Hocontroller = Get.put(HomeController());
 
   String status = "";
+
   var userType = ''.obs; // استخدام Rx لتحديث الواجهة عند تغيير القيمة
   var isLoading = true.obs; // إضافة حالة تحميل
   @override
@@ -491,6 +492,7 @@ class _BookingState extends State<Booking> with SingleTickerProviderStateMixin {
                         ),
                       ),
                     const SizedBox(height: 20),
+
                     Expanded(
                       child: controller.isLoading.value
                           ? Center(
@@ -501,10 +503,14 @@ class _BookingState extends State<Booking> with SingleTickerProviderStateMixin {
                                 : MyColors.successColor),
                       )
                           : ListView.builder(
+
                         itemCount: Hocontroller.filteredReservations.length,
                         itemBuilder: (context, index) {
                           status = Hocontroller.filteredReservations[index]
                           ['status'];
+                          final currentReservation = Hocontroller.filteredReservations[index];
+                          final DateTime checkInDate = DateTime.parse(currentReservation['check_in']);
+                          final bool isExpired = checkInDate.isBefore(DateTime.now());
                           Color bgColor;
                           Color textColor;
                           if (status == 'pending') {
@@ -585,15 +591,27 @@ class _BookingState extends State<Booking> with SingleTickerProviderStateMixin {
                                                         "https://esteraha.ly/public/${Hocontroller.filteredReservations[index]['rest_area']['main_image']}"))),
                                           ),
                                           const SizedBox(width: 10),
+
                                           Column(
                                             crossAxisAlignment: CrossAxisAlignment.start,
                                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                             children: [
+                                              // إذا انتهت صلاحية الحجز
+                                              if (status == 'pending' && isExpired)
+                                                const Text(
+                                                  "لقد انتهت صلاحية الطلب",
+                                                  style: TextStyle(
+                                                    color: Colors.red,
+                                                    fontWeight: FontWeight.bold,
+                                                    fontFamily: 'Tajawal',
+                                                  ),
+                                                ),
                                               Text(
                                                 "${Hocontroller.filteredReservations[index]['rest_area']['name']}",
                                                 style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 16),
                                               ),
                                               const SizedBox(height: 10),
+                                              if ( status != 'pending' )
                                               Container(
                                                 padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 5),
                                                 decoration: BoxDecoration(
@@ -611,7 +629,7 @@ class _BookingState extends State<Booking> with SingleTickerProviderStateMixin {
                                               ),
 
                                               // Buttons for "Cancel Reservation" and "Confirm Reservation"
-                                              if (status == 'pending')
+                                              if (status == 'pending' && !isExpired)
                                                 Padding(
                                                   padding: const EdgeInsets.only(top: 10),
                                                   child: Row(
@@ -633,6 +651,7 @@ class _BookingState extends State<Booking> with SingleTickerProviderStateMixin {
                                                               try {
                                                                 final currentReservation = Hocontroller.filteredReservations[index];
                                                                 final reservationId = currentReservation['id'];
+
 
                                                                 // عرض مؤشر تحميل
 

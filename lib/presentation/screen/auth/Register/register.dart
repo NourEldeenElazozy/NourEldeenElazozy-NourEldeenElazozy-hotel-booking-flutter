@@ -13,9 +13,14 @@ class RegisterScreenState extends State<RegisterScreen> with SingleTickerProvide
   late TabController _tabController;
   final GlobalKey<FormState> customerFormKey = GlobalKey<FormState>();
   final GlobalKey<FormState> hostFormKey = GlobalKey<FormState>();
+  late TapGestureRecognizer _tapRecognizer;
   @override
   void initState() {
     super.initState();
+    _tapRecognizer = TapGestureRecognizer()
+      ..onTap = () {
+        Get.toNamed('/PrivacyPolicy');
+      };
     controller = Get.put(RegisterController());
     Bottomcontroller = Get.put(BottomSheetController());
     _tabController = TabController(length: 2, vsync: this);
@@ -24,6 +29,7 @@ class RegisterScreenState extends State<RegisterScreen> with SingleTickerProvide
   @override
   void dispose() {
     _tabController.dispose();
+    _tapRecognizer.dispose();
     super.dispose();
   }
 
@@ -301,11 +307,7 @@ class RegisterScreenState extends State<RegisterScreen> with SingleTickerProvide
                       fontSize: 14,
                       height: 1.5,
                     ),
-                    recognizer: TapGestureRecognizer()
-                      ..onTap = () {
-                        // انتقال باستخدام GetX
-                        Get.toNamed('/PrivacyPolicy');
-                      },
+                    recognizer: _tapRecognizer,
                   ),
                 ],
               ),),

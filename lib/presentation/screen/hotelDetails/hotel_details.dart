@@ -379,6 +379,35 @@ class _HotelDetailState extends State<HotelDetail> {
                           ),
                           const Divider(),
                           Row(
+                            children: [
+                              SvgPicture.asset(
+                                MyImages.allMenu,
+                                colorFilter: ColorFilter.mode(
+                                  controller.themeController.isDarkMode.value
+                                      ? MyColors.white
+                                      : MyColors.black,
+                                  BlendMode.srcIn,
+                                ),
+                                width: 15,
+                              ),
+                              const SizedBox(width: 5),
+                              Text(
+                                "العدد الأقصي للضيوف : ${controller.detail.maxGuests}",
+                                style: TextStyle(
+                                  color: controller
+                                      .themeController.isDarkMode.value
+                                      ? MyColors.searchTextFieldColor
+                                      : MyColors.profileListTileColor,
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 14,
+                                ),
+                              ),
+
+                            ],
+                          ),
+                          const Divider(),
+
+                          Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
                               Text(

@@ -61,7 +61,7 @@ class HomeController extends GetxController {
        token = prefs.getString('token');
 
        final response = await Dio().delete(
-         'https://esteraha.ly/api/rest_areas/$restAreaId', // ✅ استبدل هذا بعنوان URL الصحيح للحذف
+         'https://esteraha.ly/api/rest-areas/$restAreaId',
          options: Options(
            headers: {
              'Authorization': 'Bearer $token',
@@ -71,21 +71,31 @@ class HomeController extends GetxController {
        );
 
        if (response.statusCode == 200) {
-         // 1. إزالة الاستراحة من القائمة المحلية
+         print(response.data);
          restAreas.removeWhere((item) => item["id"] == restAreaId);
-         // 2. إزالة حالة الدفع من Map
          paymentStatusMap.remove(restAreaId);
 
          Get.snackbar("تم بنجاح", "تم حذف الاستراحة بنجاح.");
        } else {
-         Get.snackbar("خطأ", "فشل في حذف الاستراحة: ${response.statusCode}");
+         print("خطأ من السيرفر: ${response.data}");
+         Get.snackbar("خطأ", "فشل في حذف الاستراحة: ${response.data}");
+       }
+     } on DioException catch (e) {
+       if (e.response != null) {
+         print("رسالة الخطأ من السيرفر: ${e.response?.data}");
+         Get.snackbar("خطأ", "فشل في الحذف: ${e.response?.data}");
+       } else {
+         print("خطأ Dio بدون ريسبونس: $e");
+         Get.snackbar("خطأ", "حدث خطأ أثناء الحذف: $e");
        }
      } catch (e) {
-       Get.snackbar("خطأ", "حدث خطأ أثناء الحذف: $e");
+       print("خطأ غير متوقع: $e");
+       Get.snackbar("خطأ", "حدث خطأ غير متوقع: $e");
      } finally {
        isLoading.value = false;
      }
    }
+
    Future<void> _saveFavoritesToPrefs() async {
      final prefs = await SharedPreferences.getInstance();
      // SharedPreferences لا يدعم List<int> مباشرة، فنحولها إلى List<String>
