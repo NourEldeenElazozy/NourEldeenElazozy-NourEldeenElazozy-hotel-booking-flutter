@@ -756,20 +756,19 @@ class _BookingState extends State<Booking> with SingleTickerProviderStateMixin {
                                                                       ElevatedButton(
                                                                         onPressed: () async {
                                                                           Get.back(); // إغلاق هذا التنبيه
-                                                                          Get.dialog(
-                                                                            Center(child: CircularProgressIndicator()),
-                                                                            barrierDismissible: false,
-                                                                          );
+
                                                                           //await Hocontroller.confirmReservation(reservationId);
                                                                           await controller.markReservationAsCompleted(reservationId);
                                                                           Hocontroller.getReservations();
                                                                           controller.getMyBooking();
                                                                           for (var res in overlapping) {
-                                                                           // await Hocontroller.cancelReservation(res['id']);
+                                                                            // MY Edit
+                                                                            await controller.markReservationAscanceled(res['id']);
                                                                           }
 
                                                                           await Hocontroller.fetchRecentlyBooked();
                                                                           Hocontroller.update(); // 3. تحديث الواجهة
+
                                                                         },
                                                                         style: ElevatedButton.styleFrom(backgroundColor: Colors.green),
                                                                         child: const Text("نعم، متابعة", style: TextStyle(color: Colors.white, fontFamily: 'Tajawal', )),
@@ -784,9 +783,9 @@ class _BookingState extends State<Booking> with SingleTickerProviderStateMixin {
                                                                             AlertDialog(
                                                                               title: const Text("الحجوزات في هذا اليوم"),
                                                                               content: SizedBox(
-                                                                                height: 300,
-                                                                                width: double.maxFinite,
-                                                                                child: SameDayReservationsPage(reservations: overlapping)
+                                                                                  height: 300,
+                                                                                  width: double.maxFinite,
+                                                                                  child: SameDayReservationsPage(reservations: overlapping)
                                                                               ),
                                                                               actions: [
                                                                                 TextButton(
@@ -810,7 +809,7 @@ class _BookingState extends State<Booking> with SingleTickerProviderStateMixin {
                                                                     ],
                                                                   );
 
-                                                                } else {
+                                                                }  else {
                                                                   // لا يوجد تضارب
                                                                   //await Hocontroller.confirmReservation(reservationId);
 

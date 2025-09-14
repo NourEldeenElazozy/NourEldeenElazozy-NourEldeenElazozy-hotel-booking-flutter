@@ -228,9 +228,8 @@ Future<void> main() async {
     runApp(MyApp(initialRoute: initialRoute));
 
   } catch (e) {
-    final prefs = await SharedPreferences.getInstance();
-    final hasSeenOnboarding = prefs.getBool('onboarding') ?? false;
-    final initialRoute = hasSeenOnboarding ? "/bottomBar" : "/onboarding";
+
+    final initialRoute ="/bootLogo";
 
 
     runApp(MyApp(initialRoute: initialRoute));

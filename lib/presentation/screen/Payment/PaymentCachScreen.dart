@@ -73,36 +73,51 @@ class PaymentCachScreen extends StatelessWidget {
 
                 SizedBox(height: 24),
                 Obx(() => controller.isLoading.value
-                    ? Center(child: CircularProgressIndicator())
+                    ? const Center(child: CircularProgressIndicator())
                     : ElevatedButton.icon(
-                  icon: Icon(Icons.payment),
+                  icon: const Icon(Icons.payment),
                   style: ElevatedButton.styleFrom(
                     backgroundColor: MyColors.primaryColor,
-                    padding: EdgeInsets.symmetric(vertical: 14),
+                    padding: const EdgeInsets.symmetric(vertical: 14),
                   ),
                   onPressed: () {
                     if (_formKey.currentState!.validate()) {
                       if (args != null && args['unpaidData'] != null) {
-                        controller.unpaidData = List<Map<String, dynamic>>.from(args['unpaidData']);
-                        print('Received unpaid dataw: ${ controller.unpaidData}');
+                        controller.unpaidData =
+                        List<Map<String, dynamic>>.from(args['unpaidData']);
+                        print('Received unpaid data: ${controller.unpaidData}');
                       }
+
                       controller.initiateCashPayment(
                         amount: double.parse(amountController.text),
-                        packageId: MyString.packageId
-
-                      );
+                        packageId: MyString.packageId,
+                      ).then((_) {
+                        // ✅ عرض سناك بار بعد الإرسال
+                        Get.snackbar(
+                          "تم إرسال الطلب",
+                          "تم إرسال طلب الدفع النقدي، يرجى التواصل مع الدعم الفني.",
+                          snackPosition: SnackPosition.TOP,
+                          backgroundColor: Colors.green.shade600,
+                          colorText: Colors.white,
+                          margin: const EdgeInsets.all(12),
+                          borderRadius: 10,
+                          icon: const Icon(Icons.check_circle, color: Colors.white),
+                          duration: const Duration(seconds: 4),
+                        );
+                      });
                     }
                   },
-                  label: Text(
+                  label: const Text(
                     "ادفع الآن",
                     style: TextStyle(
                       fontSize: 20,
                       fontWeight: FontWeight.bold,
                       fontFamily: 'Tajawal',
-
                     ),
                   ),
-                )),
+                ),
+                )
+
               ],
             ),
           ),

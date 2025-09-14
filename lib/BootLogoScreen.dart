@@ -18,10 +18,12 @@ class _BootLogoScreenState extends State<BootLogoScreen> {
   }
 
   Future<void> _navigateNext() async {
-    await Future.delayed(const Duration(seconds: 2)); // مدة ظهور اللوقو
-
     final prefs = await SharedPreferences.getInstance();
     final hasSeenOnboarding = prefs.getBool('onboarding') ?? false;
+    print("hasSeenOnboarding $hasSeenOnboarding");
+
+    // انتظر ثانيتين لعرض اللوجو
+    await Future.delayed(const Duration(seconds: 2));
 
     if (hasSeenOnboarding) {
       Get.offAllNamed("/bottomBar");
@@ -29,6 +31,7 @@ class _BootLogoScreenState extends State<BootLogoScreen> {
       Get.offAllNamed("/onboarding");
     }
   }
+
 
   @override
   Widget build(BuildContext context) {
