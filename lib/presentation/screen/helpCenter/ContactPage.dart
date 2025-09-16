@@ -180,6 +180,9 @@ class _ContactPageState extends State<ContactPage> {
 
                       // حقل الاسم
                       TextField(
+                        style: TextStyle( // ✅ لون النص
+                          color: Colors.black, // في الوضع الفاتح
+                        ),
                         controller: nameController,
                         decoration: InputDecoration(
                           hintText: 'الاسم',
@@ -197,8 +200,14 @@ class _ContactPageState extends State<ContactPage> {
                       TextField(
                         controller: phoneController,
                         keyboardType: TextInputType.phone,
+                        style: TextStyle( // ✅ لون النص
+                          color: Colors.black, // في الوضع الفاتح
+                        ),
                         decoration: InputDecoration(
                           hintText: 'رقم الهاتف',
+                          hintStyle: TextStyle(
+                            color: Colors.grey, // ✅ لون النص الوهمي (Hint)
+                          ),
                           filled: true,
                           fillColor: Colors.white,
                           border: OutlineInputBorder(
@@ -207,10 +216,14 @@ class _ContactPageState extends State<ContactPage> {
                           ),
                         ),
                       ),
+
                       SizedBox(height: 12),
 
                       // حقل الرسالة
                       TextField(
+                        style: TextStyle( // ✅ لون النص
+                          color: Colors.black, // في الوضع الفاتح
+                        ),
                         controller: messageController,
                         maxLines: 4,
                         decoration: InputDecoration(

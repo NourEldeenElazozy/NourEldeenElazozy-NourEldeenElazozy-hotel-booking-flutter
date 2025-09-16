@@ -242,8 +242,10 @@ class FilterBottomSheet extends StatelessWidget {
                                         DropdownMenuItem(
                                           value: "",
                                           child: Row(
+                                            textDirection: TextDirection.rtl, // 👉 يخلي الأيقونة على اليمين
                                             children: [
                                               Text("اختر المنطقة"),
+
                                               SizedBox(width: 8),
 
                                             ],
@@ -252,7 +254,8 @@ class FilterBottomSheet extends StatelessWidget {
                                         DropdownMenuItem(
                                           value: "مطلة على البحر",
                                           child: Row(
-                                            children: [
+                                            textDirection: TextDirection.rtl, // 👉 يخلي الأيقونة على اليمين
+                                            children: const [
                                               Text("🌊 "),
                                               SizedBox(width: 8),
                                               Text("مطلة على البحر"),
@@ -262,7 +265,8 @@ class FilterBottomSheet extends StatelessWidget {
                                         DropdownMenuItem(
                                           value: "قريبة من البحر",
                                           child: Row(
-                                            children: [
+                                            textDirection: TextDirection.rtl,
+                                            children: const [
                                               Text("🏖 "),
                                               SizedBox(width: 8),
                                               Text("قريبة من البحر"),
@@ -272,7 +276,8 @@ class FilterBottomSheet extends StatelessWidget {
                                         DropdownMenuItem(
                                           value: "وسط البلاد",
                                           child: Row(
-                                            children: [
+                                            textDirection: TextDirection.rtl,
+                                            children: const [
                                               Text("🏙 "),
                                               SizedBox(width: 8),
                                               Text("وسط البلاد"),
@@ -282,13 +287,15 @@ class FilterBottomSheet extends StatelessWidget {
                                         DropdownMenuItem(
                                           value: "في منطقة سياحية",
                                           child: Row(
-                                            children: [
+                                            textDirection: TextDirection.rtl,
+                                            children: const [
                                               Text("🏕 "),
                                               SizedBox(width: 8),
                                               Text("في منطقة سياحية"),
                                             ],
                                           ),
                                         ),
+
                                       ],
                                       onChanged: (value) {
                                         homecontroller.selectedGeoArea.value = value!;

@@ -1080,41 +1080,45 @@ controller = Get.put(RestAreaController());
   }
 
   Widget _buildDropdown(
-    String label,
-    IconData icon,
-    List<String> items,
-    String? value,
-    Function(String?) onChanged,
-  ) {
+      String label,
+      IconData icon,
+      List<String> items,
+      String? value,
+      Function(String?) onChanged,
+      ) {
     return Padding(
-      padding: EdgeInsets.only(bottom: 16),
+      padding: const EdgeInsets.only(bottom: 16),
       child: DropdownButtonFormField<String>(
-        onSaved: (value) => onChanged(value),
-        value: items.contains(value)
-            ? value
-            : null, // تعيين القيمة إلى null إذا لم تكن موجودة
-        items: items.map((item) {
-          return DropdownMenuItem(
-            value: item,
-            child: Text(item),
-          );
-        }).toList(),
+        value: items.contains(value) ? value : null,
         onChanged: onChanged,
+        onSaved: (val) => onChanged(val),
         decoration: InputDecoration(
           labelText: label,
           prefixIcon: Icon(icon, color: MyColors.textPaymentInfo),
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(10),
-            borderSide: BorderSide(color: Colors.grey),
+            borderSide: const BorderSide(color: Colors.grey),
           ),
           focusedBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(10),
             borderSide: BorderSide(color: MyColors.primaryColor),
           ),
         ),
+        items: items.map((item) {
+          return DropdownMenuItem<String>(
+            value: item,
+            child: Row(
+              textDirection: TextDirection.rtl, // 👈 يجعل النص على اليمين
+              children: [
+                Text(item),
+              ],
+            ),
+          );
+        }).toList(),
       ),
     );
   }
+
 
   Widget _buildTimeRow() {
     return Column(

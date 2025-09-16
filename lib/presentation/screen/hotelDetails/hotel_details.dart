@@ -311,15 +311,23 @@ class _HotelDetailState extends State<HotelDetail> {
                                           }
                                               : null, // يجعل الزر مطفأ إذا لم يتوفر الرابط
                                           style: ElevatedButton.styleFrom(
-                                            backgroundColor: (controller.detail.virtual_tour_link != null &&
-                                                (controller.detail.virtual_tour_link as String).isNotEmpty)
-                                                ? MyColors.primaryColor // لون أساسي إذا كان الرابط موجودًا
-                                                : Colors.grey.shade400, // لون رمادي فاتح إذا كان الرابط غير موجود
                                             shape: RoundedRectangleBorder(
                                               borderRadius: BorderRadius.circular(10),
                                             ),
                                             padding: const EdgeInsets.symmetric(vertical: 12),
+                                          ).copyWith(
+                                            backgroundColor: MaterialStateProperty.resolveWith<Color>((states) {
+                                              if (states.contains(MaterialState.disabled)) {
+                                                // 🎨 زر معطل
+                                                return controller.themeController.isDarkMode.value
+                                                    ? Colors.grey.shade700 // في الوضع الداكن
+                                                    : Colors.grey.shade400; // في الوضع الفاتح
+                                              }
+                                              // 🎨 زر شغال (الرابط موجود)
+                                              return MyColors.primaryColor;
+                                            }),
                                           ),
+
                                           icon: const Icon(Icons.travel_explore, color: Colors.white),
                                           label: const Text(
                                             "تجول افتراضي",
@@ -1324,13 +1332,16 @@ class _HotelDetailState extends State<HotelDetail> {
                                       microsecond: 0),
                                   daysOfWeekStyle: DaysOfWeekStyle(
                                     weekdayStyle: TextStyle(
-                                      fontSize: 10, // حجم الخط لأيام الأسبوع العادية
-                                      fontWeight: FontWeight.normal,
-                                      color: Colors.black,
+                                      fontSize: 14, // حجم الخط لأيام الأسبوع العادية
+                                      fontWeight: FontWeight.bold,
+                                      color: controller
+                                          .themeController.isDarkMode.value
+                                          ? Colors.white70
+                                          : Colors.black87,
                                     ),
                                     weekendStyle: TextStyle(
-                                      fontSize: 10 ,// حجم الخط لأيام نهاية الأسبوع
-                                      fontWeight: FontWeight.normal,
+                                      fontSize: 14 ,// حجم الخط لأيام نهاية الأسبوع
+                                      fontWeight: FontWeight.bold,
                                       color: Colors.red,
                                     ),
                                   ),

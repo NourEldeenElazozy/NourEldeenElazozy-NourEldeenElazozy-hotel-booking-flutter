@@ -113,11 +113,17 @@ class RegisterScreenState extends State<RegisterScreen> with SingleTickerProvide
                 items: [
                   DropdownMenuItem(
                     value: 'ذكر',
-                    child: Text('ذكر'),
+                    child: Align(
+                      alignment: Alignment.centerRight, // المحاذاة لليمين
+                      child: Text('ذكر'),
+                    ),
                   ),
                   DropdownMenuItem(
                     value: 'انثي',
-                    child: Text('انثي'),
+                    child: Align(
+                      alignment: Alignment.centerRight,
+                      child: Text('انثي'),
+                    ),
                   ),
                 ],
                 onChanged: (value) {
@@ -159,6 +165,7 @@ class RegisterScreenState extends State<RegisterScreen> with SingleTickerProvide
                     ),
                     items: controller.cities.map((city) {
                       return DropdownMenuItem<int>(
+                        alignment: Alignment.centerRight, // المحاذاة لليمين
                         value: city.id,
                         child: Text(city.name),
                       );
