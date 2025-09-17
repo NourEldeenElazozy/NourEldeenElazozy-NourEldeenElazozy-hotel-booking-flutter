@@ -84,14 +84,14 @@ class DateTimeSelectController extends GetxController {
             final formattedDates = reservedDates.join("\n");
 
             Get.defaultDialog(
-              title: "التواريخ غير متاحة",
+              title: "هذه المده غير متاحه بالكامل",
               content: Directionality(
                 textDirection: TextDirection.rtl,
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.center, // ✅ النصوص في المنتصف
                   children: [
                     Text(
-                      "الفترة المطلوبة متداخلة مع حجوزات أخرى.\n\nالتواريخ المشغولة:",
+                      "خلال  فترة الحجز يوجد ايام محجوزة.\n\nالتواريخ المشغولة:",
                       style: TextStyle(fontWeight: FontWeight.bold),
                       textAlign: TextAlign.center,
                     ),
@@ -123,7 +123,7 @@ class DateTimeSelectController extends GetxController {
 
                     SizedBox(height: 15),
                     Text(
-                      "الرجاء اختيار تواريخ بديلة.",
+                      "اعد تعيين ايام الحجز في هذه الإستراحة او في اخري.",
                       style: TextStyle(color: Colors.black87),
                       textAlign: TextAlign.center,
                     ),

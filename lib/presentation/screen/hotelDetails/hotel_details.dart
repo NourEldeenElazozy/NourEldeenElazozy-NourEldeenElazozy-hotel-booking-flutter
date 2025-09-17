@@ -169,48 +169,157 @@ class _HotelDetailState extends State<HotelDetail> {
                   ),
 
                   flexibleSpace: FlexibleSpaceBar(
-                    background: Stack(
-                      children: [
-                        CarouselSlider.builder(
-                          itemCount: 1,
-                          itemBuilder: (context, index, realIndex) {
-                            return Image.network(
-                                "https://esteraha.ly/public/${controller.detail.mainImage.toString()}",
-                                fit: BoxFit.fill,
-                                width: MediaQuery.of(context).size.width);
-                          },
-                          options: CarouselOptions(
-                              onPageChanged: (index, reason) {
-                                controller.sliderIndex.value = index;
+                    background: Obx(
+                          () {
+                        // إنشاء قائمة من الصور: أولها mainImage ثم تفاصيل الصور
+                        final allImages = [
+                          "https://esteraha.ly/public/${controller.detail.mainImage}",
+                          ...controller.detail.detailsImages
+                              .map((img) => "https://esteraha.ly/public/$img")
+                              .toList()
+                        ];
+
+                        return Stack(
+                          children: [
+                            CarouselSlider.builder(
+                              itemCount: allImages.length,
+                              itemBuilder: (context, index, realIndex) {
+                                final imageUrl = allImages[index];
+                                return GestureDetector(
+                                  onTap: () {
+                                    // فتح الصورة في Dialog عند الضغط
+                                    showDialog(
+                                      context: context,
+                                      builder: (context) {
+                                        PageController pageController =
+                                        PageController(initialPage: index);
+                                        return StatefulBuilder(
+                                          builder: (context, setState) {
+                                            int currentPage = index;
+                                            pageController.addListener(() {
+                                              setState(() {
+                                                currentPage =
+                                                    pageController.page?.round() ?? 0;
+                                              });
+                                            });
+
+                                            return Dialog(
+                                              insetPadding: const EdgeInsets.all(10),
+                                              child: Container(
+                                                color: Colors.black,
+                                                child: Stack(
+                                                  children: [
+                                                    PageView.builder(
+                                                      controller: pageController,
+                                                      itemCount: allImages.length,
+                                                      itemBuilder: (context, pageIndex) {
+                                                        return InteractiveViewer(
+                                                          child: Image.network(
+                                                            allImages[pageIndex],
+                                                            fit: BoxFit.contain,
+                                                          ),
+                                                        );
+                                                      },
+                                                    ),
+                                                    // زر إغلاق
+                                                    Positioned(
+                                                      top: 10,
+                                                      right: 10,
+                                                      child: IconButton(
+                                                        icon: const Icon(Icons.close,
+                                                            color: Colors.white, size: 28),
+                                                        onPressed: () =>
+                                                            Navigator.of(context).pop(),
+                                                      ),
+                                                    ),
+                                                    // زر السابق
+                                                    Positioned(
+                                                      left: 10,
+                                                      top:
+                                                      MediaQuery.of(context).size.height *
+                                                          0.4,
+                                                      child: IconButton(
+                                                        icon: const Icon(Icons.arrow_back_ios,
+                                                            color: Colors.white, size: 32),
+                                                        onPressed: () {
+                                                          pageController.previousPage(
+                                                            duration: const Duration(
+                                                                milliseconds: 300),
+                                                            curve: Curves.easeInOut,
+                                                          );
+                                                        },
+                                                      ),
+                                                    ),
+                                                    // زر التالي
+                                                    Positioned(
+                                                      right: 10,
+                                                      top:
+                                                      MediaQuery.of(context).size.height *
+                                                          0.4,
+                                                      child: IconButton(
+                                                        icon:
+                                                        const Icon(Icons.arrow_forward_ios,
+                                                            color: Colors.white, size: 32),
+                                                        onPressed: () {
+                                                          pageController.nextPage(
+                                                            duration: const Duration(
+                                                                milliseconds: 300),
+                                                            curve: Curves.easeInOut,
+                                                          );
+                                                        },
+                                                      ),
+                                                    ),
+                                                  ],
+                                                ),
+                                              ),
+                                            );
+                                          },
+                                        );
+                                      },
+                                    );
+                                  },
+                                  child: Image.network(
+                                    imageUrl,
+                                    fit: BoxFit.cover,
+                                    width: MediaQuery.of(context).size.width,
+                                  ),
+                                );
                               },
-                              autoPlay: true,
-                              viewportFraction: 1,
-                              initialPage: 0,
-                              height: MediaQuery.of(context).size.height),
-                        ),
-                        Obx(
-                          () => Positioned(
-                            bottom: 15,
-                            left: 0,
-                            right: 0,
-                            child: DotsIndicator(
-                              position: controller.sliderIndex.value,
-                              dotsCount: controller.detail.detailsImages.length,
-                              decorator: DotsDecorator(
-                                activeColor: Colors.green,
-                                color: MyColors.white,
-                                size: const Size.square(8),
-                                activeSize: const Size(35, 8),
-                                activeShape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(5),
+                              options: CarouselOptions(
+                                height: MediaQuery.of(context).size.height,
+                                viewportFraction: 1,
+                                autoPlay: true,
+                                onPageChanged: (index, reason) {
+                                  controller.sliderIndex.value = index;
+                                },
+                              ),
+                            ),
+
+                            // Dots Indicator
+                            Positioned(
+                              bottom: 15,
+                              left: 0,
+                              right: 0,
+                              child: DotsIndicator(
+                                position: controller.sliderIndex.value,
+                                dotsCount: allImages.length,
+                                decorator: DotsDecorator(
+                                  activeColor: Colors.green,
+                                  color: MyColors.white,
+                                  size: const Size.square(8),
+                                  activeSize: const Size(35, 8),
+                                  activeShape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(5),
+                                  ),
                                 ),
                               ),
                             ),
-                          ),
-                        )
-                      ],
+                          ],
+                        );
+                      },
                     ),
                   ),
+
                 )
               ];
             },

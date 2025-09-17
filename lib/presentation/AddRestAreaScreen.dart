@@ -164,7 +164,9 @@ if (args != null && args['isEdit'] == true && args['restAreaData'] != null) {
 
 
   _restArea.internalSpace = int.tryParse(data["internal_space"]?.toString() ?? "0") ?? 0;
-  _restArea.maxGuests = int.tryParse(data["maxGuests"]?.toString() ?? "0") ?? 0;
+  var value = data["max_guests"];
+  _restArea.maxGuests = (value is num) ? value.toInt() : int.tryParse(value?.toString() ?? "0") ?? 0;
+
 
 
   // 🔴🔴🔴 إضافة طباعة تصحيح هنا 🔴�🔴
@@ -205,12 +207,30 @@ if (args != null && args['isEdit'] == true && args['restAreaData'] != null) {
   } else {
     _hasPool = false;
   }
-  _restArea.numDoubleBeds = int.tryParse(data["num_double_beds"]?.toString() ?? "0") ?? 0;
-  _restArea.numSingleBeds = int.tryParse(data["num_single_beds"]?.toString() ?? "0") ?? 0;
-  _restArea.numBedrooms = int.tryParse(data["numBedrooms"]?.toString() ?? "0") ?? 0;
-  _restArea.numFloors = int.tryParse(data["num_floors"]?.toString() ?? "0") ?? 0;
-  _restArea.numBathroomsIndoor = int.tryParse(data["num_bathrooms_indoor"]?.toString() ?? "0") ?? 0;
-  _restArea.numBathroomsOutdoor = int.tryParse(data["num_bathrooms_outdoor"]?.toString() ?? "0") ?? 0;
+  _restArea.numDoubleBeds = (data["num_double_beds"] is num)
+      ? (data["num_double_beds"] as num).toInt()
+      : int.tryParse(data["num_double_beds"]?.toString() ?? "0") ?? 0;
+
+  _restArea.numSingleBeds = (data["num_single_beds"] is num)
+      ? (data["num_single_beds"] as num).toInt()
+      : int.tryParse(data["num_single_beds"]?.toString() ?? "0") ?? 0;
+
+  _restArea.numBedrooms = (data["num_bedrooms"] is num)
+      ? (data["num_bedrooms"] as num).toInt()
+      : int.tryParse(data["num_bedrooms"]?.toString() ?? "0") ?? 0;
+ print("_restArea.numBedrooms ${_restArea.numBedrooms}");
+  _restArea.numFloors = (data["num_floors"] is num)
+      ? (data["num_floors"] as num).toInt()
+      : int.tryParse(data["num_floors"]?.toString() ?? "0") ?? 0;
+
+  _restArea.numBathroomsIndoor = (data["num_bathrooms_indoor"] is num)
+      ? (data["num_bathrooms_indoor"] as num).toInt()
+      : int.tryParse(data["num_bathrooms_indoor"]?.toString() ?? "0") ?? 0;
+
+  _restArea.numBathroomsOutdoor = (data["num_bathrooms_outdoor"] is num)
+      ? (data["num_bathrooms_outdoor"] as num).toInt()
+      : int.tryParse(data["num_bathrooms_outdoor"]?.toString() ?? "0") ?? 0;
+
 
 
 
@@ -272,7 +292,7 @@ if (args != null && args['isEdit'] == true && args['restAreaData'] != null) {
   gamesdetailsController.text = _restArea.gamesdetails; // 🔴 تعبئة كنترولر
   otherSpecsController.text = _restArea.otherSpecs; // 🔴 تعبئة كنترولر
 
-
+print("maxGuests ${_restArea.numBedrooms.toString()}");
   // إذا كانت هناك صور موجودة، قم بتحميلها (هذا يتطلب منطقًا إضافيًا لتحميل الصور من URL إلى XFile)
   // حاليًا، هذا الجزء غير مدعوم بشكل مباشر في هذا الكود، ستحتاج إلى تنفيذه
    //_mainImage = XFile(data["main_image"]);

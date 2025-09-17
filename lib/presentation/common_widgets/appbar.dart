@@ -121,15 +121,38 @@ PreferredSizeWidget homeAppBar(BuildContext context,String title, bool status, b
                       onTap: () {
                         Get.toNamed("/notification");
                       },
-                      child: Container(
-                        padding: const EdgeInsets.all(5),
-                        child: SvgPicture.asset(MyImages.notification,
-                            colorFilter: ColorFilter.mode(
+                      child: Stack(
+                        clipBehavior: Clip.none, // يسمح للنقطة بالخروج عن حدود العنصر
+                        children: [
+                          Container(
+                            padding: const EdgeInsets.all(5),
+                            child: SvgPicture.asset(
+                              MyImages.notification,
+                              colorFilter: ColorFilter.mode(
                                 isDarkMode ? MyColors.white : MyColors.black,
-                                BlendMode.srcIn),
-                            width: 25),
+                                BlendMode.srcIn,
+                              ),
+                              width: 25,
+                            ),
+                          ),
+
+                          // ✅ دائرة حمراء كإشارة إشعار
+                          Positioned(
+                            right: 2, // يمين الأيقونة
+                            top: 2,   // فوق الأيقونة
+                            child: Container(
+                              width: 10,
+                              height: 10,
+                              decoration: BoxDecoration(
+                                color: Colors.red,
+                                shape: BoxShape.circle,
+                              ),
+                            ),
+                          ),
+                        ],
                       ),
                     ),
+
                     const SizedBox(width: 5),
 
                     InkWell(

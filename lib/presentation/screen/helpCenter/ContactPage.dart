@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:hotel_booking/core/constants/my_strings.dart';
 import 'package:hotel_booking/presentation/common_widgets/appbar.dart';
@@ -105,6 +106,23 @@ class _ContactPageState extends State<ContactPage> {
                           _launchUrl('tel:0928058860');
                         },
                       ),
+                      Divider(),
+                      ListTile(
+                        leading: SvgPicture.asset(
+                          'assets/icon/whatsapp.svg', // ضع مسار الأيقونة في مشروعك
+                          width: 24,
+                          height: 24,
+                        ),
+                        title: Text(
+                          'تواصل عبر واتساب',
+                          style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+                        ),
+                        onTap: () {
+                          _launchUrl('https://wa.me/218928058860');
+                        },
+                      ),
+
+
 
                       Divider(),
 
