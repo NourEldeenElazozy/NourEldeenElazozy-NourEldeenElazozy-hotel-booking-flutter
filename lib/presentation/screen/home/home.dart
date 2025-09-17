@@ -576,7 +576,7 @@ class _HomeState extends State<Home> {
                               );
                             }
                             // الحالة الثالثة: إذا كانت البيانات فارغة (بعد التحميل ووجود التوكن)
-                            if (controller.filteredReservations.isEmpty) {
+                            if (controller.allReservations.isEmpty) {
                               return const Center(
                                 child: Text("لا توجد بيانات حالياً"),
                               );
@@ -585,7 +585,7 @@ class _HomeState extends State<Home> {
                             return ListView.builder(
                               physics: const NeverScrollableScrollPhysics(),
                               shrinkWrap: true,
-                              itemCount: controller.filteredReservations.length,
+                              itemCount: controller.allReservations.length,
                               itemBuilder: (context, index) {
                                 return InkWell(
                                   onTap: () {

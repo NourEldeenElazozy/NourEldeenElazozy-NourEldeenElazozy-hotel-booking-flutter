@@ -218,26 +218,17 @@ Future<void> main() async {
       print("Hash: ${hash ?? 'NO HASH RECEIVED'}");
     }
     // تحقق مما إذا كان المستخدم شاهد Onboarding أم لا
-    final prefs = await SharedPreferences.getInstance();
-    final hasSeenOnboarding = prefs.getBool('onboarding') ?? false;
 
-    // احفظ المسار المبدئي
-    final initialRoute = hasSeenOnboarding ? "/bottomBar" : "/onboarding";
-    print("hasSeenOnboarding $hasSeenOnboarding");
+
     // 4. تشغيل التطبيق الرئيسي
-    runApp(MyApp(initialRoute: initialRoute));
+    runApp(MyApp(initialRoute: "/bootLogo"));
 
   } catch (e) {
-
-    final initialRoute ="/bootLogo";
-
-
-    runApp(MyApp(initialRoute: initialRoute));
-
+    final initialRoute = "/bootLogo";
     debugPrint('Firebase initialization error: $e');
-    // في حالة حدوث خطأ في تهيئة Firebase
-    runApp(MyApp(initialRoute: initialRoute));
+    runApp(MyApp(initialRoute: "/bootLogo"));
   }
+
 }
 
 class MyApp extends StatefulWidget {

@@ -44,40 +44,45 @@ class _DateTimeSelectState extends State<DateTimeSelect> {
 
 
   Future<void> _selectDate(
-      BuildContext context, bool isFromDate, int restAreaId) async {
+      BuildContext context, bool isFromDate, int restAreaId
+      ) async {
     // جلب الأيام المحجوزة من API
-    await controller.fetchReservedDates(restId);
+    await controller.fetchReservedDates(restAreaId);
 
     final DateTime? picked = await showDatePicker(
       context: context,
-
-      //initialDate: isFromDate ? controller.fromDate.value : controller.toDate.value,
       firstDate: DateTime.now(),
       lastDate: DateTime.now().add(const Duration(days: 365)),
       selectableDayPredicate: (DateTime day) {
-        // تحقق مما إذا كان اليوم محجوزًا
-        return !controller.reservedDates.contains(day);
+        if (isFromDate) {
+          // تاريخ الوصول: يمنع الأيام المحجوزة
+          return !controller.reservedDates.contains(day);
+        } else {
+          // تاريخ المغادرة: يمنع الأيام قبل الوصول فقط، يسمح بيوم دخول شخص آخر
+          return day.isAfter(controller.fromDate.value) ||
+              day.isAtSameMomentAs(controller.fromDate.value);
+        }
       },
     );
 
     if (picked != null) {
       if (isFromDate) {
         controller.setFromDate(picked);
+        // ضبط تاريخ المغادرة إذا أقل من الوصول
         if (picked.isAfter(controller.toDate.value)) {
           controller.setToDate(picked.add(const Duration(days: 1)));
         }
       } else {
-        if (picked.isAfter(controller.fromDate.value)) {
+        if (picked.isAfter(controller.fromDate.value) ||
+            picked.isAtSameMomentAs(controller.fromDate.value)) {
           controller.setToDate(picked);
         } else {
           Get.defaultDialog(
-            title: "خطاء",
+            title: "خطأ",
             middleText: "يجب أن يكون تاريخ المغادرة بعد تاريخ تسجيل الوصول",
             actions: [
               TextButton(
-                onPressed: () {
-                  Get.back();
-                },
+                onPressed: () => Get.back(),
                 child: const Text("إغلاق"),
               ),
             ],
@@ -86,6 +91,7 @@ class _DateTimeSelectState extends State<DateTimeSelect> {
       }
     }
   }
+
 
   @override
   Widget build(BuildContext context) {

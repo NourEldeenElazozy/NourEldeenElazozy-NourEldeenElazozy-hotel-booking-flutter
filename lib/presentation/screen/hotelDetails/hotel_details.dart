@@ -1342,7 +1342,10 @@ class _HotelDetailState extends State<HotelDetail> {
                                     weekendStyle: TextStyle(
                                       fontSize: 14 ,// حجم الخط لأيام نهاية الأسبوع
                                       fontWeight: FontWeight.bold,
-                                      color: Colors.red,
+                                      color: controller
+                                          .themeController.isDarkMode.value
+                                          ? Colors.white70
+                                          : Colors.black87,
                                     ),
                                   ),
 

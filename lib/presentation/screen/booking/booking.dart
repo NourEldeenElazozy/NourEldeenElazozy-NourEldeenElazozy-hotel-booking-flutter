@@ -510,7 +510,11 @@ class _BookingState extends State<Booking> with SingleTickerProviderStateMixin {
                           ['status'];
                           final currentReservation = Hocontroller.filteredReservations[index];
                           final DateTime checkInDate = DateTime.parse(currentReservation['check_in']);
-                          final bool isExpired = checkInDate.isBefore(DateTime.now());
+                          // نخصم يوم واحد من التاريخ الحالي
+                          final DateTime todayMinusOne = DateTime.now().subtract(const Duration(days: 1));
+
+// الشرط: يعتبر Expired إذا checkInDate أصغر من اليوم ناقص يوم
+                          final bool isExpired = checkInDate.isBefore(todayMinusOne);
                           Color bgColor;
                           Color textColor;
                           if (status == 'pending') {

@@ -16,7 +16,7 @@ class HomeController extends GetxController {
    var passingStatus = ''.obs; // لتخزين الفلتر الحالي
    var reservations = [].obs; // متغير لتخزين الحجوزات
    //var filteredReservations = [].obs;
-   List<dynamic> _allReservations = []; // استخدم underscore لجعلها خاصة بالكنترولر
+   List<dynamic> allReservations = []; // استخدم underscore لجعلها خاصة بالكنترولر
    RxList<dynamic> hostRestAreas = <dynamic>[].obs; // قائمة استراحات المضيف
    Rxn<int> selectedRestAreaIdFilter = Rxn<int>(null); // لتخزين ID الاستراحة المختارة للفرز
    RxString selectedDateSortOrder = 'newest'.obs; // 'newest' (الأقرب) أو 'oldest' (الأقدم)
@@ -231,7 +231,7 @@ class HomeController extends GetxController {
      }).toList();
    }
    void filterList(String status) {
-     List<dynamic> tempFilteredList = _allReservations.where((reservation) {
+     List<dynamic> tempFilteredList = allReservations.where((reservation) {
        bool matchesStatus = reservation['status'].toString().toLowerCase() == status.toLowerCase();
        bool matchesRestArea = true;
 
@@ -402,12 +402,12 @@ class HomeController extends GetxController {
          print(response.data);
          print("response.data5");
 
-         _allReservations = response.data['reservations']; // تخزين في القائمة الأصلية
+         allReservations = response.data['reservations']; // تخزين في القائمة الأصلية
 
          // **الجزء المعدل: استخراج الاستراحات الفريدة من الحجوزات باستخدام Map**
          if (isHost) {
            Map<int, Map<String, dynamic>> uniqueRestAreasMap = {}; // استخدم Map لضمان التفرد بالـ ID
-           for (var reservation in _allReservations) {
+           for (var reservation in allReservations) {
              if (reservation['rest_area'] != null && reservation['rest_area']['id'] != null) {
                int restAreaId = reservation['rest_area']['id'];
                String restAreaName = reservation['rest_area']['name'] ?? 'اسم غير معروف';
@@ -422,7 +422,7 @@ class HomeController extends GetxController {
            print("Host rest areas (from reservations): ${hostRestAreas.value}");
          }
 
-         print("All reservations fetched: ${_allReservations.length} items");
+         print("All reservations fetched: ${allReservations.length} items");
          filterList('pending'); // فلترة أولية بعد الجلب على القائمة الأصلية
          print("filteredReservations after initial filter: ${filteredReservations.length} items");
        } else {

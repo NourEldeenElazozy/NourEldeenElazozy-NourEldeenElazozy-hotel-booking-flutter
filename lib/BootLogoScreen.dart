@@ -18,19 +18,28 @@ class _BootLogoScreenState extends State<BootLogoScreen> {
   }
 
   Future<void> _navigateNext() async {
-    final prefs = await SharedPreferences.getInstance();
-    final hasSeenOnboarding = prefs.getBool('onboarding') ?? false;
-    print("hasSeenOnboarding $hasSeenOnboarding");
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final hasSeenOnboarding = prefs.getBool('onboarding');
+      print("hasSeenOnboarding1 $hasSeenOnboarding");
 
-    // انتظر ثانيتين لعرض اللوجو
-    await Future.delayed(const Duration(seconds: 2));
+      // انتظر ثانيتين لعرض اللوجو
+      await Future.delayed(const Duration(seconds: 2));
 
-    if (hasSeenOnboarding) {
+      if (hasSeenOnboarding == true) {
+        // اذا فشل او القيمة موجودة = true → BottomBar
+        Get.offAllNamed("/bottomBar");
+      } else {
+        // اذا القيمة false → Onboarding
+        Get.offAllNamed("/onboarding");
+      }
+    } catch (e) {
+      // في حال حصل خطأ في SharedPreferences → BottomBar افتراضياً
+      print("SharedPreferences error: $e");
       Get.offAllNamed("/bottomBar");
-    } else {
-      Get.offAllNamed("/onboarding");
     }
   }
+
 
 
   @override
