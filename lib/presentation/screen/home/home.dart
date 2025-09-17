@@ -585,7 +585,7 @@ class _HomeState extends State<Home> {
                             return ListView.builder(
                               physics: const NeverScrollableScrollPhysics(),
                               shrinkWrap: true,
-                              itemCount: controller.allReservations.length,
+                              itemCount: 10,
                               itemBuilder: (context, index) {
                                 return InkWell(
                                   onTap: () {

@@ -43,18 +43,8 @@ class DateTimeSelectController extends GetxController {
   Future<void> makeReservation(int restAreaId) async {
     try {
       loading();
-      // استرجاع التوكن من SharedPreferences
       final SharedPreferences prefs = await SharedPreferences.getInstance();
       String? token = prefs.getString('token');
-      final checkInText = checkInDateController.value.text;
-      final checkOutText = checkOutDateController.value.text;
-/*
-      final DateTime checkInDate = intl.DateFormat("dd MMM yyyy", "en").parse(checkInText);
-      final DateTime checkOutDate = intl.DateFormat("dd MMM yyyy", "en").parse(checkOutText);
-
-      final String formattedCheckIn = intl.DateFormat("yyyy-MM-dd").format(checkInDate);
-      final String formattedCheckOut = intl.DateFormat("yyyy-MM-dd").format(checkOutDate);
- */
 
       final response = await Dio.Dio().post(
         'https://esteraha.ly/api/reservations',
@@ -65,46 +55,107 @@ class DateTimeSelectController extends GetxController {
           },
         ),
         data: {
-          'rest_area_id':restAreaId ,
+          'rest_area_id': restAreaId,
           'check_in': checkInDateController.value.text,
           'check_out': checkOutDateController.value.text,
           'adults_count': adult.value,
           'children_count': children.value,
-          "accommodation_type":selectedType.value
+          "accommodation_type": selectedType.value
         },
       );
-      print("response.data");
-      print(response.data);
+
       dismissLoading();
       Get.snackbar("نجاح", "تم الحجز بنجاح", backgroundColor: Colors.green);
-      Get.offAllNamed("/bottomBar"); // أو Get.toNamed إذا كانت الصفحة غير موجودة مسبقاً
+      Get.offAllNamed("/bottomBar");
+
     } catch (e) {
       dismissLoading();
 
       if (e is Dio.DioError) {
-        // خطأ من Dio (شبكة، استجابة، timeout، إلخ)
         if (e.response != null) {
-          print('Dio Error Response Data: ${e.response?.data}');
-          print('Dio Error Response Status Code: ${e.response?.statusCode}');
-          print('Dio Error Response Headers: ${e.response?.headers}');
+          final errorData = e.response?.data;
+          print("Dio Error Response Data: $errorData");
+
+          // ✅ إذا السيرفر رجع reserved_dates
+          if (errorData is Map && errorData.containsKey('reserved_dates')) {
+            final List reservedDates = errorData['reserved_dates'];
+
+            // تحويل التواريخ لسطر نصي مرتب
+            final formattedDates = reservedDates.join("\n");
+
+            Get.defaultDialog(
+              title: "التواريخ غير متاحة",
+              content: Directionality(
+                textDirection: TextDirection.rtl,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.center, // ✅ النصوص في المنتصف
+                  children: [
+                    Text(
+                      "الفترة المطلوبة متداخلة مع حجوزات أخرى.\n\nالتواريخ المشغولة:",
+                      style: TextStyle(fontWeight: FontWeight.bold),
+                      textAlign: TextAlign.center,
+                    ),
+                    SizedBox(height: 10),
+
+                    // ✅ كونتينر مرن مع حد أقصى
+                    ConstrainedBox(
+                      constraints: BoxConstraints(
+                        maxHeight: 200, // أقصى ارتفاع
+                        maxWidth: 250,  // أقصى عرض
+                      ),
+                      child: Container(
+                        padding: EdgeInsets.all(8),
+                        decoration: BoxDecoration(
+                          color: Colors.grey.shade100,
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        child: SingleChildScrollView(
+                          child: Center(
+                            child: Text(
+                              formattedDates,
+                              style: TextStyle(color: Colors.red),
+                              textAlign: TextAlign.center, // ✅ النص في المنتصف
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+
+                    SizedBox(height: 15),
+                    Text(
+                      "الرجاء اختيار تواريخ بديلة.",
+                      style: TextStyle(color: Colors.black87),
+                      textAlign: TextAlign.center,
+                    ),
+                  ],
+                ),
+              ),
+
+              // ✅ زر حسناً يغلق النافذة
+              textConfirm: "حسناً",
+              confirmTextColor: Colors.white,
+              buttonColor: Colors.red,
+              onConfirm: () {
+                Get.back(); // يغلق النافذة
+              },
+            );
+
+          } else {
+            Get.snackbar(
+              "خطأ",
+              "${errorData['message'] ?? 'فشل في إرسال الحجز'}",
+              backgroundColor: Colors.red,
+            );
+          }
         } else {
-          print('Dio Error without response: ${e.message}');
+          Get.snackbar("خطأ", "تعذر الاتصال بالخادم", backgroundColor: Colors.red);
         }
       } else {
-        // أي خطأ آخر غير DioError
-        print('Unexpected error: $e');
+        Get.snackbar("خطأ", "حدث خطأ غير متوقع", backgroundColor: Colors.red);
       }
-
-      // طباعة بيانات الحجز لمراجعتها
-      print("RestAreaId: $restAreaId");
-      print("CheckIn: ${checkInDateController.value.text}");
-      print("CheckOut: ${checkOutDateController.value.text}");
-      print("Adults: ${adult.value}");
-      print("Children: ${children.value}");
-
-      Get.snackbar("خطأ", "فشل في إرسال الحجز", backgroundColor: Colors.red);
     }
   }
+
   void setFromDate(DateTime date) {
     fromDate.value = date;
     checkInDateController.value.text=  intl.DateFormat('yyyy-MM-dd').format(fromDate.value);
