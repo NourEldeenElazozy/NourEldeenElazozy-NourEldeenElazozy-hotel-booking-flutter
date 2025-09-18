@@ -6,6 +6,7 @@ import 'package:hotel_booking/core/constants/my_strings.dart';
 import 'package:hotel_booking/presentation/common_widgets/bottom_navigation_bar_controller.dart';
 import 'package:hotel_booking/presentation/screen/booking/booking_import.dart';
 import 'package:hotel_booking/presentation/screen/home/home_import.dart';
+import 'package:hotel_booking/presentation/screen/notification/notification_controller.dart';
 import 'package:hotel_booking/presentation/screen/profile/profile_import.dart';
 import 'package:hotel_booking/presentation/screen/search/search_import.dart';
 
@@ -18,7 +19,7 @@ class BottomBar extends StatefulWidget {
 }
 
 class _BottomBarState extends State<BottomBar> {
-
+  final notificationController = Get.put(NotificationController());
   late BottomBarController controller;
 
   @override

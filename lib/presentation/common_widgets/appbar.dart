@@ -5,6 +5,8 @@ import 'package:hotel_booking/core/constants/my_colors.dart';
 import 'package:hotel_booking/core/constants/my_images.dart';
 import 'package:hotel_booking/core/themes/themes_controller.dart';
 import 'dart:math' as math;
+
+import 'package:hotel_booking/presentation/screen/notification/notification_controller.dart';
 class CustomFullAppBar extends StatelessWidget implements PreferredSizeWidget {
   final String title;
   final List<Widget>? action;
@@ -65,6 +67,7 @@ PreferredSizeWidget homeAppBar(BuildContext context,String title, bool status, b
     ) {
   final screenWidth = MediaQuery.of(context).size.width;
   final screenHeight = MediaQuery.of(context).size.height;
+  final notificationController = Get.find<NotificationController>();
   return PreferredSize(
     preferredSize: const Size.fromHeight(kToolbarHeight),
     child: SizedBox(
@@ -115,14 +118,18 @@ PreferredSizeWidget homeAppBar(BuildContext context,String title, bool status, b
               ),
               const Spacer(),
               if (status == true) // Checks if status is true to show these icons
+
                 Row(
                   children: [
                     InkWell(
                       onTap: () {
-                        Get.toNamed("/notification");
+                        Get.toNamed("/notification")?.then((_) {
+                          // بعد الرجوع من صفحة الإشعارات نخفي الدائرة
+                          notificationController.markNotificationsAsRead();
+                        });
                       },
                       child: Stack(
-                        clipBehavior: Clip.none, // يسمح للنقطة بالخروج عن حدود العنصر
+                        clipBehavior: Clip.none,
                         children: [
                           Container(
                             padding: const EdgeInsets.all(5),
@@ -136,22 +143,25 @@ PreferredSizeWidget homeAppBar(BuildContext context,String title, bool status, b
                             ),
                           ),
 
-                          // ✅ دائرة حمراء كإشارة إشعار
-                          Positioned(
-                            right: 2, // يمين الأيقونة
-                            top: 2,   // فوق الأيقونة
+                          // 🔴 نظهر الدائرة إذا فيه إشعارات جديدة
+                          Obx(() => notificationController.hasNewNotification.value
+                              ? Positioned(
+                            right: 2,
+                            top: 2,
                             child: Container(
                               width: 10,
                               height: 10,
-                              decoration: BoxDecoration(
+                              decoration: const BoxDecoration(
                                 color: Colors.red,
                                 shape: BoxShape.circle,
                               ),
                             ),
-                          ),
+                          )
+                              : const SizedBox.shrink()),
                         ],
                       ),
                     ),
+
 
                     const SizedBox(width: 5),
 

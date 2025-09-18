@@ -5,7 +5,7 @@ class SimpleNotification {
   final String body;
   final String? targetType;
   final String? targetValue;
-  final bool isRead;
+   bool isRead;
   final DateTime createdAt;
 
   SimpleNotification({
@@ -15,7 +15,7 @@ class SimpleNotification {
     required this.body,
     required this.targetType,
     required this.targetValue,
-    required this.isRead,
+    this.isRead = false, // القيمة الافتراضية
     required this.createdAt,
   });
 
@@ -31,7 +31,7 @@ class SimpleNotification {
       body: json['body'] ?? '',
       targetType: json['target_type'],
       targetValue: json['target_value'],
-      isRead: json['is_read'] == 1,
+      isRead: json['is_read'].toString() == '1', // 🔴 هنا نتحقق من النص
       createdAt: DateTime.parse(json['created_at']),
     );
   }

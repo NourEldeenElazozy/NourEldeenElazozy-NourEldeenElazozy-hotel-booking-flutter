@@ -22,6 +22,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
 
   @override
   Widget build(BuildContext context) {
+    controller.getNotification();
     return Directionality(
       textDirection: TextDirection.rtl, // <-- RTL دعم اللغة العربية
       child: Scaffold(
