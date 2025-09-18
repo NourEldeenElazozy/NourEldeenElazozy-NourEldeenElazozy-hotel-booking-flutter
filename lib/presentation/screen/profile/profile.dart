@@ -390,8 +390,16 @@ class _ProfileState extends State<Profile> {
                               ? MyColors.white
                               : MyColors.white,
                           onpressed2: () async {
-                            SharedPreferences prefs = await SharedPreferences.getInstance();
-                            await prefs.clear(); // حذف جميع الحقول
+                            final SharedPreferences prefs = await SharedPreferences.getInstance();
+                            await prefs.remove('token');
+                            await prefs.remove('userId');
+                            await prefs.remove('userName');
+                            await prefs.remove('userPhone');
+                            await prefs.remove('user_type');
+                            await prefs.remove('gender');
+
+
+                            //await prefs.clear(); // حذف جميع الحقول
                             Get.back();
                             Get.offNamedUntil(
                                 "/loginOptionScreen", (route) => false);

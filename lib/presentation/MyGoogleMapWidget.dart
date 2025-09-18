@@ -9,63 +9,6 @@ import 'dart:ui' as ui;
 
 import 'package:hotel_booking/presentation/screen/home/home_model.dart'; // 🔴🔴🔴 استيراد جديد لـ dart:ui للرسم 🔴🔴🔴
 
-// 🔴🔴🔴 ملاحظات هامة جداً قبل استخدام هذا الودجت 🔴🔴🔴
-// ===========================================================================
-// 1. أضف الحزم إلى pubspec.yaml وقم بتشغيل 'flutter pub get':
-//    افتح ملف 'pubspec.yaml' في جذر مشروعك، وأضف السطرين التاليين ضمن قسم 'dependencies':
-//
-//    dependencies:
-//      flutter:
-//        sdk: flutter
-//      google_maps_flutter: ^2.x.x # استخدم أحدث إصدار متاح من pub.dev
-//      geolocator: ^11.x.x # استخدم أحدث إصدار متاح من pub.dev
-//      get: ^4.6.x # تأكد من وجود هذه الحزمة لاستخدام GetX
-//
-//    بعد إضافة هذه الأسطر، افتح Terminal (أو موجه الأوامر) في جذر مشروعك وشغل الأمر التالي:
-//    flutter pub get
-//
-// 2. أضف مفتاح Google Maps API في إعدادات مشروعك الأصلي (مهم جداً):
-//    أ) لأجهزة Android (ملف android/app/src/main/AndroidManifest.xml):
-//       داخل وسم <application>، أضف السطر التالي:
-//       <meta-data android:name="com.google.android.geo.API_KEY" android:value="AIzaSyDC9WFXg8tjm5UlquX9IVSb2Mkv1wiQjFk"/>
-//       ملاحظة: هذا هو المفتاح الذي ذكرته. تأكد من تفعيل خدمات Maps و Places و Geocoding APIs له في Google Cloud Console.
-//
-//    ب) لأجهزة iOS (ملف ios/Runner/AppDelegate.swift أو ios/Runner/AppDelegate.m):
-//       لـ Swift (AppDelegate.swift):
-//       import GoogleMaps // أضف هذا الاستيراد في الأعلى
-//       ...
-//       func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOfptionsKey: Any]?) -> Bool {
-//         GMSServices.provideAPIKey("AIzaSyDC9WFXg8tjm5UlquX9IVSb2Mkv1wiQjFk") // أضف هذا السطر
-//         GeneratedPluginRegistrant.register(with: self)
-//         return super.application(application, didFinishLaunchingWithOptions: launchOptions)
-//       }
-//
-//       لـ Objective-C (AppDelegate.m):
-//       #import "AppDelegate.h"
-//       #import "GeneratedPluginRegistrant.h"
-//       @import GoogleMaps; // إضافة هذا السطر
-//       ...
-//       - (BOOL)application:(UIApplication *)application
-//           didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
-//         [GMSServices provideAPIKey:@"AIzaSyDC9WFXg8tjm5UlquX9IVSb2Mkv1wiQjFk"]; // استبدل بالمفتاح الخاص بك
-//         [GeneratedPluginRegistrant registerWithRegistry:self];
-//         return [super application:application didFinishLaunchingWithOptions:launchOptions];
-//       }
-//
-// 3. أضف الأذونات إلى ملفات Android و iOS الأصلية (مهم جداً):
-//    أ) لأجهزة Android (ملف android/app/src/main/AndroidManifest.xml):
-//       داخل وسم <manifest> (قبل وسم <application>)، أضف:
-//       <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
-//       <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
-//
-//    ب) لأجهزة iOS (ملف ios/Runner/Info.plist):
-//       أضف المفاتيح والقيم التالية داخل وسم <dict>:
-//       <key>NSLocationWhenInUseUsageDescription</key>
-//       <string>This app needs access to your location to show it on the map and allow you to select a point.</string>
-//       <key>NSLocationAlwaysUsageDescription</key>
-//       <string>This app needs access to your location to provide location-based services even when closed.</string>
-// ===========================================================================
-
 
 class MapPickerScreen extends StatefulWidget {
   var restAreas = [].obs; // تخزين البيانات هنا
@@ -157,35 +100,23 @@ class _MapPickerScreenState extends State<MapPickerScreen> {
     return BitmapDescriptor.fromBytes(byteData!.buffer.asUint8List());
   }
 
-  LatLng? _extractLatLngFromGoogleMapsUrl(String url) {
-    RegExp regex = RegExp(r'@(-?\d+\.?\d*),(-?\d+\.?\d*)');
-    Match? match = regex.firstMatch(url);
-
-    if (match != null && match.groupCount == 2) {
-      try {
-        final double lat = double.parse(match.group(1)!);
-        final double lng = double.parse(match.group(2)!);
-        return LatLng(lat, lng);
-      } catch (e) {
-        debugPrint('Error parsing LatLng from @ pattern: $e');
+  LatLng? _extractLatLngFromGoogleMapsUrl(String value) {
+    try {
+      // تقسيم النص على الفاصلة
+      final parts = value.split(',');
+      if (parts.length == 2) {
+        final lat = double.tryParse(parts[0].trim());
+        final lng = double.tryParse(parts[1].trim());
+        if (lat != null && lng != null) {
+          return LatLng(lat, lng);
+        }
       }
+    } catch (e) {
+      debugPrint('Error parsing lat,lng: $e');
     }
-
-    regex = RegExp(r'!3d(-?\d+\.?\d*)!4d(-?\d+\.?\d*)');
-    match = regex.firstMatch(url);
-    if (match != null && match.groupCount == 2) {
-      try {
-        final double lat = double.parse(match.group(1)!);
-        final double lng = double.parse(match.group(2)!);
-        return LatLng(lat, lng);
-      } catch (e) {
-        debugPrint('Error parsing LatLng from !3d!4d pattern: $e');
-      }
-    }
-
-    debugPrint('Could not extract LatLng from URL: $url');
     return null;
   }
+
 
   // 🔴🔴🔴 دالة _addRestAreaMarkers أصبحت async 🔴🔴🔴
   void _addRestAreaMarkers() async {

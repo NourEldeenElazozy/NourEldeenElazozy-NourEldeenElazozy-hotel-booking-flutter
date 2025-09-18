@@ -8,7 +8,7 @@ class GoogleMapScreen extends StatefulWidget {
 }
 
 class _GoogleMapScreenState extends State<GoogleMapScreen> {
-  String? googleMapsUrl;
+  String? coords;
   LatLng? markerPosition;
   String? errorMessage;
 
@@ -18,29 +18,28 @@ class _GoogleMapScreenState extends State<GoogleMapScreen> {
   void initState() {
     super.initState();
 
-    googleMapsUrl = Get.arguments;
+    coords = Get.arguments;
 
-    if (googleMapsUrl == null || googleMapsUrl!.isEmpty) {
-      errorMessage = "الرابط غير موجود.";
+    if (coords == null || coords!.isEmpty) {
+      errorMessage = "الموقع غير موجود.";
     } else {
       try {
-        markerPosition = parseLatLngFromUrl(googleMapsUrl!);
+        markerPosition = parseLatLng(coords!);
         if (markerPosition == null) {
-          errorMessage = "الرابط غير صالح أو لا يحتوي على إحداثيات.";
+          errorMessage = "الإحداثيات غير صالحة.";
         }
       } catch (e) {
-        errorMessage = "حدث خطأ في معالجة الرابط.";
+        errorMessage = "حدث خطأ في معالجة الإحداثيات.";
       }
     }
   }
 
-  LatLng? parseLatLngFromUrl(String url) {
-    final regExp = RegExp(r'@(-?\d+\.\d+),(-?\d+\.\d+)');
-    final match = regExp.firstMatch(url);
-
-    if (match != null && match.groupCount >= 2) {
-      final lat = double.tryParse(match.group(1)!);
-      final lng = double.tryParse(match.group(2)!);
+  /// 🟢 دالة لتحويل النص "lat,lng" إلى LatLng
+  LatLng? parseLatLng(String value) {
+    final parts = value.split(",");
+    if (parts.length == 2) {
+      final lat = double.tryParse(parts[0].trim());
+      final lng = double.tryParse(parts[1].trim());
       if (lat != null && lng != null) {
         return LatLng(lat, lng);
       }
@@ -54,12 +53,11 @@ class _GoogleMapScreenState extends State<GoogleMapScreen> {
       textDirection: TextDirection.rtl,
       child: Scaffold(
         appBar: CustomFullAppBar(
-        title: "موقع الإستراحة",
+          title: "موقع الإستراحة",
         ),
         body: Builder(
           builder: (context) {
             if (errorMessage != null) {
-              // عرض رسالة الخطأ
               return Center(
                 child: Text(
                   errorMessage!,
@@ -70,11 +68,9 @@ class _GoogleMapScreenState extends State<GoogleMapScreen> {
             }
 
             if (markerPosition == null) {
-              // عرض لودنق أثناء التحليل
               return const Center(child: CircularProgressIndicator());
             }
 
-            // عرض الخريطة مع الماركر
             return GoogleMap(
               initialCameraPosition: CameraPosition(
                 target: markerPosition!,
@@ -97,3 +93,4 @@ class _GoogleMapScreenState extends State<GoogleMapScreen> {
     );
   }
 }
+

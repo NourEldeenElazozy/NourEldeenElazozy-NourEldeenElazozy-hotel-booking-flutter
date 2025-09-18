@@ -1181,7 +1181,9 @@ class _HotelDetailState extends State<HotelDetail> {
                                 ),
                                 child: InkWell(
                                   onTap: () {
+                                    print( "controller.detail.google_maps_location");
                                     print( controller.detail.google_maps_location);
+                                    print( "controller.detail.google_maps_location");
                                     Get.toNamed(
                                       "/googleMap",
                                       arguments: controller.detail.google_maps_location,
