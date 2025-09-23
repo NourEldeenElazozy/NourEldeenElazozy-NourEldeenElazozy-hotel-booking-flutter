@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:hotel_booking/main.dart';
+import 'package:internet_connection_checker/internet_connection_checker.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:hotel_booking/NoInternetScreen.dart';
 import 'package:hotel_booking/core/constants/my_colors.dart';
 import 'package:hotel_booking/core/constants/my_images.dart';
-import 'package:internet_connection_checker/internet_connection_checker.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import 'package:get/get.dart';
 
 class BootLogoScreen extends StatefulWidget {
   const BootLogoScreen({super.key});
@@ -21,22 +22,21 @@ class _BootLogoScreenState extends State<BootLogoScreen> {
   }
 
   Future<void> _navigateNext() async {
+    final elapsed = (context.findAncestorWidgetOfExactType<MyApp>()?.appStopwatch.elapsedMilliseconds) ?? 0;
+
     try {
-      // ✅ إنشاء instance أولاً
-      final bool isConnected = await InternetConnectionChecker.instance.hasConnection;
-      bool hasConnection = isConnected;
+      final bool hasConnection =
+      await InternetConnectionChecker.instance.hasConnection;
 
       if (!hasConnection) {
-        // إذا لا يوجد اتصال → صفحة Offline
         Get.offAll(() => const NoInternetScreen());
         return;
       }
 
       final prefs = await SharedPreferences.getInstance();
       final hasSeenOnboarding = prefs.getBool('onboarding');
-      print("hasSeenOnboarding1 $hasSeenOnboarding");
-
-      await Future.delayed(const Duration(seconds: 2));
+      debugPrint("⏱️ وقت فتح التطبيق حتى BootLogo: $elapsed ms");
+      //await Future.delayed(const Duration(seconds: 2));
 
       if (hasSeenOnboarding == true) {
         Get.offAllNamed("/bottomBar");
@@ -44,20 +44,18 @@ class _BootLogoScreenState extends State<BootLogoScreen> {
         Get.offAllNamed("/onboarding");
       }
     } catch (e) {
-      print("Error: $e");
+      debugPrint("Error in BootLogoScreen: $e");
       Get.offAllNamed("/bottomBar");
     }
   }
 
-
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: MyColors.primaryColor, // أو اللون الأساسي للتطبيق
+      backgroundColor: MyColors.primaryColor,
       body: Center(
         child: Image.asset(
-          MyImages.logo2, // مسار اللوقو
+          MyImages.logo2,
           width: 250,
           height: 250,
         ),
