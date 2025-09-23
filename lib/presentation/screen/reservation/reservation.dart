@@ -33,7 +33,7 @@ class _ReservationState extends State<Reservation> {
     print("///////////////");
     final user = reservation['user'];
     print("/////////////// user");
-    print(user['city_relation']['name']);
+    //print(user['city_relation']['name']);
     final restArea = reservation['rest_area'];
     final reservationStatus = reservation['status'] ?? 'unknown'; // Get the reservation status
 
