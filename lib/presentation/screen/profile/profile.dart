@@ -14,34 +14,21 @@ class _ProfileState extends State<Profile> {
   var userName = ''.obs; // استخدام Rx لتحديث الواجهة عند تغيير القيمة
   var userPhone = ''.obs; // استخدام Rx لتحديث الواجهة عند تغيير القيمة
 
-  Future<void> _loaduserType() async {
-
-    final SharedPreferences prefs = await SharedPreferences.getInstance();
+  Future<void> _loadUserData() async {
+    final prefs = await SharedPreferences.getInstance();
     userType.value = prefs.getString('user_type') ?? '';
-    print("user_type ${prefs.getString('user_type')}");
-
-  }
-  Future<void> _loadusername() async {
-
-    final SharedPreferences prefs = await SharedPreferences.getInstance();
     userName.value = prefs.getString('userName') ?? '';
-    print("user name ${prefs.getString('userName')}");
-
-
-  }
-  Future<void> _loadusermobile() async {
-
-    final SharedPreferences prefs = await SharedPreferences.getInstance();
     userPhone.value = prefs.getString('userPhone') ?? '';
-    print("userPhone ${prefs.getString('userPhone')}");
 
-
+    debugPrint("user_type: ${userType.value}");
+    debugPrint("userName: ${userName.value}");
+    debugPrint("userPhone: ${userPhone.value}");
   }
   @override
   void initState() {
     controller = Get.put(ProfileController());
     isDarkMode = controller.themeController.isDarkMode.value;
-
+    _loadUserData();
     super.initState();
   }
 
@@ -159,9 +146,7 @@ class _ProfileState extends State<Profile> {
 
   @override
   Widget build(BuildContext context) {
-    _loaduserType();
-    _loadusername();
-    _loadusermobile();
+
     return Directionality(
       textDirection: TextDirection.rtl,
       child: Scaffold(
