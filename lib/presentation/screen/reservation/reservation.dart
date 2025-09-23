@@ -32,6 +32,8 @@ class _ReservationState extends State<Reservation> {
     print(widget.reservationData['reservations'][0]);
     print("///////////////");
     final user = reservation['user'];
+    print("/////////////// user");
+    print(user['city_relation']['name']);
     final restArea = reservation['rest_area'];
     final reservationStatus = reservation['status'] ?? 'unknown'; // Get the reservation status
 
@@ -262,7 +264,7 @@ class _ReservationState extends State<Reservation> {
                       _buildDetailRow(
                         icon: Icons.location_city,
                         label: 'المدينة',
-                        value: user?['city'] ?? 'غير متوفر',
+                        value: user?['city_relation']['name'] ?? 'غير متوفر',
                       ),
                       _buildDetailRow(
                         icon: Icons.cake,

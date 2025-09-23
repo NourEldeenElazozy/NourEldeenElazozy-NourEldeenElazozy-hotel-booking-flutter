@@ -368,7 +368,7 @@ class HomeController extends GetxController {
       return recentlyBooked;
    }
    */
-   Future<void> getReservations({bool isHost = false}) async {
+   Future<void> getReservations({bool isHost = false , int? limit}) async {
      try {
        isbookLoading.value = true;
        final SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -392,6 +392,7 @@ class HomeController extends GetxController {
 
          queryParameters: {
            'type': isHost ? 'host' : 'user',
+           if (limit != null) 'limit': limit, // ✅ أضفنا limit فقط إذا مررته
          },
        );
        print("Request Query: ${{

@@ -405,6 +405,17 @@ class RegisterController extends GetxController {
     },
   ));
   RxBool isLoading = false.obs;
+  var isHost = false.obs;
+  var selectedUserType = "user".obs;
+  Future<void> _loadUserType() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    final savedType = prefs.getString('user_type') ?? "user";
+
+    selectedUserType.value = savedType; // ✅ ضبط القيمة المختارة
+    isHost.value = savedType == "host"; // ✅ تحويلها لبوول
+
+    print("Loaded user type: $savedType");
+  }
   Future<void> fillProfileSubmit({required String status}) async {
     final isValid = fillFormKey.currentState?.validate() ?? false;
     Get.focusScope?.unfocus();
@@ -417,17 +428,23 @@ class RegisterController extends GetxController {
       final prefs = await SharedPreferences.getInstance();
       final token = prefs.getString('token') ?? '';
       isLoading.value = true;
+
       if (token.isEmpty) {
         Get.snackbar('خطأ', 'التوكن غير موجود، يرجى تسجيل الدخول');
         return;
       }
+
       print("Select Gender ${selectedGender.toString()}");
+      print("Select UserType ${selectedUserType.value}");
+
       final Map<String, dynamic> data = {
         'name': nameController.text,
-        'phone': phoneController.text,
-        'mobile': mobileNumberController.text,
+        //'phone': phoneController.text,
+        //'mobile': mobileNumberController.text,
         'gender': selectedGender.toString(),
+        'user_type': selectedUserType.value, // ✅ إرسال نوع الحساب
       };
+
       if (passwordController.text.isNotEmpty) {
         data['password'] = passwordController.text;
         data['password_confirmation'] = passwordController.text;
@@ -437,27 +454,31 @@ class RegisterController extends GetxController {
       final response = await dio.post(
         '/update-user',
         data: data,
-
         options: Options(
           headers: {
             'Authorization': 'Bearer $token',
           },
         ),
-
       );
 
       isLoading.value = false; // انتهاء التحميل
 
       if (response.statusCode == 200) {
-        // حفظ البيانات في SharedPreferences فقط بعد نجاح التحديث
-        await prefs.setString('userName', nameController.text);
-        await prefs.setString('userName', nameController.text);
-        await prefs.setString('userPhone', phoneController.text);
-        await prefs.setString('userMobile', mobileNumberController.text);
-        await prefs.setString('gender',    gender.value.toString());
+        final resData = response.data ?? {}; // حماية ضد null
 
-        print(" response.statusCode ${response.data}");
+        if ((resData['logout'] ?? false) == true) {
+          // تسجيل خروج إذا تغير نوع الحساب
+          await prefs.clear();
+          Get.offAllNamed('/loginScreen');
+          return;
+        }
 
+        // ✅ حفظ البيانات في SharedPreferences فقط إذا لم يتغير نوع الحساب
+        await prefs.setString('userName', nameController.text);
+        await prefs.setString('gender', selectedGender.toString() ?? '');
+        await prefs.setString('user_type', selectedUserType.value ?? '');
+
+        print("response.data ${response.data}");
 
         if (status == 'update') {
           Get.back();
@@ -470,10 +491,16 @@ class RegisterController extends GetxController {
       }
     } catch (e) {
       isLoading.value = false;
-      print("${e.toString()}");
-      Get.snackbar('خطأ', 'حدث خطأ أثناء تحديث الملف الشخصي: ',backgroundColor: Colors.red);
+      print("gender: ${selectedGender.toString()}");
+      print("selectedUserType: ${selectedUserType.value}");
+      print("name: ${nameController.text}");
+     // print("mobile: ${mobileNumberController.text}");
+
+      print("Error: ${e.toString()}");
+      Get.snackbar('خطأ', 'حدث خطأ أثناء تحديث الملف الشخصي', backgroundColor: Colors.red);
     }
   }
+
 }
 
 

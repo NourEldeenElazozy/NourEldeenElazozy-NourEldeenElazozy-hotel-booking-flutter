@@ -72,15 +72,52 @@ class LoginController extends GetxController {
         // يمكنك تخزين التوكن أو أي معلومات أخرى هنا
       } else {
         // التعامل مع الأخطاء
+
         print('Error: ${response.statusCode}');
       }
+    } on DioException catch (e) {
+      final status = e.response?.statusCode;
+      final data = e.response?.data;
+
+      if (status == 403) {
+        // 🔴 حساب موقوف أو محذوف
+        final message = data['message'] ?? "هذا الحساب غير مسموح له بالدخول.";
+        Get.snackbar(
+          'ممنوع',
+          message,
+          backgroundColor: Colors.red,
+          colorText: Colors.white,
+        );
+      } else if (status == 401) {
+        // 🔑 بيانات غير صحيحة
+        Get.snackbar(
+          'خطأ',
+          'اسم المستخدم أو كلمة المرور غير صحيحة.',
+          backgroundColor: Colors.red,
+          colorText: Colors.white,
+        );
+      } else {
+        // أي خطأ آخر
+        final message = data['message'] ?? "حدث خطأ أثناء محاولة تسجيل الدخول.";
+        Get.snackbar(
+          'خطأ',
+          message,
+          backgroundColor: Colors.red,
+          colorText: Colors.white,
+        );
+      }
     } catch (e) {
-      print('Error: $e');
+      Get.snackbar(
+        'خطأ',
+        'تعذر الاتصال بالخادم',
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
+      );
     } finally {
       isLoading.value = false;
-    }
-  }
-  void submit() {
+    }  }
+
+    void submit() {
     final isValid = formKey.currentState!.validate();
     Get.focusScope!.unfocus();
 
@@ -96,7 +133,7 @@ class LoginController extends GetxController {
           Get.offNamedUntil("/bottomBar", (route) => false);
         } else {
           // إذا كانت البيانات غير صحيحة، يمكنك عرض رسالة خطأ
-          Get.snackbar('خطأ', 'فشل في تسجيل الدخول. تحقق من بياناتك.',backgroundColor: Colors.red);
+         // Get.snackbar('خطأ', 'فشل في تسجيل الدخول. تحقق من بياناتك.',backgroundColor: Colors.red);
         }
       }).catchError((error) {
         // التعامل مع الأخطاء أثناء الاتصال بالخادم

@@ -24,7 +24,7 @@ class _HomeState extends State<Home> {
     controller.selectedItem.value = 0;
     // استدعاء جميع الدوال التي تقوم بتحديث البيانات
     await controller.getRestAreas();
-    await controller.getReservations();
+    await controller.getReservations(limit: 10);
 
     await controller.getHomeDetail();
 
@@ -38,7 +38,7 @@ class _HomeState extends State<Home> {
   @override
   void initState() {
     super.initState();
-    controller.getReservations();
+    controller.getReservations(limit: 10);
     controller.getRestAreas();
     controller.fetchRecentlyBooked();
     controller.getHomeDetail();
@@ -90,7 +90,7 @@ class _HomeState extends State<Home> {
 
     print("filteredReservations");
    print(controller.filteredReservations.length);
-     controller.getReservations();
+     controller.getReservations(limit: 10);
     //removeToken();
     debugPrint('════════ Tokens ════════', wrapWidth: 1029);
     debugPrint(Token.value , wrapWidth: 1029);
@@ -416,6 +416,7 @@ class _HomeState extends State<Home> {
                         onTap: () {
                           Detail detail = Detail.fromJson(reservation);
                           controller.homeDetails.add(detail);
+
                           Get.toNamed("/hotelDetail", arguments: {'data': reservation});
                         },
                         child: Container(
@@ -540,6 +541,7 @@ class _HomeState extends State<Home> {
                             ),
                             InkWell(
                               onTap: () {
+
                                 Get.toNamed("/Booking");
                               },
                               child: const Text(

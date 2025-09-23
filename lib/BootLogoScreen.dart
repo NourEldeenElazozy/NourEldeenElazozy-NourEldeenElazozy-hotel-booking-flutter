@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:hotel_booking/NoInternetScreen.dart';
 import 'package:hotel_booking/core/constants/my_colors.dart';
 import 'package:hotel_booking/core/constants/my_images.dart';
+import 'package:internet_connection_checker/internet_connection_checker.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:get/get.dart';
+
 class BootLogoScreen extends StatefulWidget {
   const BootLogoScreen({super.key});
 
@@ -19,23 +22,29 @@ class _BootLogoScreenState extends State<BootLogoScreen> {
 
   Future<void> _navigateNext() async {
     try {
+      // ✅ إنشاء instance أولاً
+      final bool isConnected = await InternetConnectionChecker.instance.hasConnection;
+      bool hasConnection = isConnected;
+
+      if (!hasConnection) {
+        // إذا لا يوجد اتصال → صفحة Offline
+        Get.offAll(() => const NoInternetScreen());
+        return;
+      }
+
       final prefs = await SharedPreferences.getInstance();
       final hasSeenOnboarding = prefs.getBool('onboarding');
       print("hasSeenOnboarding1 $hasSeenOnboarding");
 
-      // انتظر ثانيتين لعرض اللوجو
       await Future.delayed(const Duration(seconds: 2));
 
       if (hasSeenOnboarding == true) {
-        // اذا فشل او القيمة موجودة = true → BottomBar
         Get.offAllNamed("/bottomBar");
       } else {
-        // اذا القيمة false → Onboarding
         Get.offAllNamed("/onboarding");
       }
     } catch (e) {
-      // في حال حصل خطأ في SharedPreferences → BottomBar افتراضياً
-      print("SharedPreferences error: $e");
+      print("Error: $e");
       Get.offAllNamed("/bottomBar");
     }
   }

@@ -51,4 +51,56 @@ class ProfileController extends GetxController {
       print("Dio error: $e");
     }
   }
+
+  Future<void> deleteAccount() async {
+    try {
+      isLoading.value = true;
+
+      final prefs = await SharedPreferences.getInstance();
+      final token = prefs.getString('token'); // تخزين التوكن عند تسجيل الدخول
+
+      if (token == null) {
+        Get.snackbar("خطأ", "لم يتم العثور على التوكن");
+        return;
+      }
+
+      final dio = Dio();
+      final response = await dio.post(
+        "https://esteraha.ly/api/delete-account",
+        options: Options(
+          headers: {
+            "Authorization": "Bearer $token",
+            "Accept": "application/json",
+          },
+        ),
+      );
+
+      if (response.statusCode == 200 && response.data['success'] == true) {
+        // حذف التوكن من التخزين المحلي
+        await prefs.remove('token');
+        await prefs.remove('user_type');
+        await prefs.remove('userId');
+        await prefs.remove('userName');
+        await prefs.remove('userPhone');
+        await prefs.remove('gender');
+
+        Get.snackbar(
+          "تم الحذف",
+          response.data['message'] ?? "تم حذف الحساب بنجاح",
+          backgroundColor: Colors.redAccent,
+          colorText: Colors.white,
+        );
+
+        // رجوع لصفحة تسجيل الدخول
+        Get.offAllNamed('/loginOptionScreen');
+      } else {
+        Get.snackbar("خطأ", response.data['message'] ?? "فشل حذف الحساب");
+      }
+    } catch (e) {
+      Get.snackbar("خطأ", "حدث خطأ أثناء حذف الحساب");
+      print(e.toString());
+    } finally {
+      isLoading.value = false;
+    }
+  }
 }

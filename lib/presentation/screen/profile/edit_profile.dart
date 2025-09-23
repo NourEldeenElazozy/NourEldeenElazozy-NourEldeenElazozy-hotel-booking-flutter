@@ -34,19 +34,25 @@ class _EditProfileState extends State<EditProfile> {
   }
 
   List<String> genderList = ["ذكر", "انثي"];
-
+  late String usertype;
   Future<void> _loadUserData() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
+
     setState(() {
       controller.nameController.text = prefs.getString('userName') ?? '';
-    });
-    String gender = prefs.getString('gender') ?? '';
+      String gender = prefs.getString('gender') ?? '';
+      usertype = prefs.getString('user_type') ?? 'user';
 
-    if (gender.isNotEmpty && genderList.contains(gender)) {
-      controller.selectedGender = gender;
-    }
-    print("gender $gender");
-    print("userName ${prefs.getString('userName')}");
+      // اضبط الـ switch بحسب نوع الحساب
+      controller.isHost.value = (usertype == "host");
+
+      if (gender.isNotEmpty && genderList.contains(gender)) {
+        controller.selectedGender = gender;
+      }
+
+      print("gender $gender");
+      print("usertype $usertype");
+    });
   }
 
 
@@ -61,12 +67,62 @@ class _EditProfileState extends State<EditProfile> {
         bottomNavigationBar: Container(
           height: 90,
           padding: const EdgeInsets.all(15),
+          // داخل زر التحديث
           child: Obx(() {
             return ElevatedButton(
               onPressed: controller.isLoading.value
                   ? null
-                  : () {
-                controller.fillProfileSubmit(status: 'update');
+                  : () async {
+                final prefs = await SharedPreferences.getInstance();
+                final oldUserType = prefs.getString('user_type') ?? "user";
+                final newUserType = controller.isHost.value ? "host" : "user";
+
+                // تحقق إذا تم تغيير النوع مسبقًا
+                final accountChanged = prefs.getBool('account_changed_once') ?? false;
+                if (oldUserType != newUserType && !accountChanged) {
+                  // ✅ لو نوع الحساب اتغير
+                  Get.defaultDialog(
+                    title: "تأكيد",
+                    middleText:
+                    "سيتم تغيير نوع الحساب إلى ${newUserType == "host" ? "صاحب استراحة" : "مستخدم"}.\n\nسيتم تسجيل خروجك وإعادة تسجيل الدخول.",
+                    textCancel: "إلغاء",
+                    textConfirm: "موافق",
+                    confirmTextColor: Colors.white,
+                    onConfirm: () async {
+                      Get.back(); // اغلاق الديالوج
+
+                      // تحديث البيانات
+                      await controller.fillProfileSubmit(status: 'update');
+
+                      // حفظ النوع الجديد
+                      await prefs.setString('user_type', newUserType);
+                      await prefs.setBool('account_changed_once', true);
+                      // تسجيل خروج
+                      await prefs.remove('token');
+                      await prefs.remove('userId');
+                      await prefs.remove('userName');
+                      await prefs.remove('userPhone');
+                      await prefs.remove('gender');
+
+                      Get.offNamedUntil("/loginOptionScreen", (route) => false);
+                    },
+
+
+    );
+    }else if (oldUserType != newUserType && accountChanged) {
+    // لو حاول المستخدم تغييره مرة ثانية
+    Get.snackbar(
+
+    "تنبيه",
+    "يمكنك تغيير نوع الحساب مرة واحدة فقط.",
+    backgroundColor: Colors.orange,
+    colorText: Colors.white,
+
+    );
+    } else {
+        // النوع لم يتغير
+        await controller.fillProfileSubmit(status: 'update');
+        }
               },
               child: controller.isLoading.value
                   ? const SizedBox(
@@ -87,6 +143,9 @@ class _EditProfileState extends State<EditProfile> {
               ),
             );
           }),
+
+
+
         ),
         body: Obx(
               () => SingleChildScrollView(
@@ -103,6 +162,12 @@ class _EditProfileState extends State<EditProfile> {
                       style:
                       TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
                     ),
+                    const SizedBox(height: 5),
+
+
+
+
+
                     const SizedBox(height: 5),
                     CustomTextFormField(
                       controller: controller.nameController,
@@ -171,6 +236,7 @@ class _EditProfileState extends State<EditProfile> {
                       style:
                       TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
                     ),
+
                     const SizedBox(height: 5),
                     Align(
                       alignment: Alignment.centerRight,
@@ -180,6 +246,44 @@ class _EditProfileState extends State<EditProfile> {
                         controller.themeController.isDarkMode.value,
                       )),
                     ),
+                    const SizedBox(height: 10),
+                    const Text(
+                      'نوع الحساب',
+                      style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
+                    ),
+                    const SizedBox(height: 5),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Column(
+                          children: const [
+                            Icon(Icons.person, color: Colors.blue),
+                            Text("مستخدم"),
+                          ],
+                        ),
+                        Obx(() => Switch(
+                          value: controller.isHost.value,
+                          onChanged: (val) {
+                            controller.isHost.value = val;
+                            controller.selectedUserType.value = val ? "host" : "user";
+                            print("تم اختيار نوع الحساب مؤقتًا: ${controller.selectedUserType.value}");
+                          },
+                          activeColor: controller.isHost.value ? Colors.green : Colors.blue,
+                          activeTrackColor: controller.isHost.value
+                              ? Colors.green.withOpacity(0.5)
+                              : Colors.blue.withOpacity(0.5),
+                        )),
+
+                        Column(
+                          children: const [
+                            Icon(Icons.house, color: Colors.green),
+                            Text("صاحب استراحة"),
+                          ],
+                        ),
+                      ],
+                    )
+
+
 
                   ],
                 ),

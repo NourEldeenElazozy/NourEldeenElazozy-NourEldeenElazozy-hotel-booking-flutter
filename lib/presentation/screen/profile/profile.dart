@@ -424,7 +424,6 @@ class _ProfileState extends State<Profile> {
                 if(userType.value.isNotEmpty)
                   InkWell(
                     onTap: () {
-                      // عرض دايلوج تأكيد الحذف
                       Get.defaultDialog(
                         title: 'تأكيد الحذف',
                         titleStyle: TextStyle(
@@ -443,15 +442,9 @@ class _ProfileState extends State<Profile> {
                         buttonColor: Colors.redAccent,
                         cancelTextColor: Colors.black,
                         onConfirm: () {
-                          Get.back(); // إغلاق الديالوج
-                          Get.snackbar(
-                            'تم الحذف',
-                            'تم حذف حسابك بنجاح.',
-                            backgroundColor: Colors.redAccent,
-                            colorText: Colors.white,
-                          );
+                          Get.back();
+                          controller.deleteAccount(); // استدعاء فنكشن الحذف
                         },
-                        onCancel: () {},
                       );
                     },
                     child: ListTile(
@@ -459,15 +452,15 @@ class _ProfileState extends State<Profile> {
                       title: Text(
                         'حذف حسابي',
                         style: TextStyle(
-                          color: Colors.redAccent, // لون النص أحمر
+                          color: Colors.redAccent,
                           fontSize: 16,
                           fontWeight: FontWeight.w600,
                           fontFamily: 'Tajawal',
                         ),
                       ),
-
                     ),
-                  ),
+                  )
+
               ],
             ),
           )),

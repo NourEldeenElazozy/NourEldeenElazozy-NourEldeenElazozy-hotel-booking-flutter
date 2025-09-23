@@ -13,7 +13,7 @@ import 'package:hotel_booking/presentation/screen/home/home_model.dart'; // 🔴
 class MapPickerScreen extends StatefulWidget {
   var restAreas = [].obs; // تخزين البيانات هنا
 
-   MapPickerScreen({Key? key, required this.restAreas}) : super(key: key);
+  MapPickerScreen({Key? key, required this.restAreas}) : super(key: key);
 
   @override
   State<MapPickerScreen> createState() => _MapPickerScreenState();
@@ -58,7 +58,7 @@ class _MapPickerScreenState extends State<MapPickerScreen> {
           fontWeight: FontWeight.bold,
         ),
       ),
-      textDirection: TextDirection.ltr, // اتجاه النص، مهم للغات مثل العربية
+      textDirection: TextDirection.rtl, // اتجاه النص، مهم للغات مثل العربية
       maxLines: 1,
     );
 
@@ -136,7 +136,10 @@ class _MapPickerScreenState extends State<MapPickerScreen> {
       if (googleMapsUrl != null && googleMapsUrl.isNotEmpty) {
         final LatLng? location = _extractLatLngFromGoogleMapsUrl(googleMapsUrl);
         if (location != null) {
-          final String priceText = price != null && price.isNotEmpty ? '$price د.ل' : 'السعر؟';
+          final String priceText = (price != null && price.isNotEmpty)
+              ? '${double.tryParse(price)?.toInt()} د.ل'
+              : 'السعر؟';
+
           // 🔴🔴🔴 استخدام الأيقونة المخصصة للسعر (شكل دبوس) 🔴🔴🔴
           final BitmapDescriptor customPriceIcon = await _getMarkerIcon(priceText);
 
@@ -166,7 +169,7 @@ class _MapPickerScreenState extends State<MapPickerScreen> {
       _errorMessage = '';
     });
 
-     _addRestAreaMarkers(); // أولاً، قم بتوليد علامات المواقع الثابتة
+    _addRestAreaMarkers(); // أولاً، قم بتوليد علامات المواقع الثابتة
     print (" _markers $_markers");
     bool serviceEnabled;
     LocationPermission permission;
@@ -248,7 +251,7 @@ class _MapPickerScreenState extends State<MapPickerScreen> {
       // بناء رابط الصورة الكامل. تأكد أن _imageBaseUrl صحيح.
       imageUrl = _imageBaseUrl + mainImageRelativePath;
     }
-print(" imageUrl $imageUrl");
+    print(" imageUrl $imageUrl");
     showModalBottomSheet(
       context: context,
       isScrollControlled: true, // للسماح للـ BottomSheet بأخذ ارتفاع متغير
@@ -486,7 +489,7 @@ print(" imageUrl $imageUrl");
 
   @override
   Widget build(BuildContext context) {
-
+    print(_pickedLocation);
     return Directionality(
       textDirection: TextDirection.rtl,
       child: Scaffold(
@@ -536,7 +539,7 @@ print(" imageUrl $imageUrl");
               rotateGesturesEnabled: true,
               markers: _markers,
             ),
-           //Red Markers
+            //Red Markers
             /*
              if (!_isLoadingLocation && _currentCameraPosition != null)
               const Center(
@@ -554,8 +557,10 @@ print(" imageUrl $imageUrl");
               child: Center(
                 child: Column(
                   children: [
-                   /*
+
+/*
                     if (_pickedLocation != null)
+
                       Card(
                         margin: const EdgeInsets.all(8.0),
                         color: Colors.white.withOpacity(0.9),
@@ -568,8 +573,8 @@ print(" imageUrl $imageUrl");
                           ),
                         ),
                       ),
-                    */
-                 //   ElevatedButton.icon(
+*/
+                    //   ElevatedButton.icon(
                     //                     onPressed: _pickedLocation == null
                     //                         ? null
                     //                         : () {

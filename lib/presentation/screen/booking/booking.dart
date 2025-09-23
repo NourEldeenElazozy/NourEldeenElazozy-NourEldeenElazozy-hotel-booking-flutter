@@ -601,7 +601,7 @@ class _BookingState extends State<Booking> with SingleTickerProviderStateMixin {
                                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                             children: [
                                               // إذا انتهت صلاحية الحجز
-                                              if (status == 'pending' && isExpired)
+                                              if (status =='canceled' && isExpired)
                                                 const Text(
                                                   "لقد انتهت صلاحية الطلب",
                                                   style: TextStyle(
@@ -615,7 +615,7 @@ class _BookingState extends State<Booking> with SingleTickerProviderStateMixin {
                                                 style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 16),
                                               ),
                                               const SizedBox(height: 10),
-                                              if ( status != 'pending' )
+                                              if (status != 'pending' && !(status == 'canceled' && isExpired))
                                               Container(
                                                 padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 5),
                                                 decoration: BoxDecoration(

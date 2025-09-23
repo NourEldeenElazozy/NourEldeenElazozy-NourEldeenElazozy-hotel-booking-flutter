@@ -7,11 +7,13 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:hotel_booking/BootLogoScreen.dart';
+import 'package:hotel_booking/NoInternetScreen.dart';
 import 'package:hotel_booking/core/force_update/force_update_service.dart';
 import 'package:hotel_booking/core/force_update/force_update_utils.dart';
 import 'package:hotel_booking/core/themes/app_themes.dart';
 import 'package:hotel_booking/presentation/routes/routes_imports.dart';
 import 'package:hotel_booking/utils/flutter_web_frame/flutter_web_frame.dart';
+import 'package:internet_connection_checker/internet_connection_checker.dart';
 import 'core/themes/themes_controller.dart';
 import 'package:flutter_localizations/flutter_localizations.dart'; // <--- تم إعادة إضافة هذا الاستيراد
 import 'package:sms_autofill/sms_autofill.dart';
@@ -97,11 +99,18 @@ Future<void> createNotificationChannels() async {
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized(); // تأكد من تهيئة Widgets قبل أي شيء آخر
   await initializeDateFormatting('ar', null); // تهيئة بيانات اللغة العربية
-
+  final bool hasConnection  = await InternetConnectionChecker.instance.hasConnection;
   // 🔴🔴🔴 لم نعد نحتاج لـ shouldUpdate أو appId هنا إذا كنت لا تعرض ForceUpdateScreen 🔴🔴🔴
   // bool shouldUpdate = false;
   // String currentAppId = Platform.isAndroid ? 'com.example.hotelbooking' : 'your_ios_app_id_number';
+  // تحقق من اتصال الإنترنت
 
+
+  if (!hasConnection) {
+    // إذا لا يوجد إنترنت → شغل التطبيق مباشرة على صفحة NoInternet
+    runApp(const MyApp(initialRoute: "/noInternet"));
+    return;
+  }
   try {
     // 1. تهيئة Firebase Core
     await Firebase.initializeApp(
@@ -221,7 +230,9 @@ Future<void> main() async {
 
 
     // 4. تشغيل التطبيق الرئيسي
-    runApp(MyApp(initialRoute: "/bootLogo"));
+    runApp(MyApp(
+      initialRoute: hasConnection ? "/bootLogo" : "/noInternet",
+    ));
 
   } catch (e) {
     final initialRoute = "/bootLogo";
@@ -270,6 +281,8 @@ class _MyAppState extends State<MyApp> {
           initialRoute: "/bootLogo", // ✅ البداية من BootLogo دائمًا
           getPages: [
             GetPage(name: "/bootLogo", page: () => const BootLogoScreen()),
+            GetPage(name: "/noInternet", page: () => const NoInternetScreen()),
+
             ...Routes.navigator,
           ],
         ));
