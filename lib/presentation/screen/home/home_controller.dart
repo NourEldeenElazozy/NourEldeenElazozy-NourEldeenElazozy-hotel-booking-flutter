@@ -370,6 +370,7 @@ class HomeController extends GetxController {
    */
    Future<void> getReservations({bool isHost = false , int? limit}) async {
      try {
+       allReservations.clear();
        isbookLoading.value = true;
        final SharedPreferences prefs = await SharedPreferences.getInstance();
        token = prefs.getString('token');
@@ -402,8 +403,12 @@ class HomeController extends GetxController {
          print("response.data5");
          print(response.data);
          print("response.data5");
-
+         print("allReservations .length ");
+         print(allReservations.length);
+         allReservations.clear();
          allReservations = response.data['reservations']; // تخزين في القائمة الأصلية
+         print("allReservations .length 2");
+         print(allReservations.length);
 
          // **الجزء المعدل: استخراج الاستراحات الفريدة من الحجوزات باستخدام Map**
          if (isHost) {
