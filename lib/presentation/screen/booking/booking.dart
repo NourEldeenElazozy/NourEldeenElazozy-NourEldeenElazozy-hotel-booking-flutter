@@ -19,7 +19,7 @@ class _BookingState extends State<Booking> with SingleTickerProviderStateMixin {
   void initState() {
     super.initState();
     _loadUserType(); // أقرأ نوع المستخدم بسرعة
-    _initData();     // بعدين خلي باقي البيانات تنزل
+    _initData(); // بعدين خلي باقي البيانات تنزل
   }
 
   Future<void> _initData() async {
