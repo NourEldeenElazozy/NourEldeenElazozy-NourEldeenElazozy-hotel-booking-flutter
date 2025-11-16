@@ -1,0 +1,21 @@
+workflows:
+  ios-workflow:
+    name: iOS Build
+    max_build_duration: 60
+    environment:
+      vars:
+        FLUTTER_CHANNEL: stable
+        FLUTTER_VERSION: 3.19.6
+    scripts:
+      - name: Install dependencies
+        script: |
+          flutter pub get
+      - name: Build iOS app
+        script: |
+          flutter build ios --release --no-codesign
+    artifacts:
+      - build/ios/ipa/*.ipa
+    publishing:
+      app_store_connect:
+        api_key:
+          secure: EncryptedApiKeyHere
