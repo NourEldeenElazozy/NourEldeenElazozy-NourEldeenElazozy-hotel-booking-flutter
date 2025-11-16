@@ -17,7 +17,6 @@ workflows:
       - build/ios/ipa/*.ipa
     publishing:
       app_store_connect:
-        api_key:
-          secure: $APP_STORE_CONNECT_API_KEY
-          key_id: YP6MHFSJ8Z
-          issuer_id: 3ce6e981-87e0-4391-82e7-c5bbc030e293
+        api_key: $APP_STORE_CONNECT_API_KEY
+        key_id: YP6MHFSJ8Z
+        issuer_id: 3ce6e981-87e0-4391-82e7-c5bbc030e293
