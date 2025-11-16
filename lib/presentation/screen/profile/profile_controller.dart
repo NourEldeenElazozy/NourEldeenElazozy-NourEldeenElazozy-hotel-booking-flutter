@@ -42,11 +42,12 @@ class ProfileController extends GetxController {
         Get.snackbar("تم الإرسال", "تم إرسال طلبك بنجاح ✅",
             backgroundColor: const Color(0xFF4CAF50), colorText: Get.theme.canvasColor);
       } else {
-        Get.snackbar("خطأ", "فشل في إرسال الطلب", backgroundColor: Get.theme.errorColor);
+        Get.snackbar("خطأ", "فشل في إرسال الطلب", backgroundColor: Colors.red,
+        );
         isLoading.value=false;
       }
     } catch (e) {
-      Get.snackbar("خطأ", "حدث خطأ أثناء الإرسال", backgroundColor: Get.theme.errorColor);
+      Get.snackbar("خطأ", "حدث خطأ أثناء الإرسال", backgroundColor: Colors.red);
       isLoading.value=false;
       print("Dio error: $e");
     }
