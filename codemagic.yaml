@@ -14,10 +14,15 @@ workflows:
       - name: Install dependencies
         script: flutter pub get
 
-      - name: Install pods
+      - name: Install pods (Fixed Conflict)
         script: |
           cd ios
-          pod install --repo-update
+          # 1. إزالة ملفات القفل و التخزين المؤقت التي تسبب تعارض الإصدارات
+          rm -rf Podfile.lock
+          rm -rf Pods
+          
+          # 2. تشغيل pod update لفرض حل التبعيات والحصول على GoogleMaps >= 8.4
+          pod update --repo-update
 
       - name: Build iOS app
         script: flutter build ipa --release
