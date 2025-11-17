@@ -8,16 +8,14 @@ workflows:
       xcode: latest
       cocoapods: default
 
-      # إعادة إضافة مجموعة الاعتماديات الخاصة بالمتجر لاستخدامها في التوقيع والنشر
-      groups:
-        - appstore_credentials
+      # تم حذف قسم groups لتجنب خطأ "unknown variable group(s)"
       vars:
         APP_STORE_APPLE_ID: "6755403313"
         BUNDLE_ID: "com.esteraha.ly"
 
     scripts:
       - name: Set up code signing settings
-        # ✅ تفعيل خطوة إعداد التوقيع باستخدام App Store Connect API
+        # تفعيل خطوة إعداد التوقيع باستخدام App Store Connect API
         script: xcode-project use-profiles
 
       - name: Install dependencies
@@ -31,7 +29,7 @@ workflows:
           find . -name "Podfile" -execdir pod install \; 
 
       - name: Build iOS app (Signed)
-        # ✅ تغيير الأمر إلى بناء موقع وجاهز للنشر
+        # تغيير الأمر إلى بناء موقع وجاهز للنشر
         script: |
           flutter build ipa --release
 
@@ -40,7 +38,7 @@ workflows:
 
     publishing:
       app_store_connect:
-        # استخدام مفاتيح API الخاصة بك (يجب أن تكون متغيرات سرية)
+        # Codemagic ستبحث عن هذا المتغير السري بشكل فردي الآن
         api_key: $APP_STORE_CONNECT_API_KEY
         key_id: YP6MHFSJ8Z
         issuer_id: 3ce6e981-87e0-4391-82e7-c5bbc030e293
