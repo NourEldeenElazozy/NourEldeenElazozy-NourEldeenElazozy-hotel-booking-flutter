@@ -301,7 +301,7 @@ class _HotelDetailState extends State<HotelDetail> {
                               left: 0,
                               right: 0,
                               child: DotsIndicator(
-                                position: controller.sliderIndex.value,
+                                position: controller.sliderIndex.value.toDouble(),
                                 dotsCount: allImages.length,
                                 decorator: DotsDecorator(
                                   activeColor: Colors.green,

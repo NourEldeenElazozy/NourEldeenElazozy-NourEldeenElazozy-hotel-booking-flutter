@@ -104,7 +104,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                       ),
                       DotsIndicator(
                         dotsCount: 3,
-                        position: onboardingController.changeValue.value,
+                        position: onboardingController.changeValue.value.toDouble(),
                         decorator: DotsDecorator(
                           size: const Size.square(8),
                           activeSize: const Size(35, 8),

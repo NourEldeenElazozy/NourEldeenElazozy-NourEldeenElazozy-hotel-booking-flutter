@@ -1,0 +1,60 @@
+{
+  "notification": [
+    {
+      "date": "2024-02-20",
+      "data": [
+        {
+          "image": "assets/images/forgot_password/congratulation.svg",
+          "heading": "Payment Successful!",
+          "description": "Laluna Hotel booking was successful!"
+        }
+      ]
+    },
+    {
+      "date": "2024-02-19",
+      "data": [
+        {
+          "image": "assets/images/notification/canceled.svg",
+          "heading": "Hotel Booking Canceled",
+          "description": "You have canceled your hotel booking"
+        },
+        {
+          "image": "assets/images/notification/verification.svg",
+          "heading": "2 step verification successful",
+          "description": "Laluna Hotel booking was successful!"
+        }
+      ]
+    },
+    {
+      "date": "2024-02-18",
+      "data": [
+        {
+          "image": "assets/images/forgot_password/congratulation.svg",
+          "heading": "Payment Successful!",
+          "description": "Laluna Hotel booking was successful!"
+        },
+        {
+          "image": "assets/images/notification/wallet.svg",
+          "heading": "E-Wallet Connected",
+          "description": "E-Wallet has been connected to BookNest"
+        }
+      ]
+    },
+    {
+      "date": "2024-02-17",
+      "data": [
+        {
+          "image": "assets/images/notification/canceled.svg",
+          "heading": "Hotel Booking Canceled",
+          "description": "You have canceled your hotel booking"
+        },
+        {
+          "image": "assets/images/notification/verification.svg",
+          "heading": "2 step verification successful",
+          "description": "Laluna Hotel booking was successful!"
+        }
+      ]
+    }
+  ]
+}
+
