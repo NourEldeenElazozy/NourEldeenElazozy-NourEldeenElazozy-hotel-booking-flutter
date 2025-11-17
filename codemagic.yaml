@@ -6,18 +6,18 @@ workflows:
       vars:
         FLUTTER_CHANNEL: stable
         FLUTTER_VERSION: 3.19.6
+
     scripts:
       - name: Install Flutter dependencies
         script: |
           flutter pub get
 
-      - name: Install CocoaPods dependencies (FIXED)
+      - name: Install CocoaPods dependencies
         script: |
           cd ios
-          # 1. حذف ملف القفل القديم الذي يسبب التعارض
+          # حذف ملف القفل القديم لتجنب التعارض
           rm -f Podfile.lock 
-          # 2. تحديث مستودع CocoaPods وفرض تثبيت التبعيات الجديدة
-          # هذا يحل مشكلة "specs repository is too out-of-date"
+          # تحديث مستودع CocoaPods وتنزيل التبعيات الجديدة
           pod install --repo-update
           cd ..
 
