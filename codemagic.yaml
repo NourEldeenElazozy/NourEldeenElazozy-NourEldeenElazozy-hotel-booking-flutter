@@ -11,21 +11,16 @@ workflows:
         BUNDLE_ID: "com.esteraha.ly"
 
     scripts:
-      - name: Set up code signing settings
-        script: xcode-project use-profiles
-
       - name: Install dependencies
-        script: |
-          flutter pub get
+        script: flutter pub get
 
-      - name: Install pods and update repo
+      - name: Install pods
         script: |
-          pod repo update
-          find . -name "Podfile" -execdir pod install \;
+          cd ios
+          pod install --repo-update
 
-      - name: Build iOS app (Signed)
-        script: |
-          flutter build ipa --release
+      - name: Build iOS app
+        script: flutter build ipa --release
 
     artifacts:
       - build/ios/ipa/*.ipa
@@ -34,7 +29,7 @@ workflows:
       app_store_connect:
         api_key: $APP_STORE_CONNECT_API_KEY
         key_id: YP6MHFSJ8
-        issuer_id: 3ce6e981-87e0-4391-82e7-c5bbc030e2934
+        issuer_id: 3ce6e981-87e0-4391-82e7-c5bbc030e293
         submit_to_testflight: true
         beta_groups:
           - Testers
