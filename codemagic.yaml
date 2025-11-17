@@ -14,27 +14,24 @@ workflows:
       - name: Install dependencies
         script: flutter pub get
 
-      - name: Install pods (Fixed Conflict)
+      - name: Install pods
         script: |
           cd ios
-          # 1. إزالة ملفات القفل و التخزين المؤقت التي تسبب تعارض الإصدارات
-          rm -rf Podfile.lock
           rm -rf Pods
-          
-          # 2. تشغيل pod update لفرض حل التبعيات والحصول على GoogleMaps >= 8.4
-          pod update --repo-update
+          rm -rf Podfile.lock
+          pod install --repo-update
 
-      - name: Build iOS app
-        script: flutter build ipa --release
+      - name: Build iOS IPA
+        script: flutter build ipa --release --export-options-plist ios/ExportOptions.plist
 
     artifacts:
       - build/ios/ipa/*.ipa
 
     publishing:
       app_store_connect:
-        api_key: $APP_STORE_CONNECT_API_KEY
-        key_id: YP6MHFSJ8
-        issuer_id: 3ce6e981-87e0-4391-82e7-c5bbc030e293
+        api_key: $APP_STORE_CONNECT_API_KEY   # المتغير السري في Codemagic
+        key_id: YP6MHFSJ8                     # key_id من حساب App Store Connect
+        issuer_id: 3ce6e981-87e0-4391-82e7-c5bbc030e293  # issuer_id من App Store Connect
         submit_to_testflight: true
         beta_groups:
           - Testers
