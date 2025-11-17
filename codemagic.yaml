@@ -5,7 +5,7 @@ workflows:
     environment:
       vars:
         FLUTTER_CHANNEL: stable
-        FLUTTER_VERSION: 3.13.1
+        FLUTTER_VERSION: 3.19.6
         APP_STORE_APPLE_ID: "6755403313"
         BUNDLE_ID: "com.esteraha.ly"
     scripts:

@@ -15,7 +15,7 @@ import 'package:hotel_booking/presentation/routes/routes_imports.dart';
 import 'package:hotel_booking/utils/flutter_web_frame/flutter_web_frame.dart';
 import 'package:internet_connection_checker/internet_connection_checker.dart';
 import 'core/themes/themes_controller.dart';
-import 'package:flutter_localizations/flutter_localizations.dart'; // <--- تم إعادة إضافة هذا الاستيراد
+
 import 'package:sms_autofill/sms_autofill.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:intl/date_symbol_data_local.dart'; // <--- استيراد جديد لتهيئة اللغة
@@ -270,12 +270,8 @@ class _MyAppState extends State<MyApp> {
       builder: (webFrameContext) {
         return Obx(() => GetMaterialApp(
           navigatorKey: Get.key, // ضروري لعمل Get.to/Get.back و Get.context
-          localizationsDelegates: const [
-            GlobalMaterialLocalizations.delegate,
-            GlobalWidgetsLocalizations.delegate,
-            GlobalCupertinoLocalizations.delegate,
-          ],
-          supportedLocales: const [Locale('ar', 'SA')], // تحديد اللغة العربية كلغة مدعومة
+
+
           debugShowCheckedModeBanner: false,
           theme: themeController.darkMode.value ? Themes.darkTheme : Themes.lightTheme,
           initialRoute: "/bootLogo", // ✅ البداية من BootLogo دائمًا

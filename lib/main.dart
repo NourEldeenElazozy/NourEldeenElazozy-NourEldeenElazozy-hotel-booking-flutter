@@ -13,7 +13,6 @@ import 'package:hotel_booking/utils/flutter_web_frame/flutter_web_frame.dart';
 import 'package:sms_autofill/sms_autofill.dart';
 import 'package:hotel_booking/firebase_options.dart';
 import 'package:get/get.dart';
-import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:internet_connection_checker/internet_connection_checker.dart';
 
 final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
@@ -145,13 +144,9 @@ class _MyAppState extends State<MyApp> {
       builder: (webFrameContext) {
         return Obx(() => GetMaterialApp(
           navigatorKey: Get.key, // ضروري لعمل Get.to / Get.back / Get.context
-          localizationsDelegates: const [
-            GlobalMaterialLocalizations.delegate,
-            GlobalWidgetsLocalizations.delegate,
-            GlobalCupertinoLocalizations.delegate,
-          ],
+
           supportedLocales: const [
-            Locale('ar', 'SA'),
+
           ], // ✅ العربية مدعومة
           debugShowCheckedModeBanner: false,
           theme: themeController.darkMode.value
