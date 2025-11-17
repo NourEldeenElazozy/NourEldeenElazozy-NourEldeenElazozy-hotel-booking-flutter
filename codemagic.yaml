@@ -8,15 +8,17 @@ workflows:
         FLUTTER_VERSION: 3.19.6
 
     scripts:
-      - name: Install Flutter dependencies
+      - name: Clean Flutter project
         script: |
+          flutter clean
           flutter pub get
 
       - name: Install CocoaPods dependencies
         script: |
           cd ios
-          # حذف ملف القفل القديم لتجنب التعارض
-          rm -f Podfile.lock 
+          # حذف ملفات القفل القديمة لتجنب التعارض
+          rm -f Podfile.lock
+          rm -rf Pods
           # تحديث مستودع CocoaPods وتنزيل التبعيات الجديدة
           pod install --repo-update
           cd ..

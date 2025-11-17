@@ -57,7 +57,6 @@ dependencies:
   flutter_mobx: ^2.2.0+2
   url_launcher: ^6.3.1
   webview_flutter: ^4.7.0
-  #win32: ^5.4.0
   firebase_core: ^2.18.0         # لتشغيل Firebase
   firebase_remote_config: ^4.2.3 # للتحكم في الإصدارات عن بُعد
   package_info_plus: ^8.0.0      # للحصول على إصدار التطبيق الحالي
