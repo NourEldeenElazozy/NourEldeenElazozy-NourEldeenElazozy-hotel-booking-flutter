@@ -11,11 +11,14 @@ workflows:
         script: |
           flutter pub get
 
-      - name: Install CocoaPods dependencies
+      - name: Install CocoaPods dependencies (FIXED)
         script: |
           cd ios
-          pod repo update
-          pod install
+          # 1. حذف ملف القفل القديم الذي يسبب التعارض
+          rm -f Podfile.lock 
+          # 2. تحديث مستودع CocoaPods وفرض تثبيت التبعيات الجديدة
+          # هذا يحل مشكلة "specs repository is too out-of-date"
+          pod install --repo-update
           cd ..
 
       - name: Build iOS app
@@ -29,4 +32,4 @@ workflows:
       app_store_connect:
         api_key: $APP_STORE_CONNECT_API_KEY
         key_id: YP6MHFSJ8
-        issuer_id: 3ce6e981-87e0-4391-82e7-c5bbc030e293
+        issuer_id: 3ce6e981-87e0-4391-82e7-c5bbc030e2934
