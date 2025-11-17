@@ -55,7 +55,7 @@ dependencies:
   flutter_lints: ^3.0.2
   mobx: ^2.3.0+1
   flutter_mobx: ^2.2.0+2
-  #url_launcher: ^6.3.1
+  url_launcher: ^6.3.1
   webview_flutter: ^4.7.0
   win32: ^5.4.0
   firebase_core: ^2.18.0         # لتشغيل Firebase
