@@ -3,19 +3,15 @@ workflows:
     name: iOS Build & Publish (Signed)
     max_build_duration: 60
     environment:
-      # تحديد الإصدار لضمان التوافق
       flutter: 3.19.6
       xcode: latest
       cocoapods: default
-
-      # تم حذف قسم groups لتجنب خطأ "unknown variable group(s)"
       vars:
         APP_STORE_APPLE_ID: "6755403313"
         BUNDLE_ID: "com.esteraha.ly"
 
     scripts:
       - name: Set up code signing settings
-        # تفعيل خطوة إعداد التوقيع باستخدام App Store Connect API
         script: xcode-project use-profiles
 
       - name: Install dependencies
@@ -23,13 +19,11 @@ workflows:
           flutter pub get
 
       - name: Install pods and update repo
-        # تحديث مستودع CocoaPods لحل مشاكل الاعتماديات
         script: |
           pod repo update
-          find . -name "Podfile" -execdir pod install \; 
+          find . -name "Podfile" -execdir pod install \;
 
       - name: Build iOS app (Signed)
-        # تغيير الأمر إلى بناء موقع وجاهز للنشر
         script: |
           flutter build ipa --release
 
@@ -38,13 +32,10 @@ workflows:
 
     publishing:
       app_store_connect:
-        # Codemagic ستبحث عن هذا المتغير السري بشكل فردي الآن
         api_key: $APP_STORE_CONNECT_API_KEY
-        key_id: YP6MHFSJ8Z
-        issuer_id: 3ce6e981-87e0-4391-82e7-c5bbc030e293
-
-        # رفع البناء إلى TestFlight بمجرد اكتمال البناء
+        key_id: YP6MHFSJ8
+        issuer_id: 3ce6e981-87e0-4391-82e7-c5bbc030e2934
         submit_to_testflight: true
         beta_groups:
-          - Testers # تأكد من أن هذا هو اسم مجموعة الاختبار الصحيح
+          - Testers
         submit_to_app_store: false
