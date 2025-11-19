@@ -34,7 +34,7 @@ class _HotelDetailState extends State<HotelDetail> {
     }
   }
 
-  BitmapDescriptor? _markerIcon;
+
   late int restAreaId;
   // متغيرات خاصة بالتقويم
 
@@ -1605,19 +1605,10 @@ class _HotelDetailState extends State<HotelDetail> {
    */
 
   Future<void> _createMarkerImageFromAsset(BuildContext context) async {
-    if (_markerIcon == null) {
-      final ImageConfiguration imageConfiguration =
-          createLocalImageConfiguration(context, size: const Size.square(48));
-      BitmapDescriptor.fromAssetImage(imageConfiguration, MyImages.markerIcon)
-          .then(_updateBitmap);
-    }
+
   }
 
-  void _updateBitmap(BitmapDescriptor bitmap) {
-    setState(() {
-      _markerIcon = bitmap;
-    });
-  }
+
 }
 
 Widget titleText(
