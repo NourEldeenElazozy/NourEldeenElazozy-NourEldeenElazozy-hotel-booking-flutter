@@ -11,11 +11,14 @@ workflows:
           # تنظيف المشروع
           flutter clean
           flutter pub get
-
-          # تحديث CocoaPods وإعادة تثبيت الـ pods
+          
+          # تحديث CocoaPods وإعادة تثبيت الـ pods مع إجبار تحديث GoogleMaps
           cd ios
+          rm -rf Pods Podfile.lock
           pod repo update
-          pod install --repo-update
+          pod install
+          pod update GoogleMaps
+      
 
       - name: Build iOS IPA
         script: |
