@@ -1,0 +1,32 @@
+workflows:
+  ios-build:
+    name: iOS Build
+    environment:
+      xcode: 15.4        # اختر نسخة Xcode المناسبة
+      cocoapods: 1.16.2  # نسخة حديثة من CocoaPods
+      flutter: 3.38.1    # نسخة Flutter
+    scripts:
+      - name: Pre-build cleanup and dependencies
+        script: |
+          # تنظيف المشروع
+          flutter clean
+          flutter pub get
+
+          # تحديث CocoaPods وإعادة تثبيت الـ pods
+          cd ios
+          pod repo update
+          pod install --repo-update
+
+      - name: Build iOS IPA
+        script: |
+          flutter build ipa --release \
+            --export-options-plist=/Users/builder/export_options.plist
+
+    artifacts:
+      - build/ios/ipa/*.ipa
+
+    publishing:
+      app_store_connect:
+        api_key: $APP_STORE_CONNECT_KEY
+        key_id: $APP_STORE_CONNECT_KEY_ID
+        issuer_id: $APP_STORE_CONNECT_ISSUER_ID
