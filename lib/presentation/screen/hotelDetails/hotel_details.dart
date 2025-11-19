@@ -34,7 +34,7 @@ class _HotelDetailState extends State<HotelDetail> {
     }
   }
 
-
+  BitmapDescriptor? _markerIcon;
   late int restAreaId;
   // متغيرات خاصة بالتقويم
 
@@ -60,7 +60,7 @@ class _HotelDetailState extends State<HotelDetail> {
   bool _isDayReserved(DateTime day) {
     // قارن اليوم فقط (دون الوقت)
     return controller.reservedDates.any((reservedDay) =>
-        reservedDay.year == day.year &&
+    reservedDay.year == day.year &&
         reservedDay.month == day.month &&
         reservedDay.day == day.day);
   }
@@ -160,8 +160,8 @@ class _HotelDetailState extends State<HotelDetail> {
                             colorFilter: ColorFilter.mode(
                                 innerBoxIsScrolled == true
                                     ? controller.themeController.darkMode.value
-                                        ? MyColors.white
-                                        : MyColors.black
+                                    ? MyColors.white
+                                    : MyColors.black
                                     : MyColors.white,
                                 BlendMode.srcIn)),
                       ),
@@ -324,7 +324,7 @@ class _HotelDetailState extends State<HotelDetail> {
               ];
             },
             body: Obx(
-              () => SingleChildScrollView(
+                  () => SingleChildScrollView(
                 child: Column(
                   children: [
                     const SizedBox(height: 10),
@@ -346,7 +346,7 @@ class _HotelDetailState extends State<HotelDetail> {
                                 "المدينة:${controller.detail.cityname.toString()}",
                                 style: TextStyle(
                                   color: controller
-                                          .themeController.isDarkMode.value
+                                      .themeController.isDarkMode.value
                                       ? MyColors.searchTextFieldColor
                                       : MyColors.profileListTileColor,
                                   fontWeight: FontWeight.bold,
@@ -373,7 +373,7 @@ class _HotelDetailState extends State<HotelDetail> {
                                     MyImages.location,
                                     colorFilter: ColorFilter.mode(
                                       controller
-                                              .themeController.isDarkMode.value
+                                          .themeController.isDarkMode.value
                                           ? MyColors.white
                                           : MyColors.black,
                                       BlendMode.srcIn,
@@ -386,7 +386,7 @@ class _HotelDetailState extends State<HotelDetail> {
                                       controller.detail.location.toString(),
                                       style: TextStyle(
                                         color: controller.themeController
-                                                .isDarkMode.value
+                                            .isDarkMode.value
                                             ? MyColors.searchTextFieldColor
                                             : MyColors.profileListTileColor,
                                         fontWeight: FontWeight.w400,
@@ -401,7 +401,7 @@ class _HotelDetailState extends State<HotelDetail> {
                               // ويدجيت التجول الافتراضي
                               if (controller.detail.id != null &&
                                   controller.detail.id != null
-                               && (controller.detail.cityname as String).isNotEmpty)
+                                  && (controller.detail.cityname as String).isNotEmpty)
 
                                 Padding(
                                   padding: const EdgeInsets.only(bottom: 20, top: 10),
@@ -473,7 +473,7 @@ class _HotelDetailState extends State<HotelDetail> {
                                 "وقت الحضور: ${controller.detail.checkin}",
                                 style: TextStyle(
                                   color: controller
-                                          .themeController.isDarkMode.value
+                                      .themeController.isDarkMode.value
                                       ? MyColors.searchTextFieldColor
                                       : MyColors.profileListTileColor,
                                   fontWeight: FontWeight.bold,
@@ -485,7 +485,7 @@ class _HotelDetailState extends State<HotelDetail> {
                                 "وقت الانصراف: ${controller.detail.checkout}",
                                 style: TextStyle(
                                   color: controller
-                                          .themeController.isDarkMode.value
+                                      .themeController.isDarkMode.value
                                       ? MyColors.searchTextFieldColor
                                       : MyColors.profileListTileColor,
                                   fontWeight: FontWeight.bold,
@@ -531,7 +531,7 @@ class _HotelDetailState extends State<HotelDetail> {
                                 "${controller.detail.price} د.ل / الليلة",
                                 style: TextStyle(
                                   color: controller
-                                          .themeController.isDarkMode.value
+                                      .themeController.isDarkMode.value
                                       ? MyColors.white
                                       : MyColors.primaryColor,
                                   fontWeight: FontWeight.w700,
@@ -546,11 +546,11 @@ class _HotelDetailState extends State<HotelDetail> {
                                         .price, // تأكد من وجوده في الموديل
 
                                     'holiday_price':
-                                        controller.detail.holidayPrice,
+                                    controller.detail.holidayPrice,
                                     'eid_days_price':
-                                        controller.detail.eidDaysPrice,
+                                    controller.detail.eidDaysPrice,
                                     'special_event_price':
-                                        null, // أضفه إذا كان موجودًا في الموديل
+                                    null, // أضفه إذا كان موجودًا في الموديل
                                   });
                                 },
                                 child: Text(
@@ -741,35 +741,35 @@ class _HotelDetailState extends State<HotelDetail> {
 
                                                   // زر السابق
 
-                                                    Positioned(
-                                                      left: 10,
-                                                      top: MediaQuery.of(context).size.height * 0.4,
-                                                      child: IconButton(
-                                                        icon: const Icon(Icons.arrow_back_ios, color: Colors.white, size: 32),
-                                                        onPressed: () {
-                                                          pageController.previousPage(
-                                                            duration: const Duration(milliseconds: 300),
-                                                            curve: Curves.easeInOut,
-                                                          );
-                                                        },
-                                                      ),
+                                                  Positioned(
+                                                    left: 10,
+                                                    top: MediaQuery.of(context).size.height * 0.4,
+                                                    child: IconButton(
+                                                      icon: const Icon(Icons.arrow_back_ios, color: Colors.white, size: 32),
+                                                      onPressed: () {
+                                                        pageController.previousPage(
+                                                          duration: const Duration(milliseconds: 300),
+                                                          curve: Curves.easeInOut,
+                                                        );
+                                                      },
                                                     ),
+                                                  ),
 
                                                   // زر التالي
 
-                                                    Positioned(
-                                                      right: 10,
-                                                      top: MediaQuery.of(context).size.height * 0.4,
-                                                      child: IconButton(
-                                                        icon: const Icon(Icons.arrow_forward_ios, color: Colors.white, size: 32),
-                                                        onPressed: () {
-                                                          pageController.nextPage(
-                                                            duration: const Duration(milliseconds: 300),
-                                                            curve: Curves.easeInOut,
-                                                          );
-                                                        },
-                                                      ),
+                                                  Positioned(
+                                                    right: 10,
+                                                    top: MediaQuery.of(context).size.height * 0.4,
+                                                    child: IconButton(
+                                                      icon: const Icon(Icons.arrow_forward_ios, color: Colors.white, size: 32),
+                                                      onPressed: () {
+                                                        pageController.nextPage(
+                                                          duration: const Duration(milliseconds: 300),
+                                                          curve: Curves.easeInOut,
+                                                        );
+                                                      },
                                                     ),
+                                                  ),
                                                 ],
                                               ),
                                             ),
@@ -827,7 +827,7 @@ class _HotelDetailState extends State<HotelDetail> {
                             physics: const NeverScrollableScrollPhysics(),
                             itemCount: 9, // عدد العناصر التي تريد عرضها
                             gridDelegate:
-                                const SliverGridDelegateWithFixedCrossAxisCount(
+                            const SliverGridDelegateWithFixedCrossAxisCount(
                               crossAxisCount: 3, // عدد الأعمدة
                               mainAxisExtent: 100, // ارتفاع العنصر
                             ),
@@ -838,20 +838,20 @@ class _HotelDetailState extends State<HotelDetail> {
                                   "icon": Icons.bed,
                                   "label": "غرف النوم",
                                   "value":
-                                      "${controller.detail.details[0].numBedrooms ?? 0}",
+                                  "${controller.detail.details[0].numBedrooms ?? 0}",
                                 },
                                 {
                                   "icon": Icons.people,
                                   "label": "الحد الأقصى للضيوف",
                                   "value":
-                                      "${controller.detail.details[0].maxGuests ?? 0}",
+                                  "${controller.detail.details[0].maxGuests ?? 0}",
                                 },
                                 {
                                   "icon": Icons.kitchen,
                                   "label": "المطبخ",
                                   "value": controller.detail.details[0]
-                                              .kitchenAvailable ==
-                                          true
+                                      .kitchenAvailable ==
+                                      true
                                       ? "متوفر"
                                       : "غير متوفر",
                                 },
@@ -864,23 +864,23 @@ class _HotelDetailState extends State<HotelDetail> {
                                   "icon": Icons.bathtub,
                                   "label": "حمامات داخلية",
                                   "value":
-                                      "${controller.detail.details[0].numBathroomsIndoor ?? 0}",
+                                  "${controller.detail.details[0].numBathroomsIndoor ?? 0}",
                                 },
                                 {
                                   "icon": Icons.local_parking,
                                   "label": "مرآب",
                                   "value":
-                                      controller.detail.details[0].garage ==
-                                              true
-                                          ? "متوفر"
-                                          : "غير متوفر",
+                                  controller.detail.details[0].garage ==
+                                      true
+                                      ? "متوفر"
+                                      : "غير متوفر",
                                 },
                                 {
                                   "icon": Icons.ac_unit, // أيقونة التكييف
                                   "label": "تكييف/تدفئة",
                                   "value": controller
-                                              .detail.details[0].hasACHeating ==
-                                          true
+                                      .detail.details[0].hasACHeating ==
+                                      true
                                       ? "متوفر"
                                       : "غير متوفر",
                                 },
@@ -888,22 +888,22 @@ class _HotelDetailState extends State<HotelDetail> {
                                   "icon": Icons.tv, // أيقونة التلفاز
                                   "label": "عدد شاشات التلفاز",
                                   "value":
-                                      "${controller.detail.details[0].tvScreens ?? 0}",
+                                  "${controller.detail.details[0].tvScreens ?? 0}",
                                 },
                                 {
                                   "icon": Icons.wifi, // أيقونة الواي فاي
                                   "label": "واي فاي مجاني",
                                   "value":
-                                      controller.detail.details[0].freeWifi ==
-                                              true
-                                          ? "نعم"
-                                          : "لا",
+                                  controller.detail.details[0].freeWifi ==
+                                      true
+                                      ? "نعم"
+                                      : "لا",
                                 },
                                 {
                                   "icon": Icons.games, // أيقونة الألعاب
                                   "label": "ألعاب ترفيهية",
                                   "value": controller.detail.details[0]
-                                          .entertainmentGames ??
+                                      .entertainmentGames ??
                                       "لا توجد ألعاب",
                                 },
                               ];
@@ -970,7 +970,7 @@ class _HotelDetailState extends State<HotelDetail> {
                             physics: const NeverScrollableScrollPhysics(),
                             itemCount: 15, // عدد العناصر التي تريد عرضها
                             gridDelegate:
-                                const SliverGridDelegateWithFixedCrossAxisCount(
+                            const SliverGridDelegateWithFixedCrossAxisCount(
                               crossAxisCount: 3, // عدد الأعمدة
                               mainAxisExtent: 100, // ارتفاع العنصر
                             ),
@@ -981,28 +981,28 @@ class _HotelDetailState extends State<HotelDetail> {
                                   "icon": Icons.pool, // أيقونة المسبح
                                   "label": "مساحة المسبح",
                                   "value":
-                                      "${controller.detail.details[0].poolSpace ?? 0}",
+                                  "${controller.detail.details[0].poolSpace ?? 0}",
                                 },
                                 {
                                   "icon": Icons.pool, // أيقونة المسبح
                                   "label": "نوع المسبح",
                                   "value":
-                                      controller.detail.details[0].poolType ??
-                                          "لا يوجد",
+                                  controller.detail.details[0].poolType ??
+                                      "لا يوجد",
                                 },
                                 {
                                   "icon": Icons.water, // أيقونة المياه
                                   "label": "عمق المسبح",
                                   "value":
-                                      "${controller.detail.details[0].poolDepth ?? 0}",
+                                  "${controller.detail.details[0].poolDepth ?? 0}",
                                 },
                                 {
                                   "icon": Icons
                                       .outdoor_grill, // أيقونة المساحة الخارجية
                                   "label": "مساحة خارجية",
                                   "value": controller
-                                              .detail.details[0].outdoorSpace ==
-                                          true
+                                      .detail.details[0].outdoorSpace ==
+                                      true
                                       ? "متوفر"
                                       : "غير متوفر",
                                 },
@@ -1010,17 +1010,17 @@ class _HotelDetailState extends State<HotelDetail> {
                                   "icon": Icons.grass, // أيقونة المساحة العشبية
                                   "label": "مساحة عشبية",
                                   "value":
-                                      controller.detail.details[0].grassSpace ==
-                                              true
-                                          ? "متوفر"
-                                          : "غير متوفر",
+                                  controller.detail.details[0].grassSpace ==
+                                      true
+                                      ? "متوفر"
+                                      : "غير متوفر",
                                 },
                                 {
                                   "icon": Icons.local_florist, // أيقونة نباتات
                                   "label": "تدفئة للمسبح",
                                   "value": controller
-                                              .detail.details[0].poolHeating ==
-                                          true
+                                      .detail.details[0].poolHeating ==
+                                      true
                                       ? "متوفر"
                                       : "غير متوفر",
                                 },
@@ -1028,26 +1028,26 @@ class _HotelDetailState extends State<HotelDetail> {
                                   "icon": Icons.local_florist, // أيقونة نباتات
                                   "label": "فلتر  للمسبح",
                                   "value":
-                                      controller.detail.details[0].poolFilter ==
-                                              true
-                                          ? "متوفر"
-                                          : "غير متوفر",
+                                  controller.detail.details[0].poolFilter ==
+                                      true
+                                      ? "متوفر"
+                                      : "غير متوفر",
                                 },
                                 {
                                   "icon": Icons.local_parking,
                                   "label": "كراج",
                                   "value":
-                                      controller.detail.details[0].garage ==
-                                              true
-                                          ? "متوفر"
-                                          : "غير متوفر",
+                                  controller.detail.details[0].garage ==
+                                      true
+                                      ? "متوفر"
+                                      : "غير متوفر",
                                 },
                                 {
                                   "icon": Icons.local_parking,
                                   "label": "أماكن جلوس خارجية",
                                   "value": controller.detail.details[0]
-                                              .outdoorSeating ==
-                                          true
+                                      .outdoorSeating ==
+                                      true
                                       ? "متوفر"
                                       : "غير متوفر",
                                 },
@@ -1055,8 +1055,8 @@ class _HotelDetailState extends State<HotelDetail> {
                                   "icon": Icons.gamepad_outlined,
                                   "label": "ألعاب للأطفال",
                                   "value": controller.detail.details[0]
-                                              .childrenGames ==
-                                          true
+                                      .childrenGames ==
+                                      true
                                       ? "متوفر"
                                       : "غير متوفر",
                                 },
@@ -1075,8 +1075,8 @@ class _HotelDetailState extends State<HotelDetail> {
                                       .outdoor_grill, // أيقونة المطبخ الخارجي
                                   "label": "مطبخ خارجي",
                                   "value": controller.detail.details[0]
-                                              .outdoorKitchen ==
-                                          true
+                                      .outdoorKitchen ==
+                                      true
                                       ? "متوفر"
                                       : "غير متوفر",
                                 },
@@ -1084,8 +1084,8 @@ class _HotelDetailState extends State<HotelDetail> {
                                   "icon": Icons.local_play, // أيقونة مكان الذبح
                                   "label": "مكان الذبح",
                                   "value": controller.detail.details[0]
-                                              .slaughterPlace ==
-                                          true
+                                      .slaughterPlace ==
+                                      true
                                       ? "متوفر"
                                       : "غير متوفر",
                                 },
@@ -1093,27 +1093,27 @@ class _HotelDetailState extends State<HotelDetail> {
                                   "icon": Icons.local_hospital, // أيقونة البئر
                                   "label": "بئر",
                                   "value":
-                                      controller.detail.details[0].well == true
-                                          ? "متوفر"
-                                          : "غير متوفر",
-                                },
-                                {
-                                  "icon":
-                                      Icons.power, // أيقونة المولد الكهربائي
-                                  "label": "مولد كهربائي",
-                                  "value": controller.detail.details[0]
-                                              .powerGenerator ==
-                                          true
+                                  controller.detail.details[0].well == true
                                       ? "متوفر"
                                       : "غير متوفر",
                                 },
                                 {
                                   "icon":
-                                      Icons.power, // أيقونة المولد الكهربائي
+                                  Icons.power, // أيقونة المولد الكهربائي
+                                  "label": "مولد كهربائي",
+                                  "value": controller.detail.details[0]
+                                      .powerGenerator ==
+                                      true
+                                      ? "متوفر"
+                                      : "غير متوفر",
+                                },
+                                {
+                                  "icon":
+                                  Icons.power, // أيقونة المولد الكهربائي
                                   "label": "حمام خارجي",
                                   "value": controller.detail.details[0]
-                                              .OutdoorBathroom ==
-                                          true
+                                      .OutdoorBathroom ==
+                                      true
                                       ? "متوفر"
                                       : "غير متوفر",
                                 },
@@ -1304,7 +1304,7 @@ class _HotelDetailState extends State<HotelDetail> {
                           Padding(
                             padding: const EdgeInsets.symmetric(horizontal: 15),
                             child: Obx(
-                              () => buildReviewInputWidget(
+                                  () => buildReviewInputWidget(
                                 context: context,
                                 currentRating: controller.userRating.value,
                                 onRatingTap: (rating) {
@@ -1352,7 +1352,7 @@ class _HotelDetailState extends State<HotelDetail> {
                                       0.045, // حجم الخط يتناسب مع عرض الشاشة
                                   fontWeight: FontWeight.bold,
                                   color: controller
-                                          .themeController.isDarkMode.value
+                                      .themeController.isDarkMode.value
                                       ? Colors.white
                                       : Colors.black,
                                 ),
@@ -1379,11 +1379,11 @@ class _HotelDetailState extends State<HotelDetail> {
                                     "متاح للحجز",
                                     style: TextStyle(
                                       fontSize: MediaQuery.of(context)
-                                              .size
-                                              .width *
+                                          .size
+                                          .width *
                                           0.035, // حجم الخط يتناسب مع عرض الشاشة
                                       color: controller
-                                              .themeController.isDarkMode.value
+                                          .themeController.isDarkMode.value
                                           ? Colors.white70
                                           : Colors.black87,
                                     ),
@@ -1408,10 +1408,10 @@ class _HotelDetailState extends State<HotelDetail> {
                                     "غير متاح للحجز (محجوز/ماضي)",
                                     style: TextStyle(
                                       fontSize:
-                                          MediaQuery.of(context).size.width *
-                                              0.035,
+                                      MediaQuery.of(context).size.width *
+                                          0.035,
                                       color: controller
-                                              .themeController.isDarkMode.value
+                                          .themeController.isDarkMode.value
                                           ? Colors.white70
                                           : Colors.black87,
                                     ),
@@ -1425,7 +1425,7 @@ class _HotelDetailState extends State<HotelDetail> {
                                   height: MediaQuery.of(context).size.height *
                                       0.02), // مسافة قبل بداية التقويم
                             ],
-                           ),
+                          ),
                           Container(
                             child: Obx(() {
                               if (controller.isLoading2.value) {
@@ -1541,7 +1541,7 @@ class _HotelDetailState extends State<HotelDetail> {
                           ),
 
                           const SizedBox(height: 15),
-                      /*
+                          /*
                           SizedBox(
                             height: 50,
                             child: ElevatedButton(
@@ -1605,10 +1605,19 @@ class _HotelDetailState extends State<HotelDetail> {
    */
 
   Future<void> _createMarkerImageFromAsset(BuildContext context) async {
-
+    if (_markerIcon == null) {
+      final ImageConfiguration imageConfiguration =
+      createLocalImageConfiguration(context, size: const Size.square(48));
+      BitmapDescriptor.fromAssetImage(imageConfiguration, MyImages.markerIcon)
+          .then(_updateBitmap);
+    }
   }
 
-
+  void _updateBitmap(BitmapDescriptor bitmap) {
+    setState(() {
+      _markerIcon = bitmap;
+    });
+  }
 }
 
 Widget titleText(
@@ -1622,14 +1631,14 @@ Widget titleText(
       ),
       seeAllStatus == true
           ? InkWell(
-              onTap: onPress,
-              child: Container(
-                  padding: const EdgeInsets.all(5),
-                  child: const Text(
-                    MyString.seeAll,
-                    style: TextStyle(fontWeight: FontWeight.w700, fontSize: 14),
-                  )),
-            )
+        onTap: onPress,
+        child: Container(
+            padding: const EdgeInsets.all(5),
+            child: const Text(
+              MyString.seeAll,
+              style: TextStyle(fontWeight: FontWeight.w700, fontSize: 14),
+            )),
+      )
           : const SizedBox(),
     ],
   );
@@ -1649,12 +1658,12 @@ _review(bool isDarkMode, List<AllReview> allReview) {
             width: MediaQuery.of(context).size.width,
             decoration: BoxDecoration(
               color:
-                  isDarkMode ? MyColors.darkSearchTextFieldColor : Colors.white,
+              isDarkMode ? MyColors.darkSearchTextFieldColor : Colors.white,
               borderRadius: BorderRadius.circular(15),
               boxShadow: [
                 BoxShadow(
                     color:
-                        isDarkMode ? Colors.transparent : Colors.grey.shade200,
+                    isDarkMode ? Colors.transparent : Colors.grey.shade200,
                     blurRadius: 10),
               ],
             ),
@@ -1714,14 +1723,14 @@ _review(bool isDarkMode, List<AllReview> allReview) {
 }
 
 Widget _buildReviewItem(
-  BuildContext context,
-  bool isDarkMode,
-  String reviewerName,
-  double rating,
-  String comment,
-  String? imageUrl,
-  String reviewDate,
-) {
+    BuildContext context,
+    bool isDarkMode,
+    String reviewerName,
+    double rating,
+    String comment,
+    String? imageUrl,
+    String reviewDate,
+    ) {
   // ... (نفس الكود الذي قدمته لـ _buildReviewItem سابقًا) ...
   return Container(
     padding: const EdgeInsets.all(15),
@@ -1745,18 +1754,18 @@ Widget _buildReviewItem(
           children: [
             imageUrl != null && imageUrl.isNotEmpty
                 ? CircleAvatar(
-                    radius: 20,
-                    backgroundImage: NetworkImage(imageUrl),
-                    backgroundColor: Colors.grey[200],
-                  )
+              radius: 20,
+              backgroundImage: NetworkImage(imageUrl),
+              backgroundColor: Colors.grey[200],
+            )
                 : CircleAvatar(
-                    radius: 20,
-                    backgroundColor: isDarkMode
-                        ? MyColors.disabledColor
-                        : MyColors.profileListTileColor,
-                    child: Icon(Icons.person,
-                        color: isDarkMode ? MyColors.white : MyColors.black),
-                  ),
+              radius: 20,
+              backgroundColor: isDarkMode
+                  ? MyColors.disabledColor
+                  : MyColors.profileListTileColor,
+              child: Icon(Icons.person,
+                  color: isDarkMode ? MyColors.white : MyColors.black),
+            ),
             const SizedBox(width: 10),
             Expanded(
               child: Column(
@@ -1791,8 +1800,8 @@ Widget _buildReviewItem(
                     index < rating.floor()
                         ? Colors.amber
                         : (index < rating && rating % 1 != 0)
-                            ? Colors.amber
-                            : Colors.grey[300]!,
+                        ? Colors.amber
+                        : Colors.grey[300]!,
                     BlendMode.srcIn,
                   ),
                 );
@@ -1830,9 +1839,9 @@ Widget _buildReviewItem(
 Widget buildReviewInputWidget({
   required BuildContext context, // نحتاج Context لعرض SnackBar
   required double
-      currentRating, // التقييم الحالي (يجب أن يأتي من State/Controller)
+  currentRating, // التقييم الحالي (يجب أن يأتي من State/Controller)
   required ValueChanged<double>
-      onRatingTap, // دالة لتحديث التقييم عند النقر على نجمة
+  onRatingTap, // دالة لتحديث التقييم عند النقر على نجمة
   required TextEditingController commentController, // متحكم النص للتعليق
   required ValueChanged<String> onCommentChanged, // دالة عند تغيير التعليق
   required VoidCallback onSubmit, // دالة عند الضغط على زر الإرسال
@@ -1898,7 +1907,7 @@ Widget buildReviewInputWidget({
           style: TextStyle(color: isDarkMode ? MyColors.white : MyColors.black),
           decoration: InputDecoration(
             hintText:
-                "اكتب تعليقك هنا...", // يمكنك استخدام MyString.writeYourComment here
+            "اكتب تعليقك هنا...", // يمكنك استخدام MyString.writeYourComment here
             hintStyle: TextStyle(
                 color: isDarkMode
                     ? MyColors.searchTextFieldColor

@@ -8,9 +8,11 @@
 
 import 'package:connectivity_plus/src/connectivity_plus_web.dart';
 import 'package:firebase_core_web/firebase_core_web.dart';
+import 'package:firebase_messaging_web/firebase_messaging_web.dart';
 import 'package:firebase_remote_config_web/firebase_remote_config_web.dart';
 import 'package:flutter_credit_card/src/plugin/flutter_credit_card_web.dart';
 import 'package:geolocator_web/geolocator_web.dart';
+import 'package:google_maps_flutter_web/google_maps_flutter_web.dart';
 import 'package:image_picker_for_web/image_picker_for_web.dart';
 import 'package:location_web/location_web.dart';
 import 'package:package_info_plus/src/package_info_plus_web.dart';
@@ -22,9 +24,11 @@ void registerPlugins([final Registrar? pluginRegistrar]) {
   final Registrar registrar = pluginRegistrar ?? webPluginRegistrar;
   ConnectivityPlusWebPlugin.registerWith(registrar);
   FirebaseCoreWeb.registerWith(registrar);
+  FirebaseMessagingWeb.registerWith(registrar);
   FirebaseRemoteConfigWeb.registerWith(registrar);
   FlutterCreditCardWeb.registerWith(registrar);
   GeolocatorPlugin.registerWith(registrar);
+  GoogleMapsPlugin.registerWith(registrar);
   ImagePickerPlugin.registerWith(registrar);
   LocationWebPlugin.registerWith(registrar);
   PackageInfoPlusWebPlugin.registerWith(registrar);

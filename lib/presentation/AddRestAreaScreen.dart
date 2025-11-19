@@ -12,7 +12,7 @@ import 'package:http/http.dart' as http;
 import 'dart:io';
 import 'package:get/get.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 class AddRestAreaScreen extends StatefulWidget {
   @override
   _AddRestAreaScreenState createState() => _AddRestAreaScreenState();
@@ -91,7 +91,7 @@ class _AddRestAreaScreenState extends State<AddRestAreaScreen> {
   List<String> _initialDetailsImageUrls = [];
   int _currentStep = 0;
 
-
+  LatLng? selectedLocation; // هنا نخزن الاحداثيات
   late RestAreaController controller;
   late TextEditingController nameController;
   late TextEditingController locationController;
@@ -615,7 +615,30 @@ controller = Get.put(RestAreaController());
                   (value) => _restArea.depositValue = value,
               validator: _requiredValidator,
             ),
+            InkWell(
+              onTap: () async {
+                LatLng? result = await Get.to(() => MapPickerScreens(
+                  initialLocation: selectedLocation,
+                ));
 
+                if (result != null) {
+                  setState(() {
+                    selectedLocation = result;
+                    googleMapsLocationController.text =
+                    "${result.latitude},${result.longitude}";
+                    _restArea.googleMapsLocation = googleMapsLocationController.text;
+                  });
+                }
+              },
+              child: IgnorePointer( // 👈 يمنع الكتابة اليدوية
+                child: _buildTextFormField(
+                  controller: googleMapsLocationController,
+                  'الموقع على خرائط جوجل',
+                  Icons.map,
+                      (value) => _restArea.googleMapsLocation = value ?? "",
+                ),
+              ),
+            ),
             _buildNumberField(
               controller: holidayPriceController,
               'سعر العطل الرسمية',

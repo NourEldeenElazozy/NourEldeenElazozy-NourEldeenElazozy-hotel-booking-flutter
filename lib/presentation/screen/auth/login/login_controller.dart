@@ -13,7 +13,6 @@ class LoginController extends GetxController {
   var token = ''.obs;
   var user = User(id: 0, name: '', phone: '',userType: "",gender: "").obs;
 
-/*
   Future<String?> getDeviceToken() async {
     try {
       return await FirebaseMessaging.instance.getToken();
@@ -22,7 +21,6 @@ class LoginController extends GetxController {
       return null;
     }
   }
- */
   Future<void> login(String phone, String password) async {
     isLoading.value = true;
     try {
@@ -51,8 +49,7 @@ class LoginController extends GetxController {
         user.value = loginResponse.user;
         await _storeData(loginResponse.token, loginResponse.user);
         // جلب device token
-        //String? deviceToken = await getDeviceToken();
-       /*
+        String? deviceToken = await getDeviceToken();
         if (deviceToken != null && deviceToken.isNotEmpty) {
           print("deviceToken: ${deviceToken.toString()}");
 
@@ -72,7 +69,6 @@ class LoginController extends GetxController {
           print('Error: ${response.statusCode}');
           print("⚠️ لم يتم جلب deviceToken");
         }
-        */
         // يمكنك تخزين التوكن أو أي معلومات أخرى هنا
       } else {
         // التعامل مع الأخطاء
