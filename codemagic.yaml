@@ -5,21 +5,24 @@ workflows:
     environment:
       vars:
         FLUTTER_CHANNEL: stable
-        FLUTTER_VERSION: 3.19.6
+        FLUTTER_VERSION: 3.27.3
 
     scripts:
       - name: Clean Flutter project
         script: |
+          # تنظيف شامل لكلا الملفين: pubspec.lock و Pub Cache
           flutter clean
           flutter pub get
 
-      - name: Install CocoaPods dependencies
+      - name: Install CocoaPods dependencies (Forced Update)
         script: |
           cd ios
-          # حذف ملفات القفل القديمة لتجنب التعارض
+          # هذه الخطوات ضرورية لضمان قراءة التعديل الجديد في Podfile
           rm -f Podfile.lock
           rm -rf Pods
-          # تحديث مستودع CocoaPods وتنزيل التبعيات الجديدة
+          
+          # تحديث مستودع CocoaPods (للتأكد من وجود الإصدار 9.0.0) وتنزيل التبعيات
+          # سيتم تطبيق التجاوز (Override) من خلال كتلة post_install المضافة.
           pod install --repo-update
           cd ..
 
