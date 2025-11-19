@@ -70,9 +70,7 @@ class Themes {
     bottomSheetTheme: const BottomSheetThemeData(
       backgroundColor: MyColors.searchTextFieldColor,
     ),
-    dialogTheme: const DialogTheme(
-      backgroundColor: MyColors.scaffoldLightColor,
-    ),
+
     elevatedButtonTheme: ElevatedButtonThemeData(
       style: ElevatedButton.styleFrom(
         backgroundColor: MyColors.primaryColor,
@@ -165,9 +163,7 @@ class Themes {
     bottomSheetTheme: const BottomSheetThemeData(
       backgroundColor: MyColors.scaffoldDarkColor,
     ),
-    dialogTheme: const DialogTheme(
-      backgroundColor: MyColors.scaffoldDarkColor,
-    ),
+
     elevatedButtonTheme: ElevatedButtonThemeData(
       style: ElevatedButton.styleFrom(
         backgroundColor: MyColors.successColor,
