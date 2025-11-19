@@ -212,24 +212,6 @@
       "languageVersion": "3.2"
     },
     {
-      "name": "firebase_messaging",
-      "rootUri": "file:///C:/Users/nouro/AppData/Local/Pub/Cache/hosted/pub.dev/firebase_messaging-14.9.4",
-      "packageUri": "lib/",
-      "languageVersion": "2.18"
-    },
-    {
-      "name": "firebase_messaging_platform_interface",
-      "rootUri": "file:///C:/Users/nouro/AppData/Local/Pub/Cache/hosted/pub.dev/firebase_messaging_platform_interface-4.5.37",
-      "packageUri": "lib/",
-      "languageVersion": "2.18"
-    },
-    {
-      "name": "firebase_messaging_web",
-      "rootUri": "file:///C:/Users/nouro/AppData/Local/Pub/Cache/hosted/pub.dev/firebase_messaging_web-3.8.7",
-      "packageUri": "lib/",
-      "languageVersion": "3.2"
-    },
-    {
       "name": "firebase_remote_config",
       "rootUri": "file:///C:/Users/nouro/AppData/Local/Pub/Cache/hosted/pub.dev/firebase_remote_config-4.4.7",
       "packageUri": "lib/",
@@ -1010,7 +992,7 @@
       "languageVersion": "3.2"
     }
   ],
-  "generated": "2025-11-19T11:36:55.343233Z",
+  "generated": "2025-11-19T11:48:22.451907Z",
   "generator": "pub",
   "generatorVersion": "3.6.1",
   "flutterRoot": "file:///D:/flutter_windows_3.27.3-stable2/flutter",

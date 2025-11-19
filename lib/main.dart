@@ -2,7 +2,7 @@ import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'package:firebase_messaging/firebase_messaging.dart';
+//import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:hotel_booking/BootLogoScreen.dart';
 import 'package:hotel_booking/NoInternetScreen.dart';
@@ -20,9 +20,11 @@ import 'package:internet_connection_checker/internet_connection_checker.dart';
 final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
 FlutterLocalNotificationsPlugin();
 
+/*
 Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   debugPrint("Handling a background message: ${message.messageId}");
 }
+ */
 
 Future<void> initializeAppServices() async {
   try {
@@ -32,7 +34,7 @@ Future<void> initializeAppServices() async {
     );
 
     // 2. Notifications
-    FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
+    //FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
 
     const AndroidInitializationSettings initializationSettingsAndroid =
     AndroidInitializationSettings('@mipmap/ic_launcher');
@@ -57,16 +59,17 @@ Future<void> initializeAppServices() async {
     );
 
     // طلب أذونات
-    await FirebaseMessaging.instance.requestPermission();
+    //await FirebaseMessaging.instance.requestPermission();
 
     // عرض الـ Token
-    String? token = await FirebaseMessaging.instance.getToken();
-    debugPrint("FCM Token: $token");
+    //String? token = await FirebaseMessaging.instance.getToken();
+   // debugPrint("FCM Token: $token");
 
     // اشتراك في topic
-    await FirebaseMessaging.instance.subscribeToTopic("all");
+    //await FirebaseMessaging.instance.subscribeToTopic("all");
 
     // إشعارات foreground
+  /*
     FirebaseMessaging.onMessage.listen((RemoteMessage message) {
       if (message.notification != null) {
         flutterLocalNotificationsPlugin.show(
@@ -89,6 +92,7 @@ Future<void> initializeAppServices() async {
         );
       }
     });
+   */
 
     // SMS AutoFill
     if (kDebugMode) {
