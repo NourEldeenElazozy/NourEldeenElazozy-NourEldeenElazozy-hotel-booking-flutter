@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:hotel_booking/main.dart';
-import 'package:internet_connection_checker/internet_connection_checker.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:hotel_booking/NoInternetScreen.dart';
 import 'package:hotel_booking/core/constants/my_colors.dart';
@@ -25,14 +24,17 @@ class _BootLogoScreenState extends State<BootLogoScreen> {
     final elapsed = (context.findAncestorWidgetOfExactType<MyApp>()?.appStopwatch.elapsedMilliseconds) ?? 0;
 
     try {
+
+      /*
       final bool hasConnection =
-      await InternetConnectionChecker.instance.hasConnection;
+      //await InternetConnectionChecker.instance.hasConnection;
+
 
       if (!hasConnection) {
         Get.offAll(() => const NoInternetScreen());
         return;
       }
-
+   */
       final prefs = await SharedPreferences.getInstance();
       final hasSeenOnboarding = prefs.getBool('onboarding');
       debugPrint("⏱️ وقت فتح التطبيق حتى BootLogo: $elapsed ms");
