@@ -515,7 +515,7 @@ class _HomeState extends State<Home> {
                     onPressed: () {
                       // للتنقل إلى صفحة الخريطة
                       // لو تستخدم GetX:
-                      Get.to(() =>  MapPickerScreen(restAreas: controller.restAreas,));
+
           
                       // أو لو تستخدم Navigator:
                       // Navigator.push(

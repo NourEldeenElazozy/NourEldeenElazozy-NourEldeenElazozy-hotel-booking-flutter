@@ -35,24 +35,14 @@ class _ProfileState extends State<Profile> {
   File? selectedImage;
 
   Future<void> selectImageFromGallery() async {
-    XFile? pickedFile =
-        (await ImagePicker().pickImage(source: ImageSource.gallery));
-    if (pickedFile != null) {
-      setState(() {
-        selectedImage = File(pickedFile.path);
-      });
-    }
+
+
   }
 
   Future<void> selectImageFroCamera() async {
-    XFile? pickedFile =
-        (await ImagePicker().pickImage(source: ImageSource.camera));
 
-    if (pickedFile != null) {
-      setState(() {
-        selectedImage = File(pickedFile.path);
-      });
-    }
+
+
   }
 
   Future showOptions() async {

@@ -23,7 +23,7 @@ import 'package:get/get.dart';
 import 'package:hotel_booking/presentation/screen/auth/OtpVerificationPage.dart';
 import 'package:hotel_booking/presentation/screen/auth/login/login_import.dart';
 import 'package:hotel_booking/utils/validations.dart';
-import 'package:image_picker/image_picker.dart';
+
 import 'package:pin_code_fields/pin_code_fields.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 

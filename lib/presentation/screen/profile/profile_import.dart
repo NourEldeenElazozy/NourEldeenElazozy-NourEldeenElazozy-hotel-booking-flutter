@@ -16,7 +16,7 @@ import 'package:hotel_booking/presentation/common_widgets/dropdown_button_form_f
 import 'package:hotel_booking/presentation/common_widgets/textformfield.dart';
 import 'package:hotel_booking/presentation/screen/auth/Register/register_import.dart';
 import 'package:hotel_booking/utils/validations.dart';
-import 'package:image_picker/image_picker.dart';
+
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:dio/dio.dart';
 
