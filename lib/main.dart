@@ -1,117 +1,41 @@
-import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:firebase_core/firebase_core.dart';
-import 'package:firebase_messaging/firebase_messaging.dart';
-import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:hotel_booking/BootLogoScreen.dart';
 import 'package:hotel_booking/NoInternetScreen.dart';
 import 'package:hotel_booking/core/themes/app_themes.dart';
 import 'package:hotel_booking/core/themes/themes_controller.dart';
 import 'package:hotel_booking/presentation/routes/routes_imports.dart';
 import 'package:hotel_booking/utils/flutter_web_frame/flutter_web_frame.dart';
-import 'package:sms_autofill/sms_autofill.dart';
-import 'package:hotel_booking/firebase_options.dart';
+// تم إزالة (firebase_core, firebase_messaging, flutter_local_notifications, sms_autofill)
 import 'package:get/get.dart';
 
 
+// تم حذف جميع الدوال والمتغيرات الخاصة بـ Firebase والإشعارات
 
-
-final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
-FlutterLocalNotificationsPlugin();
-
-Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
-  debugPrint("Handling a background message: ${message.messageId}");
-}
-
+/// دالة تهيئة الخدمات (تم تفريغها من كود Firebase)
 Future<void> initializeAppServices() async {
   try {
-    // 1. Firebase
-    await Firebase.initializeApp(
-      options: DefaultFirebaseOptions.currentPlatform,
-    );
-
-    // 2. Notifications
-    FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
-
-    const AndroidInitializationSettings initializationSettingsAndroid =
-    AndroidInitializationSettings('@mipmap/ic_launcher');
-
-    const DarwinInitializationSettings initializationSettingsIOS =
-    DarwinInitializationSettings(
-      requestAlertPermission: true,
-      requestBadgePermission: true,
-      requestSoundPermission: true,
-    );
-
-    const InitializationSettings initializationSettings = InitializationSettings(
-      android: initializationSettingsAndroid,
-      iOS: initializationSettingsIOS,
-    );
-
-    await flutterLocalNotificationsPlugin.initialize(
-      initializationSettings,
-      onDidReceiveNotificationResponse: (response) {
-        debugPrint("Notification tapped: ${response.payload}");
-      },
-    );
-
-    // طلب أذونات
-    await FirebaseMessaging.instance.requestPermission();
-
-    // عرض الـ Token
-    String? token = await FirebaseMessaging.instance.getToken();
-    debugPrint("FCM Token: $token");
-
-    // اشتراك في topic
-    await FirebaseMessaging.instance.subscribeToTopic("all");
-
-    // إشعارات foreground
-    FirebaseMessaging.onMessage.listen((RemoteMessage message) {
-      if (message.notification != null) {
-        flutterLocalNotificationsPlugin.show(
-          message.hashCode,
-          message.notification!.title,
-          message.notification!.body,
-          const NotificationDetails(
-            android: AndroidNotificationDetails(
-              'high_importance_channel',
-              'إشعارات التطبيق الهامة',
-              channelDescription: 'قناة لعرض الإشعارات الهامة من التطبيق.',
-              importance: Importance.max,
-              priority: Priority.high,
-              playSound: true,
-              icon: '@mipmap/ic_launcher',
-            ),
-            iOS: DarwinNotificationDetails(),
-          ),
-          payload: message.data['click_action'] ?? message.data['payload'],
-        );
-      }
-    });
-
-    // SMS AutoFill
-    if (kDebugMode) {
-      final hash = await SmsAutoFill().getAppSignature;
-      debugPrint("App hash: $hash");
-    }
-
-    debugPrint("✅ Services initialized");
+    // هذه الدالة جاهزة لإضافة أي تهيئة أخرى غير Firebase في المستقبل
+    debugPrint("✅ تم تهيئة الخدمات (النسخة الخالية من Firebase)");
   } catch (e) {
-    debugPrint("❌ Error initializing services: $e");
+    debugPrint("❌ حدث خطأ أثناء تهيئة الخدمات: $e");
   }
 }
 
 void main() async {
+  // التأكد من تهيئة ربط الـ Widgets
   WidgetsFlutterBinding.ensureInitialized();
 
-  // ✅ شغل الواجهة مباشرة
+  // تشغيل تهيئة الخدمات
+  initializeAppServices();
+
+  // تشغيل الواجهة مباشرة
   runApp( MyApp(initialRoute: "/bootLogo",appStopwatch: stopwatch));
 
-  // ✅ خلّي التهيئة تشتغل بالخلفية
-  initializeAppServices();
 }
+
 final stopwatch = Stopwatch()..start();
+
 class MyApp extends StatefulWidget {
   final String initialRoute;
   final Stopwatch appStopwatch;
@@ -133,8 +57,7 @@ class _MyAppState extends State<MyApp> {
   @override
   void initState() {
     super.initState();
-    // تم إزالة جميع منطق الإشعارات والتحديث الإجباري من هنا
-    // حيث تم نقلها إلى دالة main() ليتم تهيئتها قبل تشغيل التطبيق.
+    // initState أصبح الآن نظيفاً
   }
 
   @override
@@ -156,7 +79,7 @@ class _MyAppState extends State<MyApp> {
             GetPage(name: "/bootLogo", page: () => const BootLogoScreen()),
             GetPage(
                 name: "/noInternet", page: () => const NoInternetScreen()),
-            ...Routes.navigator, // باقي الصفحات عندك
+            ...Routes.navigator, // باقي الصفحات لديك
           ],
         ));
       },
