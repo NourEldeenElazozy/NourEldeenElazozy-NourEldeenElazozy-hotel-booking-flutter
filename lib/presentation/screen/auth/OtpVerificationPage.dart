@@ -1,5 +1,4 @@
 import 'package:dio/dio.dart';
-import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:hotel_booking/Model/User.dart';
@@ -48,17 +47,10 @@ class _OtpVerificationPageState extends State<OtpVerificationPage> {
   }
 
 
-  Future<String?> getDeviceToken() async {
-    try {
-      return await FirebaseMessaging.instance.getToken();
-    } catch (e) {
-      print('Failed to get device token: $e');
-      return null;
-    }
-  }
+
   Future<void> _completeRegistration() async {
-    String? deviceToken = await getDeviceToken();
-    print("deviceToken: ${deviceToken.toString()}");
+
+
     final response = await Dio().post(
       'https://esteraha.ly/api/register',
       data: {
@@ -69,7 +61,7 @@ class _OtpVerificationPageState extends State<OtpVerificationPage> {
         'gender': widget.gender,
         'user_type': widget.useType,
         'password': widget.password,
-        'device_token':deviceToken.toString()
+
       },
     );
 

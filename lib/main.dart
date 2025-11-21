@@ -24,10 +24,10 @@ Future<void> initializeAppServices() async {
 
 void main() async {
   // التأكد من تهيئة ربط الـ Widgets
-  WidgetsFlutterBinding.ensureInitialized();
+  //WidgetsFlutterBinding.ensureInitialized();
 
   // تشغيل تهيئة الخدمات
-  initializeAppServices();
+ // initializeAppServices();
 
   // تشغيل الواجهة مباشرة
   runApp( MyApp(initialRoute: "/bootLogo",appStopwatch: stopwatch));

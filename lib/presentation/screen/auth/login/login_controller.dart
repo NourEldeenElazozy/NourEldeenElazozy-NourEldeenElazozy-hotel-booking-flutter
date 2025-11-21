@@ -13,14 +13,7 @@ class LoginController extends GetxController {
   var token = ''.obs;
   var user = User(id: 0, name: '', phone: '',userType: "",gender: "").obs;
 
-  Future<String?> getDeviceToken() async {
-    try {
-      return await FirebaseMessaging.instance.getToken();
-    } catch (e) {
-      print('Failed to get device token: $e');
-      return null;
-    }
-  }
+
   Future<void> login(String phone, String password) async {
     isLoading.value = true;
     try {
@@ -49,7 +42,7 @@ class LoginController extends GetxController {
         user.value = loginResponse.user;
         await _storeData(loginResponse.token, loginResponse.user);
         // جلب device token
-        String? deviceToken = await getDeviceToken();
+        String? deviceToken = "";
         if (deviceToken != null && deviceToken.isNotEmpty) {
           print("deviceToken: ${deviceToken.toString()}");
 
