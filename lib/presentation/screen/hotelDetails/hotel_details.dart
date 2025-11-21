@@ -1434,7 +1434,7 @@ class _HotelDetailState extends State<HotelDetail> {
                                 );
                               } else {
                                 return TableCalendar(
-                                  locale: 'ar',
+                                  //locale: 'ar',
                                   firstDay: DateTime.now().copyWith(
                                       hour: 0,
                                       minute: 0,

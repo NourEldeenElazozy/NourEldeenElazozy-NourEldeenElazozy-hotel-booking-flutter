@@ -36,12 +36,13 @@ android {
     ndkVersion flutter.ndkVersion
 
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
+        coreLibraryDesugaringEnabled true
     }
 
     kotlinOptions {
-        jvmTarget = '1.8'
+        jvmTarget = '17'
     }
 
     sourceSets {
@@ -85,29 +86,7 @@ flutter {
 }
 
 dependencies {
-    // تبعيات Flutter القياسية (عادة ما تكون موجودة بالفعل أو تدار بواسطة Flutter)
-    // لا تقم بتغيير السطور التي تبدأ بـ "implementation(flutter..." إذا كانت موجودة
+    coreLibraryDesugaring "com.android.tools:desugar_jdk_libs:2.1.4"
+    implementation(platform("com.google.firebase:firebase-bom:33.5.0"))
 
-    // ** هنا نبدأ بإضافة تبعيات Firebase **
-
-    // استخدام Firebase BoM (Bill of Materials) لإدارة إصدارات المكتبات يوصى به بشدة
-    // هذا السطر سيضمن أن جميع مكتبات Firebase التي تضيفها تستخدم إصدارات متوافقة
-    implementation(platform("com.google.firebase:firebase-bom:32.7.0")) // ✅ أضف هذا السطر ✅
-    // (يمكنك التحقق من وثائق Firebase لأحدث إصدار مستقر من BoM)
-
-
-
-    // Firebase Remote Config - المكتبة لـ Remote Config
-    implementation("com.google.firebase:firebase-config-ktx") // ✅ أضف هذا السطر ✅
-    // (نستخدم -ktx هنا إذا كنت تستخدم Kotlin، وإلا استخدم firebase-config)
-
-    // Firebase Analytics - موصى به بشدة مع Remote Config للميزات المتقدمة مثل الاستهداف
-    implementation("com.google.firebase:firebase-analytics-ktx") // ✅ أضف هذا السطر ✅
-    // (نستخدم -ktx هنا إذا كنت تستخدم Kotlin، وإلا استخدم firebase-analytics)
-
-    // ** يمكنك إضافة تبعيات مكتبات Firebase الأخرى هنا حسب الحاجة **
-    // على سبيل المثال:
-    // implementation("com.google.firebase:firebase-auth-ktx") // للمصادقة
-    // implementation("com.google.firebase:firebase-firestore-ktx") // لـ Cloud Firestore
-
-} // ✅ تأكد أن هذه القوس هي نهاية كتلة التبعيات ✅
+}
