@@ -39,8 +39,7 @@
         <string>This app requires continuous location access to provide accurate map and notification services.</string>
       <key>UNUserNotificationCenterUsageDescription</key>
       <string>This app uses notifications to send important updates.</string>
-    <key>Google Maps API Key</key>
-    <string>AIzaSyDC9WFXg8tjm5UlquX9IVSb2Mkv1wiQjFk</string>
+
 
 
     <key>FirebaseAppDelegateProxyEnabled</key>
